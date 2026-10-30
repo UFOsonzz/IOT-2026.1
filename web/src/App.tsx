@@ -551,12 +551,12 @@ export default function App() {
             <div className="flex items-center gap-2">
               <Database className="w-5 h-5 text-cyan-400" />
               <h2 className="text-base font-bold text-white">
-                Nhật ký Đo Vi khí hậu Bất biến (Append-Only Telemetry Stream)
+                Nhật ký Đo
               </h2>
             </div>
             <span className="text-xs text-slate-400">
               Hiển thị {telemetryList.length}/{MAX_TABLE_ROWS} bản ghi gần nhất •
-              Khóa cứng UPDATE/DELETE bằng Trigger DB
+              UPDATE và DELETE bị khóa
             </span>
           </div>
 
@@ -565,12 +565,12 @@ export default function App() {
               <thead>
                 <tr className="bg-slate-950/70 text-slate-400 border-b border-slate-800 uppercase text-[11px] tracking-wider">
                   <th className="py-3 px-4">Seq No</th>
-                  <th className="py-3 px-4">Thời gian RTC (DS3231)</th>
+                  <th className="py-3 px-4">Thời gian</th>
                   <th className="py-3 px-4">Kênh truyền</th>
                   <th className="py-3 px-4">Nhiệt độ</th>
                   <th className="py-3 px-4">Độ ẩm</th>
                   <th className="py-3 px-4">Pin 18650</th>
-                  <th className="py-3 px-4">Mã băm SHA-256 (Canonical)</th>
+                  <th className="py-3 px-4">Mã băm SHA-256</th>
                   <th className="py-3 px-4">Xác thực ECDSA</th>
                 </tr>
               </thead>
