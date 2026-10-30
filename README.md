@@ -1,7 +1,7 @@
 # Hệ thống IoT Giám sát chuỗi cung ứng lạnh tuân thủ GSP
 
-Đồ án học phần **IT4735 - IoT và Ứng dụng** - Đại học Bách Khoa Hà Nội.  
-Hệ thống giám sát chuỗi cung ứng lạnh theo tiêu chuẩn Thực hành Tốt Bảo quản (**GSP - Good Storage Practices**) dành cho Vaccine (`+2.0°C` đến `+8.0°C`) và Thủy sản đông lạnh (`-20.0°C` đến `-40.0°C`).
+1. Đồ án học phần **IT4735 - IoT và Ứng dụng** - Đại học Bách Khoa Hà Nội.  
+2. Hệ thống giám sát chuỗi cung ứng lạnh theo tiêu chuẩn Thực hành Tốt Bảo quản (**GSP - Good Storage Practices**) dành cho Vaccine (`+2.0°C` đến `+8.0°C`) và Thủy sản đông lạnh (`-20.0°C` đến `-40.0°C`).
 
 ---
 
@@ -53,50 +53,129 @@ IOT-2026.1/
 
 ## 3. Hướng dẫn chạy Toàn bộ Hệ thống
 
-### Bước 1: Chuẩn bị file biến môi trường
+### 3.1. Điều kiện tiên quyết
+
+Để chạy trọn vẹn toàn bộ hệ sinh thái của đồ án, máy tính cần đáp ứng các yêu cầu sau:
+
+1. **Docker & Docker Compose:** Đã cài đặt [Docker Desktop](https://www.docker.com/) hoặc Docker Engine + Docker Compose Plugin v2 (Linux) và Docker Daemon đang hoạt động.
+2. **Kiểm tra giải phóng các cổng mạng trên máy, tránh tình trạng Port conflict:**
+   - `1883`: MQTT Broker
+   - `5432`: Database
+   - `8000`: Backend REST API và WebSocket
+   - `5173`: Frontend Web Dashboard
+3. **Nguồn phát dữ liệu IoT:**
+   > Lệnh `docker compose up` chỉ khởi chạy *tầng Nền tảng Server và Web* (Broker + DB + Backend + Frontend). Khi vừa chạy Docker, hệ thống ở trạng thái **chờ**, thiết bị sẽ hiển thị `OFFLINE` trên Web, chưa có đồ thị và thông số đo đạc.
+   > Để có dữ liệu chạy thông toàn bộ luồng End-to-End, cần 1 trong 2 nguồn dữ liệu:
+   > - **Cách A (test nhanh hoặc demo):** Cài sẵn **Python 3.8+** trên máy host để chạy script Simulator (xem [Mục 4](#4-hướng-dẫn-chạy-giả-lập-dữ-liệu)).
+   > - **Cách B (Môi trường thực tế có phần cứng):** Cần mạch **ESP32-S3-N16R8**, cáp kết nối USB Type-C và tiện ích **PlatformIO** (xem [Mục 5](#5-hướng-dẫn-biên-dịch-và-nạp-firmware-cho-esp32)).
+
+---
+
+### 3.2. Khởi chạy Server và Web
+
+#### Bước 1: Chuẩn bị file biến môi trường
 Tại thư mục gốc của dự án, sao chép `.env.example` thành `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-### Bước 2: Khởi chạy
-Chạy lệnh sau đây:
+Mặc định file `.env.example` đã điền sẵn các tham số cấu hình phù hợp để chạy ngay. Có thể tùy biến `POSTGRES_USER`, `POSTGRES_PASSWORD` hoặc `POSTGRES_DB`, và cần cập nhật tương ứng biến `DATABASE_URL` theo cú pháp: `postgresql://<POSTGRES_USER>:<POSTGRES_PASSWORD>@timescaledb:5432/<POSTGRES_DB>`
+
+#### Bước 2: Build và Khởi chạy các container
+Chạy lệnh sau tại thư mục gốc của dự án:
 
 ```bash
 docker compose up -d --build
 ```
 
-Kiểm tra trạng thái các dịch vụ:
+#### Bước 3: Kiểm tra trạng thái các dịch vụ
+Chạy lệnh:
 
 ```bash
 docker compose ps
 ```
 
-- **Giao diện Web Dashboard:** Truy cập [http://localhost:5173](http://localhost:5173)
-- **Tài liệu API Backend - Swagger UI:** Truy cập [http://localhost:8000/docs](http://localhost:8000/docs)
-- **MQTT Broker - Mosquitto:** Lắng nghe tại `localhost:1883`
-- **TimescaleDB - PostgreSQL:** Lắng nghe tại `localhost:5432` (User: `gsp_user` / Pass: `gsp_pass_2026` / DB: `gsp_coldchain`)
+Nếu thành công, cả 4 container sẽ có trạng thái `Up` (hoặc `healthy` đối với database):
+
+| Tên Container | Dịch vụ | Cổng ánh xạ | Trạng thái mong đợi |
+| :--- | :--- | :--- | :--- |
+| `gsp-mosquitto` | MQTT Message Broker | `localhost:1883` | Up |
+| `gsp-timescaledb` | CSDL TimescaleDB / PG16 | `localhost:5432` | Up (healthy) |
+| `gsp-backend` | FastAPI REST + WebSocket + MQTT Worker | `localhost:8000` | Up |
+| `gsp-web` | React + TypeScript Dashboard | `localhost:5173` | Up |
+
+#### Bước 4: Truy cập các điểm dịch vụ
+- **Giao diện Web Dashboard:** [http://localhost:5173](http://localhost:5173)
+- **Tài liệu API Backend (Swagger UI):** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Địa chỉ kết nối MQTT Broker:** `localhost:1883`
+- **Địa chỉ kết nối TimescaleDB:** `localhost:5432`
 
 ---
 
-## 4. Hướng dẫn Giả lập dữ liệu
+### 3.3. Kích hoạt Luồng Dữ liệu IoT
+
+Sau khi kiểm tra 4 container đã hoạt động, hãy chọn một trong hai phương thức sau để cấp dữ liệu cho hệ thống:
+
+1. **Chạy Giả lập kiểm thử trên máy tính:** Chuyển sang **[Mục 4. Hướng dẫn chạy giả lập dữ liệu](#4-hướng-dẫn-chạy-giả-lập-dữ-liệu)**. Script sẽ tự động phát sinh bản tin chuẩn GSP, bản tin cảnh báo vượt ngưỡng, bản tin tấn công giả mạo (TAMPERED), và đẩy bù dữ liệu Offline (MicroSD Sync).
+2. **Chạy cùng mạch phần cứng ESP32-S3:** Chuyển sang **[Mục 5. Hướng dẫn Biên dịch và Nạp Firmware cho ESP32](#5-hướng-dẫn-biên-dịch-và-nạp-firmware-cho-esp32)**. Mạch sẽ đọc cảm biến, ký số và gửi dữ liệu thực tế về Broker qua Wi-Fi.
+
+---
+
+### 3.4. Các lệnh Quản trị trong Docker thường dùng
+
+- Xem toàn bộ log thời gian thực:
+  ```bash
+  docker compose logs -f
+  ```
+- Xem log riêng của từng dịch vụ (ví dụ backend hoặc broker):
+  ```bash
+  docker compose logs -f backend
+  docker compose logs -f mosquitto
+  ```
+- Khởi động lại toàn bộ hoặc một dịch vụ:
+  ```bash
+  docker compose restart
+  # hoặc chỉ restart backend
+  docker compose restart backend
+  ```
+- Dừng toàn bộ hệ thống (giữ nguyên dữ liệu CSDL):
+  ```bash
+  docker compose down
+  ```
+- Dừng và Xóa sạch dữ liệu (Reset CSDL về trạng thái ban đầu):
+  ```bash
+  docker compose down -v
+  ```
+
+---
+
+## 4. Hướng dẫn chạy giả lập dữ liệu
 
 Khi chưa cắm mạch phần cứng ESP32-S3, giảng viên và nhóm phát triển có thể chạy script giả lập để kiểm thử toàn bộ luồng: **MQTT → FastAPI → TimescaleDB → WebSocket → React UI**
 
-```bash
-# Cài đặt thư viện paho-mqtt trên máy host nếu chưa có
-pip install paho-mqtt
+Để tránh xung đột thư viện với hệ điều hành, dự án đã đóng gói sẵn các script tự động thiết lập môi trường ảo `.venv`, cài đặt `paho-mqtt` và khởi chạy giả lập.
 
-# Chạy trình giả lập đẩy dữ liệu thời gian thực
-python tools/dummy_simulator.py
+**Đối với Windows,** mở Command Prompt hoặc PowerShell tại thư mục gốc của dự án và chạy:
+```cmd
+run_simulator_win.bat
+```
+hoặc click đúp chuột trực tiếp vào file `run_simulator_win.bat` trong File Explorer
+
+**Đối với macOS / Linux,** mở Terminal tại thư mục gốc của dự án và chạy:
+
+```bash
+# Cấp quyền thực thi, chỉ cần chạy 1 lần
+chmod +x run_simulator_mac.sh
+# Khởi chạy
+./run_simulator_mac.sh
 ```
 
 Khi script chạy, mở trình duyệt tại `http://localhost:5173` để quan sát:
 1. Trạng thái thiết bị chuyển sang **ONLINE** xanh lá.
-2. Nhiệt độ, độ ẩm, điện áp pin cập nhật trực tiếp qua WebSocket mà không cần tải lại trang.
-3. Khi có bản tin vượt ngưỡng (`> 8.0°C`) hoặc bản tin giả lập bị sửa đổi trái phép, giao diện lập tức nhấp nháy cảnh báo đỏ và gắn nhãn **TAMPERED**.
-4. Nhấn nút **"Kiểm toán chuỗi chữ ký GSP"** trên góc phải để gọi API `/api/v1/devices/GSP-TRUCK-01/verify-chain` đối soát toàn bộ chuỗi bản ghi.
+2. Nhiệt độ, độ ẩm, điện áp pin cập nhật trực tiếp qua WebSocket.
+3. Khi có bản tin vượt ngưỡng (`> 8.0°C`) hoặc bản tin giả lập bị sửa đổi trái phép, giao diện sẽ nhấp nháy cảnh báo đỏ và gắn nhãn **TAMPERED**.
+4. Nhấn nút **"Kiểm toán chuỗi chữ ký GSP"** trên góc phải để gọi API `/api/v1/devices/<DEVICE-ID>/verify-chain` đối soát toàn bộ chuỗi bản ghi.
 
 ---
 
@@ -127,7 +206,7 @@ pio run --target upload --target monitor
 ```
 
 ### Bước 3: Thao tác kiểm thử trực tiếp trên mạch phần cứng
-- **Hoạt động bình thường:** Mỗi 10 giây, Core 0 tạo bản ghi nhiệt độ quanh mức `4.50°C`, băm SHA-256 bằng `mbedTLS` và chuyển sang Core 1 bắn lên topic `gsp/v1/GSP-TRUCK-01/telemetry`.
+- **Hoạt động bình thường:** Mỗi 10 giây, Core 0 tạo bản ghi nhiệt độ quanh mức `4.50°C`, băm SHA-256 bằng `mbedTLS` và chuyển sang Core 1 bắn lên topic `gsp/v1/<DEVICE-ID>/telemetry`.
 - **Kiểm thử Cảnh báo Vượt ngưỡng & Bật Relay (FR-04):** Nhấn giữ nút **BTN3 (`GPIO7`)**, nhiệt độ giả lập vọt lên `9.50°C` → Module Relay tại **`GPIO21`** đóng tiếp điểm bật Còi + Đèn ngay lập tức, đồng thời thẻ nhiệt độ trên Web Dashboard chuyển sang màu Đỏ nhấp nháy.
 - **Kiểm thử Tắt tiếng còi tại chỗ (HMI Mute):** Nhấn nút **BTN2 (`GPIO6`)** để ngắt Relay còi báo tại chỗ.
 - **Kiểm thử Di chúc LWT (`OFFLINE`):** Rút dây nguồn USB của mạch ESP32-S3 → Sau 30 giây Keep-Alive, Mosquitto Broker tự động phát bản tin Di chúc LWT chuyển trạng thái thiết bị trên Web Dashboard sang **OFFLINE (LWT)**.
