@@ -175,7 +175,7 @@ Khi script chạy, mở trình duyệt tại `http://localhost:5173` để quan 
 1. Trạng thái thiết bị chuyển sang **ONLINE** xanh lá.
 2. Nhiệt độ, độ ẩm, điện áp pin cập nhật trực tiếp qua WebSocket.
 3. Khi có bản tin vượt ngưỡng (`> 8.0°C`) hoặc bản tin giả lập bị sửa đổi trái phép, giao diện sẽ nhấp nháy cảnh báo đỏ và gắn nhãn **TAMPERED**.
-4. Nhấn nút **"Kiểm toán chuỗi chữ ký GSP"** trên góc phải để gọi API `/api/v1/devices/<DEVICE-ID>/verify-chain` đối soát toàn bộ chuỗi bản ghi.
+4. Nhấn nút **"Kiểm toán chuỗi chữ ký GSP"** trên góc phải để gọi API `/api/v1/devices/<DEVICE_ID>/verify-chain` đối soát toàn bộ chuỗi bản ghi.
 
 ---
 
@@ -206,7 +206,7 @@ pio run --target upload --target monitor
 ```
 
 ### Bước 3: Thao tác kiểm thử trực tiếp trên mạch phần cứng
-- **Hoạt động bình thường:** Mỗi 10 giây, Core 0 tạo bản ghi nhiệt độ quanh mức `4.50°C`, băm SHA-256 bằng `mbedTLS` và chuyển sang Core 1 bắn lên topic `gsp/v1/<DEVICE-ID>/telemetry`.
+- **Hoạt động bình thường:** Mỗi 10 giây, Core 0 tạo bản ghi nhiệt độ quanh mức `4.50°C`, băm SHA-256 bằng `mbedTLS` và chuyển sang Core 1 bắn lên topic `gsp/v1/<DEVICE_ID>/telemetry`.
 - **Kiểm thử Cảnh báo Vượt ngưỡng & Bật Relay (FR-04):** Nhấn giữ nút **BTN3 (`GPIO7`)**, nhiệt độ giả lập vọt lên `9.50°C` → Module Relay tại **`GPIO21`** đóng tiếp điểm bật Còi + Đèn ngay lập tức, đồng thời thẻ nhiệt độ trên Web Dashboard chuyển sang màu Đỏ nhấp nháy.
 - **Kiểm thử Tắt tiếng còi tại chỗ (HMI Mute):** Nhấn nút **BTN2 (`GPIO6`)** để ngắt Relay còi báo tại chỗ.
 - **Kiểm thử Di chúc LWT (`OFFLINE`):** Rút dây nguồn USB của mạch ESP32-S3 → Sau 30 giây Keep-Alive, Mosquitto Broker tự động phát bản tin Di chúc LWT chuyển trạng thái thiết bị trên Web Dashboard sang **OFFLINE (LWT)**.

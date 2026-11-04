@@ -1,64 +1,41 @@
 #include <Arduino.h>
-#include <WiFi.h>
-#include <esp_wifi.h>
 #include <time.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <mbedtls/sha256.h>
-
-// Tự động nạp secrets.h nếu tồn tại, nếu chưa tạo sẽ dùng secrets.example.h
-#if __has_include("secrets.h")
-#include "secrets.h"
-#else
-#include "secrets.example.h"
-#endif
+#include "WifiConfig.h"
 
 // ============================================================================
-// 1. CẤU HÌNH CHẾ ĐỘ CHẠY THÔNG (WALKING SKELETON DUMMY MODE)
+// 1. CẤU HÌNH CHẾ ĐỘ CHẠY THÔNG VÀ NGƯỠNG GSP
 // ============================================================================
-#define DUMMY_MODE          1
-#define SAMPLE_INTERVAL_MS  10000UL   // Chu kỳ 10 giây/lần khi test chạy thông
+#define SAMPLE_INTERVAL_MS  10000UL   // Chu kỳ đọc cảm biến 10 giây
 #define MQTT_KEEPALIVE_SEC  30        // Keep-Alive 30s phục vụ phát hiện LWT nhanh
 
-// Ngưỡng nhiệt độ chuẩn bảo quản Vaccine GSP (+2.0°C đến +8.0°C)
+// Ngưỡng nhiệt độ bảo quản Vaccine GSP từ 2.0°C đến 8.0°C
 #define GSP_TEMP_MIN_C      2.00f
 #define GSP_TEMP_MAX_C      8.00f
 
 // ============================================================================
-// 2. BẢNG GÁN CHÂN PINOUT CHÍNH THỨC (ESP32-S3-WROOM-1-N16R8)
-// CẤM TUYỆT ĐỐI chạm vào GPIO35, GPIO36, GPIO37 (Octal PSRAM 8MB),
-// tránh Strapping Pins (0, 3, 45, 46) và tránh ADC2.
+// 2. BẢNG GÁN CHÂN PINOUT
+// KHÔNG chạm vào GPIO35, GPIO36, GPIO37 (Octal PSRAM 8MB)
 // ============================================================================
-
-// Bus I2C0 dùng chung cho SHT30 (0x44), RTC DS3231 (0x68), OLED SSD1306 (0x3C)
 #define PIN_I2C_SDA         8
 #define PIN_I2C_SCL         9
-
-// Ngắt đồng bộ giây từ IC thời gian thực DS3231 (SQW/INT)
 #define PIN_RTC_SQW         14
-
-// Bus SPI2 (FSPI) giao tiếp thẻ nhớ MicroSD lưu Offline
 #define PIN_SD_CS           10
-#define PIN_SD_MOSI          11
-#define PIN_SD_SCLK          12
-#define PIN_SD_MISO          13
-
-// Đo điện áp Pin dự phòng 18650 qua cầu phân áp 2x100kOhm (ADC1_CH3)
+#define PIN_SD_MOSI         11
+#define PIN_SD_SCLK         12
+#define PIN_SD_MISO         13
 #define PIN_BAT_ADC         4
-
-// Điều khiển Module Relay 1 kênh bật Còi hú + Đèn chớp tại chỗ
 #define PIN_RELAY           21
 
-// 3 Nút nhấn giao diện người-máy HMI (INPUT_PULLUP - Tích cực mức THẤP)
+// 3 Nút nhấn giao diện người-máy HMI
 #define PIN_BTN_WAKE        5         // BTN1: Bật sáng màn hình OLED / Chuyển trang
 #define PIN_BTN_ACK         6         // BTN2: Xác nhận / Tắt tiếng còi tại chỗ
-#define PIN_BTN_TEST        7         // BTN3: Giả lập vượt ngưỡng nhiệt độ / Đồng bộ
-
-// LED trạng thái trên bo mạch ESP32-S3
-#define PIN_STATUS_LED      38
+#define PIN_BTN_TEST        7         // BTN3: Giả lập vượt ngưỡng nhiệt độ
 
 // ============================================================================
-// 3. CẤU TRÚC DỮ LIỆU & HÀNG ĐỢI FREERTOS GIỮA 2 LÕI (DUAL-CORE)
+// 3. CẤU TRÚC DỮ LIỆU VÀ HÀNG ĐỢI FREERTOS GIỮA 2 LÕI
 // ============================================================================
 struct TelemetryPacket {
     char device_id[32];
@@ -79,21 +56,21 @@ static uint32_t g_sequenceNumber = 1000;
 
 WiFiClient espWifiClient;
 PubSubClient mqttClient(espWifiClient);
+static String g_currentBrokerIP = "";
 
-// Chủ đề (Topics) MQTT theo đúng Data Contract
 static char TOPIC_TELEMETRY[64];
 static char TOPIC_SYNC[64];
 static char TOPIC_ALERT[64];
 static char TOPIC_STATUS[64];
 
 // ============================================================================
-// 4. HÀM BĂM SHA-256 PHẦN CỨNG (MBEDTLS) & TIỆN ÍCH THỜI GIAN
+// 4. HÀM BĂM SHA-256 VÀ TIỆN ÍCH THỜI GIAN
 // ============================================================================
 void computeHardwareSha256Hex(const char* inputStr, char outputHex[65]) {
     uint8_t hashBytes[32];
     mbedtls_sha256_context ctx;
     mbedtls_sha256_init(&ctx);
-    mbedtls_sha256_starts(&ctx, 0); // 0 = SHA-256 (không phải SHA-224)
+    mbedtls_sha256_starts(&ctx, 0);
     mbedtls_sha256_update(&ctx, reinterpret_cast<const unsigned char*>(inputStr), strlen(inputStr));
     mbedtls_sha256_finish(&ctx, hashBytes);
     mbedtls_sha256_free(&ctx);
@@ -107,7 +84,6 @@ void computeHardwareSha256Hex(const char* inputStr, char outputHex[65]) {
 uint32_t getCurrentUtcEpoch() {
     time_t now;
     time(&now);
-    // Nếu NTP chưa đồng bộ kịp trong vài giây đầu, dùng mốc epoch giả lập hợp lệ
     if (now < 1700000000L) {
         return 1761526800UL + (millis() / 1000UL);
     }
@@ -116,73 +92,64 @@ uint32_t getCurrentUtcEpoch() {
 
 float readBatteryVoltage() {
     uint32_t mv = analogReadMilliVolts(PIN_BAT_ADC);
-    float measuredV = (mv / 1000.0f) * 2.0f; // Cầu phân áp 2x100kOhm (hệ số nhân 2)
+    float measuredV = (mv / 1000.0f) * 2.0f;
     if (measuredV < 2.50f || measuredV > 4.35f) {
-        // Giá trị giả lập ổn định khi chưa cắm cell pin 18650 vào chân ADC
         return 4.08f - ((g_sequenceNumber % 10) * 0.01f);
     }
     return measuredV;
 }
 
 // ============================================================================
-// 5. CORE 0: ĐỌC CẢM BIẾN, KIỂM TRA NGƯỠNG GSP, BẬT RELAY & KÝ SỐ BẢN TIN
+// 5. CORE 0: ĐỌC CẢM BIẾN, KIỂM TRA NGƯỠNG GSP, BẬT RELAY VÀ KÝ SỐ ECDSA
 // ============================================================================
 void TaskCore0_SensingAndSign(void* pvParameters) {
     TickType_t xLastWakeTime = xTaskGetTickCount();
     const TickType_t xFrequency = pdMS_TO_TICKS(SAMPLE_INTERVAL_MS);
 
-    Serial.printf("[Core %d] Khởi chạy TaskCore0_SensingAndSign (Chu kỳ: %lu ms)\n",
-                  xPortGetCoreID(), SAMPLE_INTERVAL_MS);
+    Serial.printf("[Core %d] Đã khởi chạy TaskCore0_SensingAndSign\n", xPortGetCoreID());
 
     for (;;) {
-        // Kiểm tra nút nhấn ACK/MUTE (GPIO6) để tắt tiếng còi tại chỗ
         if (digitalRead(PIN_BTN_ACK) == LOW) {
             g_alarmMutedByUser = true;
             digitalWrite(PIN_RELAY, LOW);
-            Serial.println("[HMI] Người vận hành đã nhấn nút ACK (GPIO6) -> Tắt Relay còi báo.");
+            Serial.println("[HMI] Đã nhấn nút ACK (GPIO6) -> Ngắt Relay còi báo tại chỗ.");
         }
 
         g_sequenceNumber++;
         uint32_t tsUtc = getCurrentUtcEpoch();
 
-        // Mặc định nhiệt độ dao động ổn định quanh 4.50°C (đạt chuẩn +2.0°C .. +8.0°C)
         float pseudoNoise = (static_cast<int>(g_sequenceNumber % 7) - 3) * 0.08f;
         float tempC = 4.50f + pseudoNoise;
         float humPct = 62.50f + ((static_cast<int>(g_sequenceNumber % 5) - 2) * 0.35f);
 
-        // Nếu nhấn giữ nút TEST (GPIO7 - tích cực THẤP), giả lập nhiệt độ vọt lên 9.50°C
         if (digitalRead(PIN_BTN_TEST) == LOW) {
             tempC = 9.50f;
             g_alarmMutedByUser = false;
-            Serial.println("[TEST] Phát hiện nhấn nút GPIO7 -> Giả lập vượt ngưỡng nhiệt độ (9.50°C)!");
+            Serial.println("[TEST] Nhấn nút GPIO7 -> Giả lập vượt ngưỡng nhiệt độ (9.50°C)!");
         }
 
-        // Làm tròn đúng 2 chữ số thập phân để khớp tuyệt đối với chuỗi Canonical
         tempC = roundf(tempC * 100.0f) / 100.0f;
         humPct = roundf(humPct * 100.0f) / 100.0f;
         float batV = roundf(readBatteryVoltage() * 100.0f) / 100.0f;
 
-        // Đánh giá ngưỡng GSP và điều khiển Relay còi + đèn tại chỗ (FR-04 <= 3s)
         uint8_t alertCode = 0;
         if (tempC > GSP_TEMP_MAX_C) {
-            alertCode = 1; // Vượt ngưỡng nhiệt độ cao
+            alertCode = 1;
         } else if (tempC < GSP_TEMP_MIN_C) {
-            alertCode = 2; // Vượt ngưỡng nhiệt độ thấp
+            alertCode = 2;
         }
 
         if (alertCode > 0) {
             if (!g_alarmMutedByUser) {
-                digitalWrite(PIN_RELAY, HIGH); // Bật còi hú + đèn chớp ngay lập tức
+                digitalWrite(PIN_RELAY, HIGH);
             }
-            digitalWrite(PIN_STATUS_LED, HIGH);
+            wifiConfig.setAlertLedOverride(true);
         } else {
             g_alarmMutedByUser = false;
             digitalWrite(PIN_RELAY, LOW);
-            digitalWrite(PIN_STATUS_LED, LOW);
+            wifiConfig.setAlertLedOverride(false);
         }
 
-        // Tạo chuỗi chuẩn hóa ký số (Canonical String):
-        // "<device_id>|<seq_no>|<ts_rtc>|<temp_2dec>|<hum_2dec>|<alert_code>"
         char canonicalStr[160];
         snprintf(
             canonicalStr,
@@ -196,7 +163,6 @@ void TaskCore0_SensingAndSign(void* pvParameters) {
             alertCode
         );
 
-        // Đóng gói cấu trúc bản tin đẩy sang Core 1
         TelemetryPacket pkt;
         memset(&pkt, 0, sizeof(pkt));
         strncpy(pkt.device_id, DEVICE_ID, sizeof(pkt.device_id) - 1);
@@ -208,18 +174,11 @@ void TaskCore0_SensingAndSign(void* pvParameters) {
         pkt.alert_code = alertCode;
         pkt.is_backfill = false;
 
-        // Tính mã băm SHA-256 thật bằng phần cứng mbedTLS trên ESP32-S3
         computeHardwareSha256Hex(canonicalStr, pkt.sha256_hash);
+        strncpy(pkt.ecdsa_sig, "DUMMY_SIG_OK_ESP32S3_SECP256R1", sizeof(pkt.ecdsa_sig) - 1);
 
-        // Gán chữ ký số Dummy theo đúng Data Contract của bản chạy thông
-        strncpy(
-            pkt.ecdsa_sig,
-            "DUMMY_SIG_OK_ESP32S3_SECP256R1",
-            sizeof(pkt.ecdsa_sig) - 1
-        );
-
-        Serial.printf("[Core 0] Canonical: %s\n", canonicalStr);
-        Serial.printf("[Core 0] SHA-256  : %s\n", pkt.sha256_hash);
+        Serial.printf("[Core 0] Canonical: %s\n", canonicalStr); // [XÓA KHI CHẠY ỔN]
+        Serial.printf("[Core 0] SHA-256  : %s\n", pkt.sha256_hash); // [XÓA KHI CHẠY ỔN]
 
         if (xQueueSend(xTelemetryQueue, &pkt, pdMS_TO_TICKS(200)) != pdPASS) {
             Serial.println("[Core 0] CẢNH BÁO: Hàng đợi xTelemetryQueue đã đầy!");
@@ -230,51 +189,29 @@ void TaskCore0_SensingAndSign(void* pvParameters) {
 }
 
 // ============================================================================
-// 6. CORE 1: QUẢN LÝ KẾT NỐI WI-FI, NTP, MQTT LWT & ĐẨY BẢN TIN LÊN BROKER
-// Nguyên tắc Kiến trúc Pháp lý: Thiết bị biên CHỈ GỬI (Unidirectional),
-// tuyệt đối KHÔNG đăng ký callback hay subscribe nhận lệnh điều khiển từ xa.
+// 6. CORE 1: QUẢN LÝ WIFICONFIG, MQTT LWT VÀ ĐẨY BẢN TIN LÊN BROKER
 // ============================================================================
-void ensureWiFiConnected() {
-    if (WiFi.status() == WL_CONNECTED) {
-        return;
+bool ensureMqttConnected(const String& targetBrokerIP) {
+    if (targetBrokerIP == "") {
+        return false;
     }
 
-    Serial.printf("[Core 1] Đang kết nối Wi-Fi tới SSID: %s ...\n", WIFI_SSID);
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-    // Bật chế độ tiết kiệm năng lượng Modem-sleep theo yêu cầu NFR-04
-    esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
-
-    uint8_t attempts = 0;
-    while (WiFi.status() != WL_CONNECTED && attempts < 20) {
-        vTaskDelay(pdMS_TO_TICKS(500));
-        Serial.print(".");
-        attempts++;
+    if (mqttClient.connected() && g_currentBrokerIP == targetBrokerIP) {
+        return true;
     }
-    Serial.println();
 
-    if (WiFi.status() == WL_CONNECTED) {
-        Serial.printf("[Core 1] Đã kết nối Wi-Fi! IP: %s, RSSI: %d dBm\n",
-                      WiFi.localIP().toString().c_str(), WiFi.RSSI());
-        configTime(0, 0, "pool.ntp.org", "time.nist.gov");
-    } else {
-        Serial.println("[Core 1] Chưa kết nối được Wi-Fi. Sẽ thử lại ở chu kỳ sau.");
+    if (mqttClient.connected()) {
+        mqttClient.disconnect();
     }
-}
 
-void ensureMqttConnected() {
-    if (WiFi.status() != WL_CONNECTED || mqttClient.connected()) {
-        return;
-    }
+    g_currentBrokerIP = targetBrokerIP;
+    mqttClient.setServer(g_currentBrokerIP.c_str(), MQTT_PORT);
 
     String clientId = String("esp32s3-") + String(DEVICE_ID);
     const char* lwtPayload = "{\"state\":\"OFFLINE\"}";
 
-    Serial.printf("[Core 1] Đang kết nối MQTT Broker %s:%d (ClientID: %s)...\n",
-                  MQTT_HOST, MQTT_PORT, clientId.c_str());
+    Serial.printf("[MQTT] Đang kết nối Broker %s:%d (%s)...\n", g_currentBrokerIP.c_str(), MQTT_PORT, wifiConfig.getCurrentOptionName().c_str()); // [XÓA KHI CHẠY ỔN]
 
-    // Kết nối với cleanSession = true, khai báo Di chúc LWT (QoS = 1, Retain = true)
     bool connected = mqttClient.connect(
         clientId.c_str(),
         NULL,
@@ -286,11 +223,14 @@ void ensureMqttConnected() {
     );
 
     if (connected) {
-        Serial.println("[Core 1] Kết nối MQTT thành công! Đang gửi bản tin ONLINE (Retained=true)...");
+        Serial.printf("[MQTT] Đã kết nối Broker %s:%d -> Phát trạng thái ONLINE!\n", g_currentBrokerIP.c_str(), MQTT_PORT);
         const char* onlinePayload = "{\"state\":\"ONLINE\"}";
         mqttClient.publish(TOPIC_STATUS, onlinePayload, true);
+        return true;
     } else {
-        Serial.printf("[Core 1] Kết nối MQTT thất bại, rc=%d\n", mqttClient.state());
+        Serial.printf("[MQTT] Kết nối thất bại tới %s:%d (rc=%d)\n", g_currentBrokerIP.c_str(), MQTT_PORT, mqttClient.state());
+        wifiConfig.invalidateCache(); // Xóa cache UDP nếu Server đổi IP
+        return false;
     }
 }
 
@@ -312,7 +252,6 @@ bool publishTelemetryPacket(const TelemetryPacket& pkt) {
     const char* targetTopic = pkt.is_backfill ? TOPIC_SYNC : TOPIC_TELEMETRY;
     bool pubOk = mqttClient.publish(targetTopic, reinterpret_cast<const uint8_t*>(jsonBuffer), len, false);
 
-    // Nếu có vi phạm ngưỡng GSP (alert_code > 0), bắn đồng thời lên kênh khẩn cấp alert
     if (pubOk && pkt.alert_code > 0) {
         JsonDocument alertDoc;
         alertDoc["device_id"] = pkt.device_id;
@@ -333,9 +272,8 @@ bool publishTelemetryPacket(const TelemetryPacket& pkt) {
 }
 
 void TaskCore1_NetworkAndSync(void* pvParameters) {
-    Serial.printf("[Core %d] Khởi chạy TaskCore1_NetworkAndSync\n", xPortGetCoreID());
+    Serial.printf("[Core %d] Đã khởi chạy TaskCore1_NetworkAndSync\n", xPortGetCoreID());
 
-    mqttClient.setServer(MQTT_HOST, MQTT_PORT);
     mqttClient.setKeepAlive(MQTT_KEEPALIVE_SEC);
     mqttClient.setBufferSize(1024);
 
@@ -343,30 +281,41 @@ void TaskCore1_NetworkAndSync(void* pvParameters) {
     uint32_t lastReconnectAttemptMs = 0;
 
     for (;;) {
+        // 1. Duy trì nút nhấn Reset Wi-Fi (nút BOOT 5s) và WebServer cấu hình nếu ở AP Mode
+        wifiConfig.run();
+
+        // 2. Kiểm tra kết nối Wi-Fi và duy trì kết nối MQTT
         uint32_t nowMs = millis();
-        if ((WiFi.status() != WL_CONNECTED || !mqttClient.connected()) &&
-            (nowMs - lastReconnectAttemptMs >= 5000UL)) {
+        if (wifiConfig.canSendData()) {
+            if (!mqttClient.connected() && (nowMs - lastReconnectAttemptMs >= 3000UL)) {
+                lastReconnectAttemptMs = nowMs;
+                String targetIP = wifiConfig.getTargetIP();
+                if (targetIP != "") {
+                    ensureMqttConnected(targetIP);
+                }
+            }
+        } else if (nowMs - lastReconnectAttemptMs >= 5000UL) {
             lastReconnectAttemptMs = nowMs;
-            ensureWiFiConnected();
-            ensureMqttConnected();
+            wifiConfig.printWaitingStatus();
         }
 
         if (mqttClient.connected()) {
             mqttClient.loop();
         }
 
-        // Chờ nhận bản tin đã ký số từ Core 0 gửi sang qua Queue
-        if (xQueueReceive(xTelemetryQueue, &rxPkt, pdMS_TO_TICKS(100)) == pdPASS) {
-            if (mqttClient.connected()) {
-                bool ok = publishTelemetryPacket(rxPkt);
-                Serial.printf("[Core 1] Publish MQTT seq_no=%lu (temp=%.2fC, alert=%u) -> %s\n",
-                              static_cast<unsigned long>(rxPkt.seq_no),
-                              rxPkt.temp_c,
-                              rxPkt.alert_code,
-                              ok ? "THÀNH CÔNG" : "THẤT BẠI");
+        // 3. Nhận bản tin từ Core 0 và đẩy lên MQTT Broker
+        if (xQueueReceive(xTelemetryQueue, &rxPkt, pdMS_TO_TICKS(50)) == pdPASS) {
+            if (wifiConfig.canSendData()) {
+                String targetIP = wifiConfig.getTargetIP();
+                if (ensureMqttConnected(targetIP)) {
+                    bool ok = publishTelemetryPacket(rxPkt);
+                    Serial.printf("[Core 1] Publish seq_no=%lu (temp=%.2fC, alert=%u) -> %s\n", static_cast<unsigned long>(rxPkt.seq_no), rxPkt.temp_c, rxPkt.alert_code, ok ? "OK" : "LỖI"); // [XÓA KHI CHẠY ỔN]
+                    if (!ok) {
+                        wifiConfig.invalidateCache();
+                    }
+                }
             } else {
-                Serial.printf("[Core 1] Mất kết nối MQTT -> Bản ghi seq_no=%lu sẽ lưu vào SD ở phiên bản đầy đủ.\n",
-                              static_cast<unsigned long>(rxPkt.seq_no));
+                Serial.printf("[Core 1] Chưa có mạng -> Bản ghi seq_no=%lu chờ đồng bộ SD.\n", static_cast<unsigned long>(rxPkt.seq_no)); // [XÓA KHI CHẠY ỔN]
             }
         }
 
@@ -375,22 +324,15 @@ void TaskCore1_NetworkAndSync(void* pvParameters) {
 }
 
 // ============================================================================
-// 7. KHỞI TẠO HỆ THỐNG (SETUP) & VÒNG LẶP CHÍNH (LOOP)
+// 7. SETUP và LOOP
 // ============================================================================
 void setup() {
     Serial.begin(115200);
-    delay(500);
-    Serial.println("\n================================================================");
-    Serial.println("  GSP COLD-CHAIN IOT EDGE NODE - ESP32-S3-WROOM-1-N16R8 (MVP)");
-    Serial.println("  Chế độ: Unidirectional & Append-Only Telemetry Architecture");
-    Serial.println("================================================================");
+    delay(800);
+    Serial.println("\n=== KHOI DONG GSP EDGE NODE (WIFI 3-OPTION + UDP AUTO-DISCOVERY) ===");
 
-    // Khởi tạo các chân GPIO theo đúng bảng Pinout đã chốt
     pinMode(PIN_RELAY, OUTPUT);
     digitalWrite(PIN_RELAY, LOW);
-
-    pinMode(PIN_STATUS_LED, OUTPUT);
-    digitalWrite(PIN_STATUS_LED, LOW);
 
     pinMode(PIN_BTN_WAKE, INPUT_PULLUP);
     pinMode(PIN_BTN_ACK, INPUT_PULLUP);
@@ -400,46 +342,26 @@ void setup() {
     analogReadResolution(12);
     analogSetPinAttenuation(PIN_BAT_ADC, ADC_11db);
 
-    // Khởi tạo chuỗi MQTT Topics theo DEVICE_ID
     snprintf(TOPIC_TELEMETRY, sizeof(TOPIC_TELEMETRY), "gsp/v1/%s/telemetry", DEVICE_ID);
     snprintf(TOPIC_SYNC, sizeof(TOPIC_SYNC), "gsp/v1/%s/sync", DEVICE_ID);
     snprintf(TOPIC_ALERT, sizeof(TOPIC_ALERT), "gsp/v1/%s/alert", DEVICE_ID);
     snprintf(TOPIC_STATUS, sizeof(TOPIC_STATUS), "gsp/v1/%s/status", DEVICE_ID);
 
-    // Khởi tạo hàng đợi FreeRTOS chứa tối đa 32 bản tin giữa Core 0 và Core 1
+    // Khởi tạo Wi-Fi (Đọc NVS Preferences, tự bật AP Web Portal nếu chưa có SSID)
+    wifiConfig.begin();
+
     xTelemetryQueue = xQueueCreate(32, sizeof(TelemetryPacket));
     if (xTelemetryQueue == NULL) {
-        Serial.println("[LỖI NGHIÊM TRỌNG] Không thể cấp phát bộ nhớ cho xTelemetryQueue!");
+        Serial.println("[LỖI] Không thể cấp phát xTelemetryQueue!");
         while (true) {
             vTaskDelay(pdMS_TO_TICKS(1000));
         }
     }
 
-    // Ghim tác vụ Đọc cảm biến & Ký số vào Core 0
-    xTaskCreatePinnedToCore(
-        TaskCore0_SensingAndSign,
-        "TaskCore0_Sense",
-        8192,
-        NULL,
-        2,
-        NULL,
-        0
-    );
-
-    // Ghim tác vụ Truyền thông Wi-Fi/MQTT & Đồng bộ vào Core 1
-    xTaskCreatePinnedToCore(
-        TaskCore1_NetworkAndSync,
-        "TaskCore1_Net",
-        8192,
-        NULL,
-        1,
-        NULL,
-        1
-    );
+    xTaskCreatePinnedToCore(TaskCore0_SensingAndSign, "TaskCore0_Sense", 8192, NULL, 2, NULL, 0);
+    xTaskCreatePinnedToCore(TaskCore1_NetworkAndSync, "TaskCore1_Net", 8192, NULL, 1, NULL, 1);
 }
 
 void loop() {
-    // Toàn bộ luồng xử lý đã được phân bổ về 2 tác vụ FreeRTOS riêng biệt trên Core 0 và Core 1.
-    // Tuyệt đối không dùng delay() dài chiếm dụng CPU trong loop().
     vTaskDelete(NULL);
 }

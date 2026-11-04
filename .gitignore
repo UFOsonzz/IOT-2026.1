@@ -2,7 +2,6 @@
 .env
 .env.local
 .env.*.local
-firmware/include/secrets.h
 
 # Khóa mật mã & Chứng chỉ số (ECDSA / TLS)
 *.key
@@ -46,6 +45,9 @@ pnpm-debug.log*
 infra/mosquitto/data/
 infra/mosquitto/log/
 pgdata/
+
+# Thư mục thử nghiệm cá nhân, scratchpad & scripts phụ trợ
+playground/
 
 # Hệ điều hành & IDE
 .DS_Store
