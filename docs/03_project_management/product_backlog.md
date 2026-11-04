@@ -1,6 +1,6 @@
 # Product Backlog
 
-> **Cập nhật lần cuối:** 2026-11-04 (sau khi merge `feat/walking-skeleton` → `main`)
+> **Cập nhật lần cuối:** 2026-11-04
 >
 > **Quy ước trạng thái:** ✅ Done | 🔄 In Progress | 📋 Planned | ❌ Blocked
 >
@@ -26,7 +26,7 @@
 
 ## 2. Backlog giai đoạn tiếp theo
 
-### Sprint 1 — Tuần 8: Cảm biến thực I2C (Midterm Checkpoint)
+### Sprint 1 — Tuần 8: Cảm biến thực I2C
 
 | ID | Hạng mục | Mô tả chi tiết | Ưu tiên | Owner | Nhánh | Trạng thái |
 |:---|:---------|:----------------|:--------|:------|:------|:-----------|

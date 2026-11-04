@@ -14,7 +14,7 @@
 
 | Mã Thiết bị | Tên Thiết bị | Vị trí lắp đặt / Mô hình thử nghiệm | Vi điều khiển | Phiên bản Firmware | Ngày lắp đặt / Nghiệm thu |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `GSP-TRUCK-01` | `[Cập nhật sau]` | `[Mô hình thùng lạnh bảo quản Vaccine (+2°C .. +8°C)]` | ESP32-S3-WROOM-1-N16R8 | `[v0.1.0-skeleton -> Cập nhật sau]` | `[Điền sau]` |
+| `GSP-TRUCK-01` | `[Cập nhật sau]` | `[Mô hình thùng lạnh bảo quản Vaccine (+2°C .. +8°C)]` | ESP32-S3-WROOM-1-N16R8 | `[v1.0.0-skeleton -> Cập nhật sau]` | `[Điền sau]` |
 
 ## Phần 4: Hướng dẫn sử dụng dành cho Người vận hành (Bản nháp)
 1. **Cách theo dõi nhiệt độ hằng ngày:** Mở trình duyệt truy cập bảng điều khiển (`http://localhost:5173`). Khi nhãn trạng thái góc phải hiển thị **`THIẾT BỊ: ONLINE`** màu xanh lá và thẻ nhiệt độ hiển thị **`ĐẠT CHUẨN GSP`**, kho lạnh đang vận hành an toàn.

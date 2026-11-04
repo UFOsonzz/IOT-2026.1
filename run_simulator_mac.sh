@@ -16,8 +16,8 @@ source .venv/bin/activate
 # 3. Cài đặt thư viện
 echo "-> Đang cài đặt thư viện paho-mqtt..."
 pip install --upgrade pip --quiet
-pip install paho-mqtt --quiet
+pip install paho-mqtt customtkinter --quiet
 
 # 4. Chạy kịch bản giả lập
 echo "-> Đang chạy Simulator..."
-python tools/dummy_simulator.py
+python tools/gui_simulator.py

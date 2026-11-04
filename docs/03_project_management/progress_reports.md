@@ -36,7 +36,7 @@
 
 ---
 
-## Sprint 1 — Tuần 8: Cảm biến thực I2C (Midterm)
+## Sprint 1 — Tuần 8: Cảm biến thực I2C
 
 **Thời gian:** Tuần 8
 **Mục tiêu:** Thay pseudo-sensor bằng SHT30 + DS3231 thực qua I2C. Hiển thị OLED cơ bản.

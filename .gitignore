@@ -48,6 +48,7 @@ pgdata/
 
 # Thư mục thử nghiệm cá nhân, scratchpad & scripts phụ trợ
 playground/
+tools/*.csv
 
 # Hệ điều hành & IDE
 .DS_Store

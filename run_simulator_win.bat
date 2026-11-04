@@ -18,10 +18,10 @@ call .venv\Scripts\activate
 REM 3. Cài đặt thư viện
 echo -^> Dang cai dat thu vien paho-mqtt...
 python -m pip install --upgrade pip --quiet
-pip install paho-mqtt --quiet
+pip install paho-mqtt customtkinter --quiet
 
 REM 4. Chạy kịch bản giả lập
 echo -^> Dang chay Simulator...
-python tools\dummy_simulator.py
+python tools\gui_simulator.py
 
 pause
