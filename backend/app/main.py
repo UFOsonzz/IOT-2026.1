@@ -65,18 +65,43 @@ async def broadcast_worker(queue: asyncio.Queue) -> None:
             logger.error("Lỗi trong tác vụ broadcast_worker: %s", exc)
 
 
+class UdpDiscoveryProtocol(asyncio.DatagramProtocol):
+    """Lắng nghe gói tin UDP Broadcast cổng 8888 từ ESP32-S3 và phản hồi nếu chọn Option 1."""
+
+    def connection_made(self, transport: asyncio.BaseTransport) -> None:
+        self.transport = transport
+
+    def datagram_received(self, data: bytes, addr: tuple[str, int]) -> None:
+        msg = data.decode("utf-8", errors="ignore").strip()
+        if msg == "WHO_IS_IOT_SERVER" and hasattr(self, "transport"):
+            self.transport.sendto(b"IOT_SERVER_HERE", addr)
+            logger.info("Đã phản hồi UDP Auto-Discovery cho ESP32-S3 tại %s:%d", addr[0], addr[1])
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Vòng đời ứng dụng: khởi chạy MQTT Worker và trình phát WebSocket khi bật server."""
+    """Vòng đời ứng dụng: khởi chạy MQTT Worker, UDP Discovery và trình phát WebSocket."""
     loop = asyncio.get_running_loop()
     mqtt_worker = GSPMqttWorker(event_queue=mqtt_event_queue, loop=loop)
     mqtt_worker.start()
+
+    udp_transport = None
+    try:
+        udp_transport, _ = await loop.create_datagram_endpoint(
+            lambda: UdpDiscoveryProtocol(),
+            local_addr=("0.0.0.0", 8888),
+        )
+        logger.info("Đang lắng nghe UDP Auto-Discovery trên cổng 8888/udp...")
+    except Exception as exc:
+        logger.warning("Không thể mở cổng UDP 8888: %s", exc)
 
     broadcaster_task = asyncio.create_task(broadcast_worker(mqtt_event_queue))
     try:
         yield
     finally:
         broadcaster_task.cancel()
+        if udp_transport is not None:
+            udp_transport.close()
         mqtt_worker.stop()
 
 

@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-gsp_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gsp_pass_2026}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gsp_pass}
       POSTGRES_DB: ${POSTGRES_DB:-gsp_coldchain}
       TZ: UTC
     ports:
@@ -41,13 +41,14 @@ services:
     container_name: gsp-backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://gsp_user:gsp_pass_2026@timescaledb:5432/gsp_coldchain}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://gsp_user:gsp_pass@timescaledb:5432/gsp_coldchain}
       MQTT_BROKER_HOST: ${MQTT_BROKER_HOST:-mosquitto}
       MQTT_BROKER_PORT: ${MQTT_BROKER_PORT:-1883}
       TZ: UTC
       WATCHFILES_FORCE_POLLING: "true" # Giúp macOS nhận diện thay đổi file Python trong Docker ngay lập tức
     ports:
       - "8000:8000"
+      - "8888:8888/udp"
     volumes:
       - ./backend:/app # Đồng bộ trực tiếp code Python từ máy Mac vào container
     depends_on:

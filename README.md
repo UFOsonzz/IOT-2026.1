@@ -24,6 +24,11 @@ IOT-2026.1/
 ├── .env.example
 ├── docker-compose.yml
 ├── README.md
+├── run_simulator_mac.sh             # Script tự động chạy Simulator trên macOS/Linux
+├── run_simulator_win.bat            # Script tự động chạy Simulator trên Windows
+├── docs/
+│   ├── architecture.md              # Sơ đồ kiến trúc 4 lớp
+│   └── hardware_wiring.md           # Sơ đồ đấu nối và bảng gán chân ESP32-S3
 ├── infra/
 │   ├── mosquitto/mosquitto.conf     # Cấu hình Eclipse Mosquitto
 │   └── db/init.sql                  # Schema TimescaleDB, Hypertable và Trigger
@@ -31,9 +36,9 @@ IOT-2026.1/
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   └── app/
-│       ├── main.py                  # REST API (chỉ đọc) và WebSocket
+│       ├── main.py                  # REST API (chỉ đọc), WebSocket & UDP Discovery
 │       ├── db.py                    # Truy vấn LATERAL JOIN, Cursor Pagination và Verify Chain
-│       └── mqtt_worker.py           # Duy trì MQTT Subscriber và Xác thực ECDSA
+│       └── mqtt_worker.py           # Duy trì MQTT Subscriber và Xác thực chữ ký
 ├── web/
 │   ├── Dockerfile
 │   ├── package.json
@@ -43,8 +48,8 @@ IOT-2026.1/
 │   └── src/                         # Giao diện React + TypeScript + TailwindCSS v4
 ├── firmware/
 │   ├── platformio.ini               # Cấu hình ESP32-S3-N16R8
-│   ├── include/secrets.example.h
-│   └── src/main.cpp                 # Firmware FreeRTOS 2 Core chạy thông
+│   ├── include/WifiConfig.h         # Quản lý Wi-Fi
+│   └── src/main.cpp                 # Firmware chính
 └── tools/
     └── dummy_simulator.py           # Script giả lập thiết bị đẩy gói tin MQTT kiểm thử
 ```
@@ -181,19 +186,8 @@ Khi script chạy, mở trình duyệt tại `http://localhost:5173` để quan 
 
 ## 5. Hướng dẫn Biên dịch và Nạp Firmware cho ESP32
 
-### Bước 1: Cấu hình thông tin Wi-Fi và IP máy chủ MQTT
-Sao chép file mẫu `secrets.example.h` sang `secrets.h`:
-
-```bash
-cp firmware/include/secrets.example.h firmware/include/secrets.h
-```
-
-Mở `firmware/include/secrets.h` và cập nhật:
-- `WIFI_SSID` / `WIFI_PASSWORD`: Tên và mật khẩu Wi-Fi tại phòng chấm đồ án.
-- `MQTT_HOST`: Địa chỉ IPv4 trong mạng LAN của máy tính đang chạy Docker Mosquitto (xem bằng lệnh `ipconfig` trên Windows hoặc `ifconfig` / `ip a` trên macOS/Linux).
-
-### Bước 2: Biên dịch và nạp xuống mạch ESP32-S3-N16R8
-Sử dụng **PlatformIO CLI** hoặc tiện ích **PlatformIO IDE** trên VS Code:
+### Bước 1: Biên dịch và nạp xuống mạch ESP32-S3-N16R8
+Firmware đã tích hợp sẵn cơ chế quản lý mạng linh hoạt trong `firmware/include/WifiConfig.h` (lưu cấu hình vào bộ nhớ NVS Flash, không cần sửa cứng SSID/IP trong mã nguồn). Sử dụng **PlatformIO CLI** hoặc **PlatformIO IDE** trên VS Code:
 
 ```bash
 cd firmware
@@ -205,8 +199,12 @@ pio run
 pio run --target upload --target monitor
 ```
 
-### Bước 3: Thao tác kiểm thử trực tiếp trên mạch phần cứng
-- **Hoạt động bình thường:** Mỗi 10 giây, Core 0 tạo bản ghi nhiệt độ quanh mức `4.50°C`, băm SHA-256 bằng `mbedTLS` và chuyển sang Core 1 bắn lên topic `gsp/v1/<DEVICE_ID>/telemetry`.
-- **Kiểm thử Cảnh báo Vượt ngưỡng & Bật Relay (FR-04):** Nhấn giữ nút **BTN3 (`GPIO7`)**, nhiệt độ giả lập vọt lên `9.50°C` → Module Relay tại **`GPIO21`** đóng tiếp điểm bật Còi + Đèn ngay lập tức, đồng thời thẻ nhiệt độ trên Web Dashboard chuyển sang màu Đỏ nhấp nháy.
-- **Kiểm thử Tắt tiếng còi tại chỗ (HMI Mute):** Nhấn nút **BTN2 (`GPIO6`)** để ngắt Relay còi báo tại chỗ.
-- **Kiểm thử Di chúc LWT (`OFFLINE`):** Rút dây nguồn USB của mạch ESP32-S3 → Sau 30 giây Keep-Alive, Mosquitto Broker tự động phát bản tin Di chúc LWT chuyển trạng thái thiết bị trên Web Dashboard sang **OFFLINE (LWT)**.
+### Bước 2: Chọn kịch bản kết nối mạng Wi-Fi và MQTT Broker
+
+Khi mới nạp code hoặc nhấn giữ nút `BOOT (GPIO0)` trong 5 giây, mạch ESP32-S3 sẽ phát mạng Wi-Fi riêng có tên `GSP-ESP32-XXXX`:
+
+- **Option 3 (AP Direct - Không cần Router ngoài):** Kết nối trực tiếp máy tính chạy Docker vào Wi-Fi `GSP-ESP32-XXXX`. Không cần cấu hình gì thêm, ESP32-S3 tự động gửi gói tin MQTT về địa chỉ máy tính `192.168.4.2:1883`.
+    
+- **Option 1 (Mạng Wi-Fi chung):** Kết nối vào Wi-Fi `GSP-ESP32-XXXX`, mở trình duyệt truy cập `http://192.168.4.1`, chọn **Option 1**, chọn tên Wi-Fi 2.4GHz và lưu lại. Sau khi khởi động lại, ESP32-S3 tự động phát bản tin UDP Broadcast (cổng `8888`) để tìm địa chỉ IP của máy chủ Backend/MQTT trong mạng LAN (hoặc dùng IP Broker nhập thủ công nếu có).
+    
+- **Option 2 (Wi-Fi phát từ máy tính):** Mở `http://192.168.4.1`, chọn **Option 2** khi ESP32-S3 kết nối vào mạng Wi-Fi Hotspot phát ra từ máy tính đang chạy Docker (mạch tự động lấy IP Gateway làm địa chỉ MQTT Broker).

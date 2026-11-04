@@ -1,5 +1,6 @@
-# Kiến trúc Bốn Lớp
+# (3) Kiến trúc Bốn Lớp, chuẩn truyền thông và giao thức tầng ứng dụng
 
+## 1. Kiến trúc
 ```mermaid
 flowchart TB
     %% Định nghĩa kiểu dáng cho các lớp
@@ -80,3 +81,14 @@ flowchart TB
     RULE -- "HTTPS POST" --> TELE_API
     TELE_API -- "Push Notification" --> PHONE
 ```
+
+---
+
+## 2. Lựa chọn giao thức truyền thông và nền tảng lưu trữ
+
+| Chặng | Công nghệ | Phương án thay thế bị loại bỏ | Lập luận kỹ thuật theo ràng buộc bài toán GSP |
+| :--- | :--- | :--- | :--- |
+| **Thiết bị biên -> Broker** | **MQTT** | HTTP REST / CoAP | MQTT có kích thước gói nhỏ, hỗ trợ `QoS 1` đảm bảo giao nhận ít nhất 1 lần khi đẩy bù thẻ SD và có bản tin Di chúc `LWT` phát hiện mất kết nối tức thời. Loại HTTP vì không có LWT và tốn băng thông bắt tay. |
+| **Kiến trúc luồng dữ liệu** | **Một chiều** | Điều khiển 2 chiều từ xa | Theo nguyên tắc dữ liệu có giá trị pháp lý, thiết bị đo chỉ đọc và gửi, tuyệt đối không mở kênh nhận lệnh từ xa để đảm bảo tính chống chối bỏ. |
+| **Cơ sở dữ liệu** | **TimescaleDB (PostgreSQL)** | MongoDB / InfluxDB / MySQL | Vừa tối ưu chuỗi thời gian nhờ `Hypertable` phân mảnh theo `ts_rtc`, vừa hỗ trợ ràng buộc quan hệ `ON CONFLICT (device_id, ts_rtc) DO NOTHING` và Trigger PL/pgSQL khóa cứng lệnh `UPDATE/DELETE`. |
+| **Server -> Giao diện Web** | **REST API + WebSocket** | HTTP Polling | WebSocket đẩy cảnh báo vượt ngưỡng GSP tức thời xuống trình duyệt mà không cần client hỏi liên tục. |

@@ -10,7 +10,7 @@ logger = logging.getLogger("gsp.db")
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://gsp_user:gsp_pass_2026@timescaledb:5432/gsp_coldchain",
+    "postgresql://gsp_user:gsp_pass@timescaledb:5432/gsp_coldchain",
 )
 
 

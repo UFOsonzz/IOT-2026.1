@@ -1,0 +1,120 @@
+{
+  "info": {
+    "name": "GSP Cold-Chain IoT API Automated Tests",
+    "description": "Bộ sưu tập kiểm thử tự động REST API cho Hệ thống Giám sát Chuỗi cung ứng lạnh tuân thủ GSP (IT4735).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "deviceId",
+      "value": "GSP-TRUCK-01"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. GET Danh sách thiết bị kèm thông số mới nhất",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code là 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Cấu trúc JSON trả về có mảng items và thiết bị GSP-TRUCK-01', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('count');",
+              "    pm.expect(jsonData.items).to.be.an('array');",
+              "    pm.expect(jsonData.items[0].device_id).to.eql('GSP-TRUCK-01');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/devices",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "devices"]
+        }
+      }
+    },
+    {
+      "name": "2. GET Lịch sử đo vi khí hậu (Cursor Pagination)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code là 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Trả về đúng device_id và danh sách bản ghi có trường sig_verified', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.device_id).to.eql('GSP-TRUCK-01');",
+              "    pm.expect(jsonData).to.have.property('next_cursor');",
+              "    pm.expect(jsonData.items).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/devices/{{deviceId}}/telemetry?limit=20",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "devices", "{{deviceId}}", "telemetry"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "20"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. GET Kiểm toán tính toàn vẹn chuỗi chữ ký GSP (Verify Chain)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code là 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Trả về đầy đủ thống kê tổng bản ghi hợp lệ và giả mạo', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('total_records');",
+              "    pm.expect(jsonData).to.have.property('valid_records');",
+              "    pm.expect(jsonData).to.have.property('tampered_records');",
+              "    pm.expect(jsonData).to.have.property('chain_intact');",
+              "    pm.expect(jsonData).to.have.property('gsp_compliance_status');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/devices/{{deviceId}}/verify-chain",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "devices", "{{deviceId}}", "verify-chain"]
+        }
+      }
+    }
+  ]
+}
