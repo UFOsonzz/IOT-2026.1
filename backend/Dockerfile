@@ -17,4 +17,4 @@ COPY ./app ./app
 EXPOSE 8000
 
 # Khởi chạy FastAPI server kèm WebSocket & MQTT Worker
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

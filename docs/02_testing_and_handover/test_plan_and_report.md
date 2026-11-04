@@ -1,4 +1,4 @@
-# Kế Hoạch Và Biên Bản Kết Quả Kiểm Thử Hệ Thống (Bước 8)
+# Kế Hoạch Và Biên Bản Kết Quả Kiểm Thử Hệ Thống
 *(Tài liệu thuộc Mục 5.2.8 & Rubric Kiểm thử - Phụ trách chính: TV4 cùng cả nhóm)*
 
 > **Trạng thái tài liệu hiện tại:** Đã lập xong **Kế hoạch kiểm thử** cho 3 mức và 4 kịch bản bất lợi; đã kiểm chứng luồng logic Backend/DB/UI thông qua `tools/dummy_simulator.py`. Kết quả nghiệm thu trên phần cứng thực tế sẽ được cập nhật sau.

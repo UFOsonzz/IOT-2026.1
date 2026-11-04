@@ -24,7 +24,7 @@
 
 ---
 
-## 2. Backlog giai đoạn tiếp theo (Sprint 1 → Final)
+## 2. Backlog giai đoạn tiếp theo
 
 ### Sprint 1 — Tuần 8: Cảm biến thực I2C (Midterm Checkpoint)
 

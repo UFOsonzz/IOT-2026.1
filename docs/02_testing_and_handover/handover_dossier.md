@@ -1,4 +1,4 @@
-# Hồ Sơ Bàn Giao Hệ Thống (Khung Dự Thảo Bước 10)
+# Hồ sơ bàn giao hệ thống (dự kiến)
 *(Sản phẩm cuối cùng của Bước 10 theo mẫu 5.7.5 - Phụ trách chính: TV4 & TV3 - Hoàn thiện ở Tuần 14)*
 
 > **Ghi chú:** Đây là khung hồ sơ bàn giao được khởi tạo từ giai đoạn `feat/walking-skeleton`. Các thông số lắp đặt thực tế, danh mục kiểm tra an toàn thông tin và biên bản Phép thử bàn giao sẽ được chốt ở **Tuần 14** sau khi hoàn tất đợt vận hành thử 7 ngày.

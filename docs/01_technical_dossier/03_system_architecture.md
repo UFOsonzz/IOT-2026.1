@@ -27,8 +27,7 @@ flowchart TB
     subgraph L2 ["LỚP 2: LỚP MẠNG và ĐIỆN TOÁN BIÊN - [TV1: Firmware | TV4: Bảo mật]"]
         direction TB
         subgraph ESP32S3 ["Vi điều khiển trung tâm ESP32-S3 - [Nhóm Tự Xây Dựng]"]
-            CORE0["⚙️ Core 0: Thu thập và Xử lý Biên<br/>- Đọc cảm biến theo chu kỳ<br/>- Kiểm tra ngưỡng<br/>- Kích hoạt Còi và Đèn"]:::edge
-            CRYPTO["🔐 Khối Bảo mật Mật mã<br/>- Băm gói tin bằng SHA-256<br/>- Ký số ECDSA<br/>- Khóa Private Key"]:::security
+            CORE0["⚙️ Core 0: Thu thập, Xử lý Biên và Bảo mật Mật mã<br/>- Đọc cảm biến theo chu kỳ<br/>- Kiểm tra ngưỡng và kích hoạt Còi, Đèn<br/>- Băm gói tin bằng SHA-256 và Ký số ECDSA"]:::edge
             CORE1["🔄 Core 1: Quản lý Mạng và Auto-Sync<br/>- Kiểm tra kết nối Wi-Fi/MQTTS<br/>- Ghi đệm SD khi rớt mạng (FR-02)<br/>- Đẩy bù nền khi có mạng (FR-03)"]:::edge
         end
         WIFI_GW["📡 Router Wi-Fi hoặc Hotspot 5G trên Xe"]:::thirdparty
@@ -41,8 +40,7 @@ flowchart TB
     BTN -- "GPIO Interrupt" --> CORE0
     BAT -- "ADC1 (Đo điện áp pin)" --> CORE0
     CORE0 -- "GPIO Digital Out" --> RELAY
-    CORE0 -- "Payload thô" --> CRYPTO
-    CRYPTO -- "Gói tin + Chữ ký ECDSA" --> CORE1
+    CORE0 -- "Gói tin + Chữ ký ECDSA" --> CORE1
     CORE1 <-- "SPI (Đọc/Ghi file .CSV)" --> SDCARD
     CORE1 -- "Wi-Fi và MQTTS" --> WIFI_GW
 
