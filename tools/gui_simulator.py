@@ -1,13 +1,6 @@
 #!/usr/bin/env python3
 """
 GSP Cold-Chain IoT - ESP32-S3 Hardware-in-the-Loop (HIL) Desktop GUI Simulator
-Ứng dụng Desktop Native trên macOS/Windows mô phỏng toàn diện phần cứng ESP32-S3-N16R8:
-- Tự động kết nối MQTT & bắn dữ liệu liên tục ngay khi mở app.
-- Thanh trượt (Slider) điều chỉnh Nhiệt độ, Độ ẩm, Chu kỳ lấy mẫu theo thời gian thực.
-- Mô phỏng Mất điện lưới (xả pin 18650 nhanh trực quan tới khi sập nguồn Brownout).
-- Mô phỏng Rớt mạng Wi-Fi -> Tự động ghi đệm vào file thẻ nhớ MicroSD thực tế (sd_card_buffer.csv).
-- Mô phỏng Rút thẻ nhớ MicroSD -> Cho phép sửa lậu nhiệt độ trực tiếp trên GUI để test phát hiện TAMPERED.
-- Mô phỏng Đẩy bù tự động (Auto-Sync) kèm tùy chọn gửi lặp gói tin để test chống trùng lặp (Dedup).
 """
 
 import csv
@@ -24,7 +17,6 @@ from typing import Any
 import customtkinter as ctk
 import paho.mqtt.client as mqtt
 
-# Cấu hình giao diện Dark Mode chuẩn công nghiệp
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
@@ -32,7 +24,6 @@ DEFAULT_BROKER_HOST = os.getenv("MQTT_BROKER_HOST", "localhost")
 DEFAULT_BROKER_PORT = int(os.getenv("MQTT_BROKER_PORT", "1883"))
 DEFAULT_DEVICE_ID = os.getenv("DEVICE_ID", "GSP-TRUCK-01")
 
-# File CSV thật trên ổ cứng đóng vai trò thẻ nhớ MicroSD vật lý của ESP32-S3
 SD_CARD_FILE = Path(__file__).resolve().parent / "sd_card_buffer.csv"
 SD_CSV_HEADERS = [
     "device_id",
@@ -56,12 +47,10 @@ def build_canonical_string(
     hum_pct: float,
     alert_code: int,
 ) -> str:
-    """Ghép chuỗi chuẩn hóa đúng theo Data Contract giữa C++ và Python."""
     return f"{device_id}|{int(seq_no)}|{int(ts_rtc)}|{float(temp_c):.2f}|{float(hum_pct):.2f}|{int(alert_code)}"
 
 
 def compute_sha256_hex(canonical_str: str) -> str:
-    """Tính mã băm SHA-256 (64 ký tự hex chữ thường)."""
     return hashlib.sha256(canonical_str.encode("utf-8")).hexdigest()
 
 
@@ -85,15 +74,16 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self.sample_interval_sec = 3.0
 
         # Các cờ trạng thái vật lý & kịch bản
-        self.mcu_powered = True          # Trạng thái nguồn MCU (Tắt khi pin < 3.0V)
-        self.ac_power_online = True      # True = Cắm điện lưới 5V, False = Đang xả pin 18650
-        self.wifi_enabled = True         # Công tắc mạng Wi-Fi
-        self.mqtt_connected = False      # Trạng thái kết nối Broker thực tế
-        self.sd_inserted = True          # True = Đang cắm thẻ MicroSD vào ESP32, False = Đã rút thẻ ra
-        self.alarm_muted = False         # Nút nhấn BTN2 (ACK/Mute còi tại chỗ)
-        self.relay_active = False        # Trạng thái đóng/ngắt Relay còi hú GPIO21
-        self.mitm_attack_next = False    # Cờ kích hoạt tấn công Man-in-the-Middle ở gói tiếp theo
-        self.dup_sync_test = True        # Cố tình gửi lặp 1 bản ghi khi Auto-Sync để test ON CONFLICT
+        self.mcu_powered = True
+        self.ac_power_online = True
+        self.wifi_enabled = True
+        self.mqtt_connected = False
+        self.mqtt_connecting = False
+        self.sd_inserted = True
+        self.alarm_muted = False
+        self.relay_active = False
+        self.mitm_attack_next = False
+        self.dup_sync_test = True
 
         # Topics MQTT
         self.topic_telemetry = f"gsp/v1/{self.device_id}/telemetry"
@@ -101,25 +91,26 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self.topic_alert = f"gsp/v1/{self.device_id}/alert"
         self.topic_status = f"gsp/v1/{self.device_id}/status"
 
-        # Khởi tạo file thẻ nhớ MicroSD nếu chưa có
-        self._init_sd_card_file()
+        self.mqtt_lock = threading.Lock()
+        self.mqtt_client: mqtt.Client | None = None
 
-        # Xây dựng giao diện người dùng
+        self._init_sd_card_file()
         self._build_ui()
 
-        # Khởi tạo MQTT Client và chạy luồng nền mô phỏng FreeRTOS 2 lõi
-        self.mqtt_client: mqtt.Client | None = None
-        self._setup_mqtt_client()
+        # Kết nối MQTT lần đầu
+        self._log_serial(f"[BOOT] Khởi động ESP32-S3-N16R8 ({self.device_id})...")
+        self._start_mqtt_session()
 
         self.running = True
         self.last_sample_ts = 0.0
+        self.last_reconnect_try_ts = 0.0
         self.worker_thread = threading.Thread(target=self._hardware_loop, daemon=True)
         self.worker_thread.start()
 
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
     # =========================================================================
-    # 1. KHỞI TẠO THẺ NHỚ MICROSD ẢO (FILE CSV THẬT)
+    # 1. QUẢN LÝ FILE THẺ NHỚ MICROSD (CSV)
     # =========================================================================
     def _init_sd_card_file(self) -> None:
         if not SD_CARD_FILE.exists():
@@ -131,8 +122,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
         if not SD_CARD_FILE.exists():
             return []
         with open(SD_CARD_FILE, mode="r", newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            return list(reader)
+            return list(csv.DictReader(f))
 
     def _write_sd_records(self, rows: list[dict[str, Any]]) -> None:
         with open(SD_CARD_FILE, mode="w", newline="", encoding="utf-8") as f:
@@ -158,25 +148,23 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self.after(0, self._refresh_sd_ui_list)
 
     # =========================================================================
-    # 2. THIẾT KẾ GIAO DIỆN DESKTOP (CUSTOMTKINTER)
+    # 2. XÂY DỰNG GIAO DIỆN DESKTOP (CUSTOMTKINTER)
     # =========================================================================
     def _build_ui(self) -> None:
         self.grid_columnconfigure(0, weight=5)
         self.grid_columnconfigure(1, weight=6)
         self.grid_rowconfigure(1, weight=1)
 
-        # --- HEADER BAR ---
         header = ctk.CTkFrame(self, corner_radius=10, fg_color="#0f172a")
         header.grid(row=0, column=0, columnspan=2, sticky="ew", padx=12, pady=(12, 6))
         header.grid_columnconfigure(1, weight=1)
 
-        title_lbl = ctk.CTkLabel(
+        ctk.CTkLabel(
             header,
-            text="🧠 MÔ PHỎNG PHẦN CỨNG ESP32-S3-N16R8 (GSP COLD-CHAIN TWIN)",
+            text="MÔ PHỎNG PHẦN CỨNG ESP32",
             font=ctk.CTkFont(size=18, weight="bold"),
             text_color="#38bdf8",
-        )
-        title_lbl.grid(row=0, column=0, padx=16, pady=10, sticky="w")
+        ).grid(row=0, column=0, padx=16, pady=10, sticky="w")
 
         self.status_badge = ctk.CTkLabel(
             header,
@@ -189,19 +177,18 @@ class ESP32S3GuiSimulator(ctk.CTk):
         )
         self.status_badge.grid(row=0, column=2, padx=16, pady=10, sticky="e")
 
-        # --- CỘT TRÁI: MÀN HÌNH OLED + CẢM BIẾN + NGUỒN & MẠNG ---
+        # --- CỘT TRÁI ---
         left_col = ctk.CTkFrame(self, fg_color="transparent")
         left_col.grid(row=1, column=0, sticky="nsew", padx=(12, 6), pady=6)
         left_col.grid_columnconfigure(0, weight=1)
 
-        # 2.1. Khung Màn hình OLED SSD1306 + Đèn LED & Còi hú tại chỗ
         oled_card = ctk.CTkFrame(left_col, corner_radius=10)
         oled_card.grid(row=0, column=0, sticky="ew", pady=(0, 10))
         oled_card.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
             oled_card,
-            text="🖥️ MÀN HÌNH OLED SSD1306 (0x3C) & BÁO ĐỘNG TẠI CHỖ (CORE 0)",
+            text="MÀN HÌNH VÀ BÁO ĐỘNG TẠI CHỖ",
             font=ctk.CTkFont(size=13, weight="bold"),
             text_color="#94a3b8",
         ).grid(row=0, column=0, padx=14, pady=(10, 6), sticky="w")
@@ -220,7 +207,6 @@ class ESP32S3GuiSimulator(ctk.CTk):
         )
         self.oled_screen.grid(row=1, column=0, sticky="ew", padx=14, pady=4)
 
-        # Hàng đèn báo phần cứng & nút nhấn HMI vật lý
         hw_bar = ctk.CTkFrame(oled_card, fg_color="transparent")
         hw_bar.grid(row=2, column=0, sticky="ew", padx=14, pady=(6, 12))
         hw_bar.grid_columnconfigure((0, 1, 2, 3), weight=1)
@@ -237,7 +223,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         self.btn_ack = ctk.CTkButton(
             hw_bar,
-            text="🔘 Nhấn BTN2 (ACK/Tắt Còi)",
+            text="BTN2 (Tắt Còi)",
             fg_color="#475569",
             hover_color="#334155",
             command=self._on_press_btn_ack,
@@ -246,29 +232,28 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         self.btn_test_spike = ctk.CTkButton(
             hw_bar,
-            text="🔥 Nhấn BTN3 (Vọt 9.8°C)",
+            text="BTN3 (Vọt 9.8°C)",
             fg_color="#dc2626",
             hover_color="#b91c1c",
             command=self._on_press_btn_test,
         )
         self.btn_test_spike.grid(row=0, column=3, sticky="ew", padx=(4, 0))
 
-        # 2.2. Khung Thanh trượt Cảm biến SHT30 (0x44)
+        # Cảm biến SHT30
         sensor_card = ctk.CTkFrame(left_col, corner_radius=10)
         sensor_card.grid(row=1, column=0, sticky="ew", pady=(0, 10))
         sensor_card.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
             sensor_card,
-            text="🌡️ ĐIỀU KHIỂN CẢM BIẾN VI KHÍ HẬU SHT30 (NGƯỠNG GSP: +2.0°C .. +8.0°C)",
+            text="🌡️ ĐIỀU KHIỂN SHT30 (NGƯỠNG GSP: 2.0°C đến 8.0°C)",
             font=ctk.CTkFont(size=13, weight="bold"),
             text_color="#94a3b8",
         ).grid(row=0, column=0, padx=14, pady=(10, 4), sticky="w")
 
-        # Thanh trượt Nhiệt độ
         self.temp_lbl = ctk.CTkLabel(
             sensor_card,
-            text="Nhiệt độ SHT30 hiện tại: +4.50 °C (ĐẠT CHUẨN GSP)",
+            text="Nhiệt độ SHT30 hiện tại: +4.50 °C (CHUẨN)",
             font=ctk.CTkFont(size=14, weight="bold"),
             text_color="#4ade80",
         )
@@ -284,14 +269,13 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self.temp_slider.set(4.50)
         self.temp_slider.grid(row=2, column=0, sticky="ew", padx=14, pady=6)
 
-        # Nút chọn nhanh mức nhiệt độ
         preset_frame = ctk.CTkFrame(sensor_card, fg_color="transparent")
         preset_frame.grid(row=3, column=0, sticky="ew", padx=14, pady=(2, 8))
         preset_frame.grid_columnconfigure((0, 1, 2), weight=1)
 
         ctk.CTkButton(
             preset_frame,
-            text="❄️ Dưới ngưỡng (+0.5°C)",
+            text="❄️ Dưới ngưỡng",
             height=28,
             fg_color="#0284c7",
             command=lambda: self._set_temp_preset(0.50),
@@ -299,7 +283,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         ctk.CTkButton(
             preset_frame,
-            text="✅ Chuẩn Vaccine (+4.5°C)",
+            text="✅ Chuẩn Vaccine",
             height=28,
             fg_color="#16a34a",
             command=lambda: self._set_temp_preset(4.50),
@@ -307,13 +291,12 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         ctk.CTkButton(
             preset_frame,
-            text="🔥 Vượt ngưỡng (+10.2°C)",
+            text="🔥 Vượt ngưỡng",
             height=28,
             fg_color="#e11d48",
             command=lambda: self._set_temp_preset(10.20),
         ).grid(row=0, column=2, sticky="ew", padx=(4, 0))
 
-        # Thanh trượt Độ ẩm
         self.hum_lbl = ctk.CTkLabel(
             sensor_card,
             text="Độ ẩm tương đối (RH): 62.50 %",
@@ -331,10 +314,9 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self.hum_slider.set(62.50)
         self.hum_slider.grid(row=5, column=0, sticky="ew", padx=14, pady=6)
 
-        # Thanh trượt Chu kỳ gửi
         self.interval_lbl = ctk.CTkLabel(
             sensor_card,
-            text="Chu kỳ đọc & bắn gói tin (Sample Interval): 3.0 giây/gói",
+            text="Chu kỳ đọc và bắn gói tin: 3s/gói",
             font=ctk.CTkFont(size=12),
             text_color="#cbd5e1",
         )
@@ -350,22 +332,21 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self.interval_slider.set(3.0)
         self.interval_slider.grid(row=7, column=0, sticky="ew", padx=14, pady=(4, 12))
 
-        # 2.3. Khung Kịch bản Mất điện lưới (Pin 18650) & Mất mạng Wi-Fi
+        # Nguồn & Mạng
         power_net_card = ctk.CTkFrame(left_col, corner_radius=10)
         power_net_card.grid(row=2, column=0, sticky="ew")
         power_net_card.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
             power_net_card,
-            text="⚡ KỊCH BẢN NGUỒN ĐIỆN (PIN 18650) & KẾT NỐI MẠNG WI-FI (CORE 1)",
+            text="NGUỒN ĐIỆN VÀ KẾT NỐI MẠNG WI-FI",
             font=ctk.CTkFont(size=13, weight="bold"),
             text_color="#94a3b8",
         ).grid(row=0, column=0, padx=14, pady=(10, 6), sticky="w")
 
-        # Công tắc Điện lưới 5V
         self.ac_switch = ctk.CTkSwitch(
             power_net_card,
-            text="Nguồn điện lưới 5V VBUS (Tắt để mô phỏng mất điện -> Pin giảm 0.08V/s)",
+            text="Nguồn điện lưới (tốc độ giảm 0.08V/s nếu ngắt điện)",
             font=ctk.CTkFont(size=13, weight="bold"),
             command=self._on_toggle_ac_power,
         )
@@ -378,20 +359,19 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         self.bat_status_lbl = ctk.CTkLabel(
             power_net_card,
-            text="🔋 Điện áp Pin 18650 (GPIO4 ADC1): 4.18 V (100% - Đang cắm nguồn 5V)",
+            text="Điện áp Pin: 4.18 V (100% - Đang cắm nguồn 5V)",
             font=ctk.CTkFont(size=12, weight="bold"),
             text_color="#34d399",
         )
         self.bat_status_lbl.grid(row=3, column=0, padx=14, pady=(0, 8), sticky="w")
 
-        # Công tắc Wi-Fi + Nút giả lập sập nguồn LWT
         net_btn_frame = ctk.CTkFrame(power_net_card, fg_color="transparent")
         net_btn_frame.grid(row=4, column=0, sticky="ew", padx=14, pady=(4, 12))
         net_btn_frame.grid_columnconfigure((0, 1), weight=1)
 
         self.wifi_switch = ctk.CTkSwitch(
             net_btn_frame,
-            text="Kết nối Wi-Fi (Tắt -> Tự ghi vào thẻ SD)",
+            text="Kết nối Wi-Fi",
             font=ctk.CTkFont(size=13, weight="bold"),
             command=self._on_toggle_wifi,
         )
@@ -400,27 +380,26 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         self.btn_lwt_kill = ctk.CTkButton(
             net_btn_frame,
-            text="💀 Rút nguồn đột ngột (Test LWT OFFLINE)",
+            text="Mất kết nối đột ngột",
             fg_color="#7c2d12",
             hover_color="#9a3412",
             command=self._on_simulate_unplug_lwt,
         )
         self.btn_lwt_kill.grid(row=0, column=1, sticky="e")
 
-        # --- CỘT PHẢI: THẺ NHỚ MICROSD & KỊCH BẢN TẤN CÔNG TAMPERING + CONSOLE LOG ---
+        # --- CỘT PHẢI ---
         right_col = ctk.CTkFrame(self, fg_color="transparent")
         right_col.grid(row=1, column=1, sticky="nsew", padx=(6, 12), pady=6)
         right_col.grid_columnconfigure(0, weight=1)
         right_col.grid_rowconfigure(1, weight=1)
 
-        # 2.4. Khung Thẻ nhớ MicroSD & Giả lập Rút thẻ sửa dữ liệu (Tampering Lab)
         sd_card_frame = ctk.CTkFrame(right_col, corner_radius=10)
         sd_card_frame.grid(row=0, column=0, sticky="ew", pady=(0, 10))
         sd_card_frame.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
             sd_card_frame,
-            text="💾 THẺ NHỚ MICROSD (SPI) & PHÒNG THÍ NGHIỆM TẤN CÔNG SỬA DỮ LIỆU (TAMPERING)",
+            text="💾 THẺ NHỚ MICROSD VÀ THÍ NGHIỆM TẤN CÔNG SỬA DỮ LIỆU",
             font=ctk.CTkFont(size=13, weight="bold"),
             text_color="#f59e0b",
         ).grid(row=0, column=0, padx=14, pady=(10, 4), sticky="w")
@@ -431,7 +410,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         self.btn_eject_sd = ctk.CTkButton(
             sd_top_bar,
-            text="⏏️ Rút thẻ MicroSD ra khỏi mạch để sửa file",
+            text="⏏️ Rút thẻ nhớ ra để sửa trộm",
             fg_color="#d97706",
             hover_color="#b45309",
             command=self._on_toggle_sd_card,
@@ -446,7 +425,6 @@ class ESP32S3GuiSimulator(ctk.CTk):
         )
         self.sd_status_lbl.grid(row=0, column=1, padx=10, sticky="e")
 
-        # Khung hiển thị nội dung file CSV trên thẻ nhớ SD
         self.sd_textbox = ctk.CTkTextbox(
             sd_card_frame,
             height=135,
@@ -456,7 +434,6 @@ class ESP32S3GuiSimulator(ctk.CTk):
         )
         self.sd_textbox.grid(row=2, column=0, sticky="ew", padx=14, pady=6)
 
-        # Khung công cụ Tấn công sửa dữ liệu (Chỉ mở khóa khi Rút thẻ SD hoặc bắn MITM)
         tamper_bar = ctk.CTkFrame(sd_card_frame, fg_color="#1e1b4b", corner_radius=8)
         tamper_bar.grid(row=3, column=0, sticky="ew", padx=14, pady=6)
         tamper_bar.grid_columnconfigure((1, 3), weight=1)
@@ -474,7 +451,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         ctk.CTkLabel(
             tamper_bar,
-            text="Thành Nhiệt độ giả (°C):",
+            text="Sửa Nhiệt độ giả (°C):",
             font=ctk.CTkFont(size=12, weight="bold"),
         ).grid(row=0, column=2, padx=8, pady=8)
 
@@ -493,14 +470,13 @@ class ESP32S3GuiSimulator(ctk.CTk):
         )
         self.btn_apply_sd_tamper.grid(row=0, column=4, padx=8, pady=8)
 
-        # Hàng nút Tấn công đường truyền (MITM) & Đẩy bù SD thủ công
         attack_action_bar = ctk.CTkFrame(sd_card_frame, fg_color="transparent")
         attack_action_bar.grid(row=4, column=0, sticky="ew", padx=14, pady=(2, 12))
         attack_action_bar.grid_columnconfigure((0, 1, 2), weight=1)
 
         self.btn_mitm_attack = ctk.CTkButton(
             attack_action_bar,
-            text="⚡ Bắn 1 gói MITM Tampered ngay (9.8°C -> sửa thành 4.5°C)",
+            text="⚡ Bắn 1 gói MITM Tampered ngay",
             fg_color="#9333ea",
             hover_color="#7e22ce",
             command=self._on_trigger_mitm_packet,
@@ -509,7 +485,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         self.btn_force_sync = ctk.CTkButton(
             attack_action_bar,
-            text="🔄 Đẩy bù thẻ SD ngay (Auto-Sync)",
+            text="🔄 Đẩy bù thẻ SD ngay",
             fg_color="#0d9488",
             hover_color="#0f766e",
             command=lambda: threading.Thread(target=self._sync_sd_card_to_broker, daemon=True).start(),
@@ -525,7 +501,6 @@ class ESP32S3GuiSimulator(ctk.CTk):
         )
         self.btn_clear_sd.grid(row=0, column=2, padx=(4, 0), sticky="ew")
 
-        # 2.5. Khung Nhật ký Serial Monitor của ESP32-S3
         log_card = ctk.CTkFrame(right_col, corner_radius=10)
         log_card.grid(row=1, column=0, sticky="nsew")
         log_card.grid_columnconfigure(0, weight=1)
@@ -533,7 +508,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         ctk.CTkLabel(
             log_card,
-            text="📟 SERIAL MONITOR (115200 BAUD - LOG HOẠT ĐỘNG CORE 0 & CORE 1)",
+            text="📟 SERIAL MONITOR",
             font=ctk.CTkFont(size=13, weight="bold"),
             text_color="#94a3b8",
         ).grid(row=0, column=0, padx=14, pady=(10, 4), sticky="w")
@@ -550,49 +525,105 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self._update_oled_display()
 
     # =========================================================================
-    # 3. KẾT NỐI MQTT VÀ GIẢ LẬP LWT
+    # 3. QUẢN LÝ PHIÊN KẾT NỐI MQTT (ĐÃ SỬA LỖI RECONNECT PAHO-MQTT)
     # =========================================================================
-    def _setup_mqtt_client(self) -> None:
+    def _create_mqtt_client_instance(self) -> mqtt.Client:
         client_id = f"esp32s3-gui-{self.device_id}-{random.randint(100, 999)}"
         if hasattr(mqtt, "CallbackAPIVersion"):
-            self.mqtt_client = mqtt.Client(
+            client = mqtt.Client(
                 mqtt.CallbackAPIVersion.VERSION1,
                 client_id=client_id,
                 clean_session=True,
             )
         else:
-            self.mqtt_client = mqtt.Client(client_id=client_id, clean_session=True)
+            client = mqtt.Client(client_id=client_id, clean_session=True)
 
-        # Cài đặt bản tin Di chúc LWT: Nếu mất mạng đột ngột, Broker tự bắn OFFLINE
         lwt_payload = json.dumps({"state": "OFFLINE"})
-        self.mqtt_client.will_set(self.topic_status, payload=lwt_payload, qos=1, retain=True)
-        self.mqtt_client.on_connect = self._on_mqtt_connect
-        self.mqtt_client.on_disconnect = self._on_mqtt_disconnect
+        client.will_set(self.topic_status, payload=lwt_payload, qos=1, retain=True)
+        client.on_connect = self._on_mqtt_connect
+        client.on_disconnect = self._on_mqtt_disconnect
+        return client
 
-        try:
-            self._log_serial(f"[BOOT] Khởi động ESP32-S3-N16R8 ({self.device_id})...")
-            self._log_serial(f"[MQTT] Đang kết nối tới Broker {self.broker_host}:{self.broker_port}...")
-            self.mqtt_client.connect_async(self.broker_host, self.broker_port, keepalive=15)
-            self.mqtt_client.loop_start()
-        except Exception as exc:
-            self._log_serial(f"[LỖI MQTT] Không thể kết nối: {exc}")
+    def _start_mqtt_session(self) -> None:
+        """Khởi tạo mới hoàn toàn phiên MQTT và vòng lặp mạng trên luồng phụ để không treo GUI."""
+        if self.mqtt_connecting or not (self.wifi_enabled and self.mcu_powered):
+            return
+
+        self.mqtt_connecting = True
+        self.after(0, lambda: self.status_badge.configure(text="● MQTT: ĐANG KẾT NỐI...", fg_color="#d97706"))
+
+        def _connect_worker() -> None:
+            with self.mqtt_lock:
+                try:
+                    # Dọn dẹp triệt để client cũ (nếu có) trước khi mở phiên mới
+                    if self.mqtt_client is not None:
+                        try:
+                            self.mqtt_client.loop_stop()
+                        except Exception:
+                            pass
+                        self.mqtt_client = None
+
+                    client = self._create_mqtt_client_instance()
+                    self.mqtt_client = client
+                    self._log_serial(f"[MQTT] Đang kết nối tới Broker {self.broker_host}:{self.broker_port}...")
+                    client.connect(self.broker_host, self.broker_port, keepalive=15)
+                    client.loop_start()
+                except Exception as exc:
+                    self.mqtt_connected = False
+                    self._log_serial(f"[LỖI MQTT] Kết nối thất bại: {exc} (Sẽ tự thử lại sau 3s)")
+                    self.after(0, lambda: self.status_badge.configure(text="● MQTT: LỖI KẾT NỐI", fg_color="#e11d48"))
+                finally:
+                    self.mqtt_connecting = False
+
+        threading.Thread(target=_connect_worker, daemon=True).start()
+
+    def _stop_mqtt_session_offline(self) -> None:
+        """Bắn bản tin OFFLINE (LWT) và đóng hoàn toàn vòng lặp mạng paho-mqtt."""
+        self.mqtt_connected = False
+        self.after(0, lambda: self.status_badge.configure(text="● MQTT: OFFLINE (LWT)", fg_color="#e11d48"))
+        self.after(0, self._update_oled_display)
+
+        def _disconnect_worker() -> None:
+            with self.mqtt_lock:
+                client = self.mqtt_client
+                self.mqtt_client = None
+                if client is not None:
+                    try:
+                        info = client.publish(
+                            self.topic_status, json.dumps({"state": "OFFLINE"}), qos=1, retain=True
+                        )
+                        info.wait_for_publish(timeout=1.0)
+                        client.disconnect()
+                    except Exception:
+                        pass
+                    try:
+                        client.loop_stop()
+                    except Exception:
+                        pass
+
+        threading.Thread(target=_disconnect_worker, daemon=True).start()
 
     def _on_mqtt_connect(self, client: mqtt.Client, userdata: Any, flags: dict, rc: int) -> None:
         if rc == 0 and self.wifi_enabled and self.mcu_powered:
             self.mqtt_connected = True
             client.publish(self.topic_status, json.dumps({"state": "ONLINE"}), qos=1, retain=True)
-            self._log_serial("[Core 1] Đã kết nối MQTT Broker -> Đã bắn bản tin ONLINE (Retain=True)!")
+            self._log_serial("[Core 1] Đã kết nối MQTT Broker -> Đã phát trạng thái ONLINE (Retain=True)!")
             self.after(0, lambda: self.status_badge.configure(text="● MQTT: ONLINE", fg_color="#059669"))
+            self.after(0, self._update_oled_display)
 
-            # Tự động đẩy bù thẻ nhớ SD nếu có bản ghi tồn đọng
+            # Tự động đẩy bù dữ liệu thẻ nhớ SD ngay khi có mạng lại
             threading.Thread(target=self._sync_sd_card_to_broker, daemon=True).start()
         else:
             self.mqtt_connected = False
 
     def _on_mqtt_disconnect(self, client: mqtt.Client, userdata: Any, rc: int) -> None:
-        self.mqtt_connected = False
-        self.after(0, lambda: self.status_badge.configure(text="● MQTT: OFFLINE", fg_color="#e11d48"))
-        self._log_serial(f"[Core 1] Đã ngắt kết nối MQTT (rc={rc}). Chuyển sang chế độ Offline.")
+        # Chỉ xử lý nếu đây là client hiện hành
+        if client is self.mqtt_client:
+            self.mqtt_connected = False
+            self.after(0, lambda: self.status_badge.configure(text="● MQTT: OFFLINE", fg_color="#e11d48"))
+            self.after(0, self._update_oled_display)
+            if rc != 0:
+                self._log_serial(f"[Core 1] Mất kết nối tới Broker (rc={rc}). Đang chờ tự động kết nối lại...")
 
     # =========================================================================
     # 4. VÒNG LẶP PHẦN CỨNG (MÔ PHỎNG FREERTOS CORE 0 & CORE 1)
@@ -601,33 +632,41 @@ class ESP32S3GuiSimulator(ctk.CTk):
         while self.running:
             now = time.time()
 
-            # 4.1. Mô phỏng Quản lý Năng lượng (Cắm điện 5V vs Xả Pin 18650 nhanh trực quan)
+            # 4.1. Quản lý nguồn điện 5V & Pin 18650
             if self.ac_power_online:
                 if self.bat_v < 4.18:
                     self.bat_v = min(4.18, round(self.bat_v + 0.06, 2))
                 if not self.mcu_powered and self.bat_v >= 3.50:
                     self.mcu_powered = True
-                    self._log_serial("[POWER] Đã cắm lại điện lưới 5V -> ESP32-S3 khởi động lại!")
+                    self._log_serial("[POWER] Đã có điện lưới 5V -> ESP32-S3 khởi động lại!")
                     if self.wifi_enabled:
-                        self._reconnect_mqtt()
+                        self._start_mqtt_session()
             else:
-                # Khi rút điện lưới: giảm 0.08V mỗi giây để người xem thấy rõ trên GUI & Web Dashboard
                 self.bat_v = max(2.90, round(self.bat_v - 0.08, 2))
                 if self.bat_v <= 3.00 and self.mcu_powered:
                     self.mcu_powered = False
                     self.relay_active = False
                     self._log_serial("[BROWNOUT RESET] Điện áp Pin sụt dưới 3.00V -> ESP32-S3 SẬP NGUỒN!")
-                    self._force_offline_status()
+                    self._stop_mqtt_session_offline()
 
             self.after(0, self._update_battery_ui)
 
-            # Nếu MCU đang sập nguồn do cạn pin thì dừng mọi hoạt động đọc cảm biến
             if not self.mcu_powered:
                 self.after(0, self._update_oled_display)
                 time.sleep(0.5)
                 continue
 
-            # 4.2. Kiểm tra chu kỳ lấy mẫu cảm biến (Core 0)
+            # 4.2. Cơ chế Watchdog tự động kết nối lại MQTT mỗi 3 giây (Giống TaskCore1 trong main.cpp)
+            if (
+                self.wifi_enabled
+                and not self.mqtt_connected
+                and not self.mqtt_connecting
+                and (now - self.last_reconnect_try_ts >= 3.0)
+            ):
+                self.last_reconnect_try_ts = now
+                self._start_mqtt_session()
+
+            # 4.3. Chu kỳ lấy mẫu cảm biến (Core 0)
             if now - self.last_sample_ts >= self.sample_interval_sec:
                 self.last_sample_ts = now
                 self._execute_sensing_and_send_cycle()
@@ -635,22 +674,18 @@ class ESP32S3GuiSimulator(ctk.CTk):
             time.sleep(0.25)
 
     def _execute_sensing_and_send_cycle(self) -> None:
-        """Mô phỏng TaskCore0_SensingAndSign và đẩy sang TaskCore1_NetworkAndSync."""
         self.seq_no += 1
         ts_rtc = int(datetime.now(timezone.utc).timestamp())
 
-        # Cộng chút nhiễu vi mô tự nhiên (±0.02°C) quanh vị trí thanh trượt
         noisy_temp = round(self.temp_c + random.uniform(-0.02, 0.02), 2)
         noisy_hum = round(self.hum_pct + random.uniform(-0.10, 0.10), 2)
 
-        # Kiểm tra ngưỡng GSP (+2.0°C đến +8.0°C)
         alert_code = 0
         if noisy_temp > 8.00:
             alert_code = 1
         elif noisy_temp < 2.00:
             alert_code = 2
 
-        # Điều khiển Relay Còi hú & Đèn chớp tại chỗ (GPIO21)
         if alert_code > 0:
             if not self.alarm_muted:
                 self.relay_active = True
@@ -658,7 +693,6 @@ class ESP32S3GuiSimulator(ctk.CTk):
             self.alarm_muted = False
             self.relay_active = False
 
-        # Băm SHA-256 trên chuỗi Canonical String
         canonical = build_canonical_string(
             device_id=self.device_id,
             seq_no=self.seq_no,
@@ -681,7 +715,6 @@ class ESP32S3GuiSimulator(ctk.CTk):
             "ecdsa_sig": "DUMMY_SIG_OK_ESP32S3_SECP256R1",
         }
 
-        # Nếu người dùng bấm nút gài bẫy tấn công MITM ở gói tiếp theo
         if self.mitm_attack_next:
             self.mitm_attack_next = False
             real_signed_temp = 9.80
@@ -689,18 +722,17 @@ class ESP32S3GuiSimulator(ctk.CTk):
                 self.device_id, self.seq_no, ts_rtc, real_signed_temp, noisy_hum, 1
             )
             packet["sha256_hash"] = compute_sha256_hex(canonical_attack)
-            packet["temp_c"] = 4.50  # Sửa lậu nhiệt độ từ 9.80°C xuống 4.50°C
+            packet["temp_c"] = 4.50
             packet["alert_code"] = 0
             self._log_serial(
                 f"[MITM ATTACK] Seq=#{self.seq_no}: Đã ký SHA-256 ở 9.80°C nhưng sửa JSON thành 4.50°C!"
             )
 
-        # Cập nhật màn hình OLED
         self.after(0, self._update_oled_display)
 
-        # Core 1: Nếu có mạng Wi-Fi + MQTT thì bắn thẳng lên Broker; nếu mất mạng thì ghi vào thẻ SD
-        if self.wifi_enabled and self.mqtt_connected and self.mqtt_client:
-            self.mqtt_client.publish(self.topic_telemetry, json.dumps(packet), qos=1, retain=False)
+        client = self.mqtt_client
+        if self.wifi_enabled and self.mqtt_connected and client is not None:
+            client.publish(self.topic_telemetry, json.dumps(packet), qos=1, retain=False)
             self._log_serial(
                 f"[Core 1 -> MQTT] Seq=#{self.seq_no} | T={packet['temp_c']:.2f}°C | "
                 f"H={packet['hum_pct']:.2f}% | Bat={self.bat_v:.2f}V | Alert={alert_code}"
@@ -717,10 +749,9 @@ class ESP32S3GuiSimulator(ctk.CTk):
                     "hum_pct": noisy_hum,
                     "message": f"CẢNH BÁO GSP: Nhiệt độ ({noisy_temp:.2f}°C) vi phạm ngưỡng [+2..+8°C]!",
                 }
-                self.mqtt_client.publish(self.topic_alert, json.dumps(alert_payload), qos=1, retain=False)
+                client.publish(self.topic_alert, json.dumps(alert_payload), qos=1, retain=False)
                 self._log_serial(f"[Core 1 -> ALERT] Đã bắn cảnh báo khẩn cấp (Temp={noisy_temp:.2f}°C)!")
         else:
-            # Đang mất mạng Wi-Fi -> Lưu vào thẻ nhớ MicroSD
             if self.sd_inserted:
                 self._append_sd_record(packet)
                 self._log_serial(
@@ -739,7 +770,8 @@ class ESP32S3GuiSimulator(ctk.CTk):
         if not self.sd_inserted:
             self._log_serial("[AUTO-SYNC] Không thể đồng bộ vì thẻ MicroSD đang bị rút ra ngoài!")
             return
-        if not (self.wifi_enabled and self.mqtt_connected and self.mqtt_client):
+        client = self.mqtt_client
+        if not (self.wifi_enabled and self.mqtt_connected and client is not None):
             self._log_serial("[AUTO-SYNC] Chưa có kết nối MQTT để đẩy bù dữ liệu SD.")
             return
 
@@ -764,22 +796,21 @@ class ESP32S3GuiSimulator(ctk.CTk):
                     "sha256_hash": row["sha256_hash"],
                     "ecdsa_sig": row["ecdsa_sig"],
                 }
-                info = self.mqtt_client.publish(self.topic_sync, json.dumps(payload), qos=1, retain=False)
-                info.wait_for_publish()
+                info = client.publish(self.topic_sync, json.dumps(payload), qos=1, retain=False)
+                info.wait_for_publish(timeout=1.5)
                 row["synced"] = "1"
                 last_sent_payload = payload
                 self._log_serial(
                     f"  -> [SYNC OK] Đã đẩy bù Seq=#{payload['seq_no']} (T={payload['temp_c']:.2f}°C) lên kênh sync"
                 )
-                time.sleep(0.35)
+                time.sleep(0.30)
 
-        # Gửi lặp lại bản ghi cuối cùng để chứng minh cơ chế chống trùng lặp ON CONFLICT DO NOTHING
         if self.dup_sync_test and last_sent_payload is not None:
             self._log_serial(
                 f"  -> [TEST DEDUP] Cố tình bắn lặp lại Seq=#{last_sent_payload['seq_no']} "
                 "để kiểm chứng ON CONFLICT DO NOTHING..."
             )
-            self.mqtt_client.publish(self.topic_sync, json.dumps(last_sent_payload), qos=1, retain=False)
+            client.publish(self.topic_sync, json.dumps(last_sent_payload), qos=1, retain=False)
 
         self._write_sd_records(rows)
         self.after(0, self._refresh_sd_ui_list)
@@ -802,7 +833,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
                 fg_color="#16a34a",
             )
             self._log_serial(
-                "[SD CARD] ĐÃ RÚT THẺ MICROSD RA NGOÀI! Bạn có thể sửa lậu nhiệt độ bản ghi SD ngay bên dưới."
+                "[SD CARD] ĐÃ RÚT THẺ MICROSD, có thể sửa lậu nhiệt độ bản ghi SD ngay bên dưới."
             )
             self._refresh_sd_ui_list()
 
@@ -828,7 +859,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
                 old_temp = row["temp_c"]
                 row["temp_c"] = f"{fake_temp:.2f}"
                 row["alert_code"] = "0"
-                row["synced"] = "0"  # Đánh dấu chưa sync để đẩy lên Server khi cắm thẻ lại
+                row["synced"] = "0"
                 modified = True
                 self._log_serial(
                     f"[HACK SD CARD] Đã sửa lậu bản ghi Seq=#{row['seq_no']} trên thẻ SD: "
@@ -848,7 +879,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self._log_serial("[SD CARD] Đã xóa sạch toàn bộ dữ liệu trên thẻ nhớ MicroSD.")
 
     # =========================================================================
-    # 6. CÁC SỰ KIỆN TƯƠNG TÁC TRÊN GUI (SLIDERS & BUTTONS)
+    # 6. CÁC SỰ KIỆN TƯƠNG TÁC TRÊN GUI
     # =========================================================================
     def _on_temp_slider_change(self, val: float) -> None:
         self.temp_c = round(float(val), 2)
@@ -893,7 +924,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self.alarm_muted = False
         self._set_temp_preset(9.80)
         self._log_serial("[HMI GPIO7] Nhấn nút TEST vượt ngưỡng -> Nhiệt độ vọt lên +9.80°C!")
-        self.last_sample_ts = 0.0  # Kích hoạt lấy mẫu và bắn gói cảnh báo ngay lập tức
+        self.last_sample_ts = 0.0
 
     def _on_toggle_ac_power(self) -> None:
         self.ac_power_online = bool(self.ac_switch.get())
@@ -907,18 +938,19 @@ class ESP32S3GuiSimulator(ctk.CTk):
     def _on_toggle_wifi(self) -> None:
         self.wifi_enabled = bool(self.wifi_switch.get())
         if self.wifi_enabled:
-            self._log_serial("[WIFI] Đã bật lại Wi-Fi STA -> Đang kết nối lại MQTT Broker...")
-            self._reconnect_mqtt()
+            self._log_serial("[WIFI] Đã bật lại Wi-Fi STA -> Đang khởi tạo lại phiên MQTT...")
+            self.last_reconnect_try_ts = time.time()
+            self._start_mqtt_session()
         else:
             self._log_serial(
                 "[WIFI] ĐÃ NGẮT MẠNG WI-FI! Thiết bị chuyển sang lưu đệm Offline vào thẻ nhớ MicroSD."
             )
-            self._force_offline_status()
+            self._stop_mqtt_session_offline()
 
     def _on_simulate_unplug_lwt(self) -> None:
         self.wifi_switch.deselect()
         self.wifi_enabled = False
-        self._force_offline_status()
+        self._stop_mqtt_session_offline()
         self._log_serial("[LWT TEST] Đã giả lập mất kết nối đột ngột -> Đã bắn bản tin LWT OFFLINE lên Broker!")
 
     def _on_trigger_mitm_packet(self) -> None:
@@ -926,27 +958,8 @@ class ESP32S3GuiSimulator(ctk.CTk):
         self.last_sample_ts = 0.0
         self._log_serial("[ATTACK QUEUED] Chuẩn bị tiêm 1 gói tin bị sửa đổi (MITM Tampered) lên đường truyền...")
 
-    def _reconnect_mqtt(self) -> None:
-        if self.mqtt_client and self.mcu_powered:
-            try:
-                self.mqtt_client.reconnect()
-            except Exception:
-                self.mqtt_client.connect_async(self.broker_host, self.broker_port, keepalive=15)
-
-    def _force_offline_status(self) -> None:
-        if self.mqtt_client:
-            try:
-                self.mqtt_client.publish(
-                    self.topic_status, json.dumps({"state": "OFFLINE"}), qos=1, retain=True
-                )
-                self.mqtt_client.disconnect()
-            except Exception:
-                pass
-        self.mqtt_connected = False
-        self.after(0, lambda: self.status_badge.configure(text="● MQTT: OFFLINE (LWT)", fg_color="#e11d48"))
-
     # =========================================================================
-    # 7. CẬP NHẬT TRẠNG THÁI HIỂN THỊ TRÊN GIAO DIỆN
+    # 7. CẬP NHẬT GIAO DIỆN
     # =========================================================================
     def _update_oled_display(self) -> None:
         if not self.mcu_powered:
@@ -955,7 +968,7 @@ class ESP32S3GuiSimulator(ctk.CTk):
                 "   -> Hãy bật lại công tắc 'Nguồn điện lưới 5V VBUS' để sạc lại! \n",
                 text_color="#64748b",
             )
-            self.relay_indicator.configure(text="🚨 CÒI & ĐÈN (GPIO21): TẮT", fg_color="#1e293b")
+            self.relay_indicator.configure(text="CÒI, ĐÈN: TẮT", fg_color="#1e293b")
             return
 
         net_str = "WIFI+MQTT: ONLINE " if (self.wifi_enabled and self.mqtt_connected) else "WIFI: OFFLINE (SD)"
@@ -978,17 +991,17 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         if self.relay_active:
             self.relay_indicator.configure(
-                text="🚨 CÒI HÚ & ĐÈN CHỚP (GPIO21): ĐANG BÁO ĐỘNG ĐỎ!",
+                text="CÒI HÚ, ĐÈN CHỚP: ĐANG BÁO ĐỘNG!",
                 fg_color="#dc2626",
             )
         elif self.alarm_muted and (self.temp_c > 8.0 or self.temp_c < 2.0):
             self.relay_indicator.configure(
-                text="🔇 CÒI HÚ (GPIO21): ĐÃ TẮT TIẾNG BỞI TÀI XẾ (ACK)",
+                text="CÒI HÚ: ĐÃ TẮT TIẾNG BỞI TÀI XẾ (ACK)",
                 fg_color="#d97706",
             )
         else:
             self.relay_indicator.configure(
-                text="🚨 CÒI & ĐÈN (GPIO21): TẮT (BÌNH THƯỜNG)",
+                text="CÒI, ĐÈN: TẮT",
                 fg_color="#1e293b",
             )
 
@@ -999,12 +1012,12 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
         if not self.mcu_powered:
             self.bat_status_lbl.configure(
-                text=f"🪫 Pin 18650: {self.bat_v:.2f} V (0% - ĐÃ SẬP NGUỒN BROWNOUT!)",
+                text=f"🪫 Pin 18650: {self.bat_v:.2f} V (0% - SẬP NGUỒN!)",
                 text_color="#ef4444",
             )
         elif self.ac_power_online:
             self.bat_status_lbl.configure(
-                text=f"🔋 Điện áp Pin 18650 (GPIO4 ADC1): {self.bat_v:.2f} V ({pct_int}% - Đang cắm điện lưới 5V)",
+                text=f"Pin 18650: {self.bat_v:.2f} V ({pct_int}% - Đang cắm điện lưới 5V)",
                 text_color="#34d399",
             )
         else:
@@ -1018,9 +1031,9 @@ class ESP32S3GuiSimulator(ctk.CTk):
         rows = self._read_sd_records()
         unsynced = [r for r in rows if r.get("synced") == "0"]
 
-        state_str = "ĐANG CẮM TRONG MẠCH" if self.sd_inserted else "ĐÃ RÚT RA NGOÀI (CÓ THỂ SỬA FILE)"
+        state_str = "ĐANG CẮM" if self.sd_inserted else "ĐÃ RÚT (sửa trong file csv)"
         self.sd_status_lbl.configure(
-            text=f"Trạng thái: {state_str} ({len(unsynced)} chờ Sync / {len(rows)} tổng)",
+            text=f"{state_str} ({len(unsynced)} Synced / {len(rows)})",
             text_color="#fde047" if self.sd_inserted else "#f87171",
         )
 
@@ -1039,7 +1052,8 @@ class ESP32S3GuiSimulator(ctk.CTk):
             )
             self.sd_textbox.insert("end", line)
 
-        if unsynced and not self.entry_tamper_seq.get():
+        if unsynced:
+            self.entry_tamper_seq.delete(0, "end")
             self.entry_tamper_seq.insert(0, unsynced[-1]["seq_no"])
 
     def _log_serial(self, message: str) -> None:
@@ -1054,9 +1068,8 @@ class ESP32S3GuiSimulator(ctk.CTk):
 
     def _on_close(self) -> None:
         self.running = False
-        self._force_offline_status()
-        if self.mqtt_client:
-            self.mqtt_client.loop_stop()
+        self._stop_mqtt_session_offline()
+        time.sleep(0.25)
         self.destroy()
 
 

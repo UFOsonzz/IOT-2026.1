@@ -4,7 +4,7 @@
 
 ---
 
-## 2. Chiến lược phân nhánh
+## 1. Chiến lược phân nhánh
 
 ```text
 main (luôn ở trạng thái chạy được)
@@ -29,7 +29,7 @@ main (luôn ở trạng thái chạy được)
 
 ---
 
-## 3. Quy trình từng bước cho mỗi nhiệm vụ
+## 2. Quy trình từng bước cho mỗi nhiệm vụ
 
 ### Bước 1: Kéo code mới nhất
 ```bash
@@ -92,7 +92,7 @@ Mở PR trên GitHub hướng vào `main`, điền:
 
 ---
 
-## 4. Tiêu chuẩn Hoàn thành (Definition of Done)
+## 3. Tiêu chuẩn Hoàn thành (Definition of Done)
 
 Một PBI chỉ được đánh dấu **✅ Done** khi thỏa mãn **tất cả** các điều kiện:
 
@@ -107,7 +107,7 @@ Một PBI chỉ được đánh dấu **✅ Done** khi thỏa mãn **tất cả*
 
 ---
 
-## 5. Xử lý khi merge vào `main` gây lỗi
+## 4. Xử lý khi merge vào `main` gây lỗi
 
 1. **Ưu tiên tuyệt đối** là đưa `main` về trạng thái chạy được, không code thêm tính năng mới.
 2. Nếu không fix được trong **30 phút**: chạy `git revert <commit-vừa-merge>` ngay lập tức.
