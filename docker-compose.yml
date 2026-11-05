@@ -1,0 +1,89 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: gsp-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+    networks:
+      - gsp-network
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: gsp-timescaledb
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gsp_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gsp_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-gsp_coldchain}
+      TZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./infra/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - timescale_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-gsp_user} -d $${POSTGRES_DB:-gsp_coldchain}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - gsp-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gsp-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://gsp_user:gsp_pass@timescaledb:5432/gsp_coldchain}
+      MQTT_BROKER_HOST: ${MQTT_BROKER_HOST:-mosquitto}
+      MQTT_BROKER_PORT: ${MQTT_BROKER_PORT:-1883}
+      TZ: UTC
+      WATCHFILES_FORCE_POLLING: "true" # Giúp macOS nhận diện thay đổi file Python trong Docker ngay lập tức
+    ports:
+      - "8000:8000"
+      - "8888:8888/udp"
+    volumes:
+      - ./backend:/app # Đồng bộ trực tiếp code Python từ máy Mac vào container
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - gsp-network
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: gsp-web
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+      VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8000/ws/realtime}
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - gsp-network
+
+volumes:
+  mosquitto_data:
+  timescale_data:
+
+networks:
+  gsp-network:
+    driver: bridge

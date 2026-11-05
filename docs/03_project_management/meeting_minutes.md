@@ -1,0 +1,13 @@
+# Nhật Ký Họp Nhóm
+
+---
+
+### Buổi họp #1 — ...
+- **Thời gian:** ...
+- **Hình thức:** ...
+- **Tham dự:** ...
+- **Nội dung trả lời 3 câu hỏi cố định:**
+  1. *Tuần qua đã làm được gì?*
+  2. *Tuần tới sẽ làm gì?*
+  3. *Đang vướng ở đâu?*
+- **Quyết định nhóm:**
