@@ -1,0 +1,3 @@
+GUI_STATE {'connected': True, 'width': 1220, 'height': 820}
+CALLBACK_ERRORS []
+PASS: desktop GUI startup and MQTT connection; interactive scenarios not covered

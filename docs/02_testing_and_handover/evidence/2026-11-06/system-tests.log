@@ -1,0 +1,90 @@
+Waiting for initialized API and seeded device...
+API ready. Starting full live suite.
+test_01_api_devices (__main__.SystemTests.test_01_api_devices) ... ok
+test_02_telemetry_database_websocket (__main__.SystemTests.test_02_telemetry_database_websocket) ... FAIL
+test_03_alert_persisted_and_broadcast (__main__.SystemTests.test_03_alert_persisted_and_broadcast) ... ok
+test_04_sync_duplicate (__main__.SystemTests.test_04_sync_duplicate) ... ok
+test_05_modified_temperature_is_tampered (__main__.SystemTests.test_05_modified_temperature_is_tampered) ... ok
+test_06_online_offline (__main__.SystemTests.test_06_online_offline) ... ok
+test_07_actual_broker_lwt (__main__.SystemTests.test_07_actual_broker_lwt) ... ok
+test_08_malformed_messages_do_not_stop_worker (__main__.SystemTests.test_08_malformed_messages_do_not_stop_worker) ... ok
+test_09_pagination_and_validation (__main__.SystemTests.test_09_pagination_and_validation) ... ok
+test_10_immutable_update_delete (__main__.SystemTests.test_10_immutable_update_delete) ... ok
+test_11_udp_discovery (__main__.SystemTests.test_11_udp_discovery) ... ok
+test_12_burst_100_unique_plus_100_duplicates (__main__.SystemTests.test_12_burst_100_unique_plus_100_duplicates) ... ok
+test_13_forged_signature_must_be_rejected (__main__.SystemTests.test_13_forged_signature_must_be_rejected) ... FAIL
+test_14_modified_battery_must_be_detected (__main__.SystemTests.test_14_modified_battery_must_be_detected) ... FAIL
+test_15_topic_payload_identity_must_match (__main__.SystemTests.test_15_topic_payload_identity_must_match) ... FAIL
+test_16_backend_stop_queued_messages_replayed (__main__.SystemTests.test_16_backend_stop_queued_messages_replayed) ... ok
+test_17_database_outage_must_not_lose_messages (__main__.SystemTests.test_17_database_outage_must_not_lose_messages) ... FAIL
+test_18_browser_normal (__main__.SystemTests.test_18_browser_normal) ... ok
+test_19_browser_alert (__main__.SystemTests.test_19_browser_alert) ... ok
+test_20_browser_tampered_and_audit (__main__.SystemTests.test_20_browser_tampered_and_audit) ... ok
+test_21_browser_old_sync_preserves_latest (__main__.SystemTests.test_21_browser_old_sync_preserves_latest) ... FAIL
+test_22_browser_duplicate_preserves_database_value (__main__.SystemTests.test_22_browser_duplicate_preserves_database_value) ... FAIL
+
+======================================================================
+FAIL: test_02_telemetry_database_websocket (__main__.SystemTests.test_02_telemetry_database_websocket)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 143, in test_02_telemetry_database_websocket
+    self.assertLess(time.monotonic() - started, 2, "Local MQTT → DB → WS exceeded 2s")
+AssertionError: 3.3192380929976935 not less than 2 : Local MQTT → DB → WS exceeded 2s
+
+======================================================================
+FAIL: test_13_forged_signature_must_be_rejected (__main__.SystemTests.test_13_forged_signature_must_be_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 247, in test_13_forged_signature_must_be_rejected
+    self.assertFalse(self.send(p)["data"]["sig_verified"], "Arbitrary 64-character signature accepted as verified")
+AssertionError: True is not false : Arbitrary 64-character signature accepted as verified
+
+======================================================================
+FAIL: test_14_modified_battery_must_be_detected (__main__.SystemTests.test_14_modified_battery_must_be_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 252, in test_14_modified_battery_must_be_detected
+    self.assertFalse(self.send(p)["data"]["sig_verified"], "Modified battery value is outside canonical hash")
+AssertionError: True is not false : Modified battery value is outside canonical hash
+
+======================================================================
+FAIL: test_15_topic_payload_identity_must_match (__main__.SystemTests.test_15_topic_payload_identity_must_match)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 261, in test_15_topic_payload_identity_must_match
+    self.assertNotIn(p["seq_no"], [r["seq_no"] for r in self.rows()], "Topic identity mismatch was stored")
+AssertionError: 112 unexpectedly found in [112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 1] : Topic identity mismatch was stored
+
+======================================================================
+FAIL: test_17_database_outage_must_not_lose_messages (__main__.SystemTests.test_17_database_outage_must_not_lose_messages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 292, in test_17_database_outage_must_not_lose_messages
+    self.assertIn(p["seq_no"], [r["seq_no"] for r in self.rows()], "QoS1 packet acknowledged despite failed DB insert; no replay")
+AssertionError: 123 not found in [124, 122, 121, 120, 119, 118, 117, 116, 115, 114, 113, 112, 111, 110, 109, 108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 1] : QoS1 packet acknowledged despite failed DB insert; no replay
+
+======================================================================
+FAIL: test_21_browser_old_sync_preserves_latest (__main__.SystemTests.test_21_browser_old_sync_preserves_latest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 367, in test_21_browser_old_sync_preserves_latest
+    self.browser_case("old-sync")
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 352, in browser_case
+    self.assertIn(failure[1], failure[0], failure[2])
+AssertionError: '#130' not found in '#131\t12:16:16 06/11/2026\t\nAUTO-SYNC (SD)\t3.25°C\t62.50%\t4.10V\tf44ef36fb9...e449c2f8\t\nECDSA Verified' : Old backfill replaced latest reading on dashboard
+
+======================================================================
+FAIL: test_22_browser_duplicate_preserves_database_value (__main__.SystemTests.test_22_browser_duplicate_preserves_database_value)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 370, in test_22_browser_duplicate_preserves_database_value
+    self.browser_case("duplicate")
+  File "/home/tam/Projects/IOT-2026.1/tools/test_system.py", line 352, in browser_case
+    self.assertIn(failure[1], failure[0], failure[2])
+AssertionError: '4.25°C' not found in '#132\t12:26:18 06/11/2026\tREALTIME\t7.75°C\t62.50%\t4.10V\ta7ce99396a...9b058c96\t\nTAMPERED' : UI accepted inserted=false duplicate; differs from DB
+
+----------------------------------------------------------------------
+Ran 22 tests in 105.759s
+
+FAILED (failures=7)
+JSON report: docs/02_testing_and_handover/evidence/2026-11-06/results.json

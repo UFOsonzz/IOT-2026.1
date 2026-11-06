@@ -1,0 +1,19 @@
+{
+  "commit": "e3bbcaf82a3885f16b654bf40c64cf35f25b2487",
+  "python_host": "3.11.17 (main, Oct 21 2026, 17:46:53) [Clang 23.1.3 ]",
+  "compose": "Docker Compose version 5.6.0",
+  "node_container": "v20.20.2",
+  "postgres": "PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+  "timescaledb": "2.31.0",
+  "fixture_summary": {
+    "device_id": "TEST-059d4ad5a7d8",
+    "total_records": 122,
+    "valid_records": 121,
+    "tampered_records": 1,
+    "backfill_records": 101,
+    "chain_intact": false,
+    "gsp_compliance_status": "COMPROMISED",
+    "first_record_at": "2026-11-06T04:24:34+00:00",
+    "last_record_at": "2026-11-06T04:26:37+00:00"
+  }
+}

@@ -1,0 +1,4 @@
+npm notice run gsp-coldchain-web@1.0.0 build
+npm notice run tsc && vite build
+src/App.tsx(27,15): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/App.tsx(29,15): error TS2339: Property 'env' does not exist on type 'ImportMeta'.

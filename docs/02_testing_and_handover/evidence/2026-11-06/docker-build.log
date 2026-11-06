@@ -1,0 +1,466 @@
+ Image iot-20261-web Building 
+ Image iot-20261-backend Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 957B done
+#1 DONE 0.0s
+
+#2 [web internal] load build definition from Dockerfile
+#2 ...
+
+#3 [backend internal] load build definition from Dockerfile
+#3 transferring dockerfile:
+#3 transferring dockerfile: 671B done
+#3 DONE 19.6s
+
+#2 [web internal] load build definition from Dockerfile
+#2 ...
+
+#4 [backend internal] load metadata for docker.io/library/python:3.11-slim
+#4 ...
+
+#2 [web internal] load build definition from Dockerfile
+#2 transferring dockerfile:
+#2 transferring dockerfile: 381B done
+#2 DONE 32.4s
+
+#4 [backend internal] load metadata for docker.io/library/python:3.11-slim
+#4 ...
+
+#5 [web internal] load metadata for docker.io/library/node:20-alpine
+#5 ...
+
+#4 [backend internal] load metadata for docker.io/library/python:3.11-slim
+#4 DONE 19.2s
+
+#6 [backend internal] load .dockerignore
+#6 transferring context:
+#6 transferring context: 2B done
+#6 DONE 3.8s
+
+#5 [web internal] load metadata for docker.io/library/node:20-alpine
+#5 ...
+
+#7 [backend internal] load build context
+#7 DONE 0.0s
+
+#7 [backend internal] load build context
+#7 transferring context: 48.14kB done
+#7 DONE 6.6s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 resolve docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 ...
+
+#5 [web internal] load metadata for docker.io/library/node:20-alpine
+#5 DONE 19.8s
+
+#9 [web internal] load .dockerignore
+#9 transferring context:
+#9 transferring context: 58B 0.1s done
+#9 DONE 1.8s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 ...
+
+#10 [web internal] load build context
+#10 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 ...
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 resolve docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79 51.7s done
+#8 ...
+
+#10 [web internal] load build context
+#10 transferring context: 32.28kB 0.3s done
+#10 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 53.9s done
+#11 ...
+
+#10 [web internal] load build context
+#10 DONE 61.3s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 DONE 109.5s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 DONE 129.5s
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 0B / 43.23MB 0.2s
+#11 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 4.19MB / 43.23MB 2.0s
+#11 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 11.53MB / 43.23MB 4.6s
+#11 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 17.83MB / 43.23MB 4.7s
+#11 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 29.36MB / 43.23MB 6.8s
+#11 ...
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 43.23MB / 43.23MB 12.6s
+#11 sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 3.86MB / 3.86MB 7.8s
+#11 sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096 445B / 445B 1.5s
+#11 sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 0B / 1.26MB 0.2s
+#11 sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 1.26MB / 1.26MB 0.5s
+#11 sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 3.86MB / 3.86MB 9.2s done
+#11 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 43.23MB / 43.23MB 16.1s done
+#11 sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096 445B / 445B 6.3s done
+#11 sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 1.26MB / 1.26MB 5.5s done
+#11 DONE 132.2s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 sha256:bbe7053e6def9842d628414346e26f25e499463adb6ca48c0c8932e036e44000 0B / 249B 0.2s
+#8 sha256:bbe7053e6def9842d628414346e26f25e499463adb6ca48c0c8932e036e44000 249B / 249B 1.5s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 0B / 14.46MB 0.2s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 2.10MB / 14.46MB 0.5s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 3.15MB / 14.46MB 0.6s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 5.24MB / 14.46MB 0.8s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 7.34MB / 14.46MB 0.9s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 8.39MB / 14.46MB 1.1s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 10.49MB / 14.46MB 1.2s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 12.58MB / 14.46MB 1.4s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 14.46MB / 14.46MB 1.5s
+#8 sha256:bbe7053e6def9842d628414346e26f25e499463adb6ca48c0c8932e036e44000 249B / 249B 6.6s
+#8 sha256:53daecf7856e9b7235583f1ec326387aae7d29af3d5cd2efc20246259ab817cc 0B / 1.29MB 0.2s
+#8 sha256:53daecf7856e9b7235583f1ec326387aae7d29af3d5cd2efc20246259ab817cc 1.29MB / 1.29MB 0.8s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 14.46MB / 14.46MB 6.6s
+#8 sha256:bbe7053e6def9842d628414346e26f25e499463adb6ca48c0c8932e036e44000 249B / 249B 11.7s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 0B / 29.86MB 0.2s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 2.10MB / 29.86MB 0.5s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 4.19MB / 29.86MB 0.6s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 7.34MB / 29.86MB 0.9s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 9.44MB / 29.86MB 1.1s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 12.58MB / 29.86MB 1.4s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 14.68MB / 29.86MB 1.5s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 17.83MB / 29.86MB 1.8s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 19.92MB / 29.86MB 2.0s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 23.07MB / 29.86MB 2.3s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 25.17MB / 29.86MB 2.4s
+#8 sha256:53daecf7856e9b7235583f1ec326387aae7d29af3d5cd2efc20246259ab817cc 1.29MB / 1.29MB 5.9s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 28.31MB / 29.86MB 2.7s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 14.46MB / 14.46MB 11.7s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 29.86MB / 29.86MB 2.9s
+#8 sha256:bbe7053e6def9842d628414346e26f25e499463adb6ca48c0c8932e036e44000 249B / 249B 16.8s done
+#8 sha256:53daecf7856e9b7235583f1ec326387aae7d29af3d5cd2efc20246259ab817cc 1.29MB / 1.29MB 11.0s
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 29.86MB / 29.86MB 8.0s
+#8 sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 14.46MB / 14.46MB 16.0s done
+#8 sha256:53daecf7856e9b7235583f1ec326387aae7d29af3d5cd2efc20246259ab817cc 1.29MB / 1.29MB 12.6s done
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 29.86MB / 29.86MB 13.1s
+#8 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 extracting sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb
+#11 ...
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 29.86MB / 29.86MB 14.6s done
+#8 DONE 172.0s
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 ...
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 extracting sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41
+#8 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 extracting sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 21.5s done
+#11 DONE 153.7s
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 extracting sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287
+#11 ...
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 extracting sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 10.6s done
+#8 DONE 182.6s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 extracting sha256:53daecf7856e9b7235583f1ec326387aae7d29af3d5cd2efc20246259ab817cc
+#8 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 extracting sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 16.8s done
+#11 DONE 170.5s
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 extracting sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122
+#11 ...
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 extracting sha256:53daecf7856e9b7235583f1ec326387aae7d29af3d5cd2efc20246259ab817cc 16.2s done
+#8 DONE 198.7s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 extracting sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d
+#8 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 extracting sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 13.4s done
+#11 DONE 183.9s
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 extracting sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096
+#11 ...
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 extracting sha256:7efbce397249e9202b070b8e638baff71160948c640b9a44f2226419a71f410d 12.8s done
+#8 DONE 211.6s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 extracting sha256:bbe7053e6def9842d628414346e26f25e499463adb6ca48c0c8932e036e44000
+#8 ...
+
+#11 [web 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#11 extracting sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096 15.0s done
+#11 DONE 198.9s
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 ...
+
+#12 [web 2/5] WORKDIR /app
+#12 ...
+
+#8 [backend 1/5] FROM docker.io/library/python:3.11-slim@sha256:65bd3d9f1d7fa268dd1909973ba7eb4bdf41f6dcf2cfbe76ba9528b170f3fd79
+#8 extracting sha256:bbe7053e6def9842d628414346e26f25e499463adb6ca48c0c8932e036e44000 13.8s done
+#8 DONE 225.4s
+
+#12 [web 2/5] WORKDIR /app
+#12 ...
+
+#13 [backend 2/5] WORKDIR /app
+#13 ...
+
+#12 [web 2/5] WORKDIR /app
+#12 DONE 27.0s
+
+#13 [backend 2/5] WORKDIR /app
+#13 DONE 24.4s
+
+#14 [backend 3/5] COPY requirements.txt .
+#14 ...
+
+#15 [web 3/5] COPY package.json ./
+#15 DONE 21.8s
+
+#14 [backend 3/5] COPY requirements.txt .
+#14 ...
+
+#16 [web 4/5] RUN npm install
+#16 ...
+
+#14 [backend 3/5] COPY requirements.txt .
+#14 DONE 23.8s
+
+#16 [web 4/5] RUN npm install
+#16 ...
+
+#17 [backend 4/5] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir -r requirements.txt
+#17 39.73 Requirement already satisfied: pip in /usr/local/lib/python3.11/site-packages (24.0)
+#17 40.41 Collecting pip
+#17 40.56   Downloading pip-26.3-py3-none-any.whl.metadata (4.6 kB)
+#17 40.62 Downloading pip-26.3-py3-none-any.whl (2.0 MB)
+#17 41.44    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 2.4 MB/s eta 0:00:00
+#17 41.52 Installing collected packages: pip
+#17 41.52   Attempting uninstall: pip
+#17 41.52     Found existing installation: pip 24.0
+#17 41.56     Uninstalling pip-24.0:
+#17 ...
+
+#16 [web 4/5] RUN npm install
+#16 62.09 
+#16 62.09 added 82 packages, and audited 89 packages in 38s
+#16 62.09 
+#16 62.09 11 packages are looking for funding
+#16 62.09   run `npm fund` for details
+#16 62.10 
+#16 62.10 2 vulnerabilities (1 moderate, 1 high)
+#16 62.10 
+#16 62.10 To address all issues (including breaking changes), run:
+#16 62.10   npm audit fix --force
+#16 62.10 
+#16 62.10 Run `npm audit` for details.
+#16 62.10 npm notice
+#16 62.10 npm notice New major version of npm available! 10.8.2 -> 12.2.2
+#16 62.10 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#16 62.10 npm notice To update run: npm install -g npm@12.2.2
+#16 62.10 npm notice
+#16 DONE 86.7s
+
+#17 [backend 4/5] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir -r requirements.txt
+#17 ...
+
+#18 [web 5/5] COPY . .
+#18 DONE 21.4s
+
+#17 [backend 4/5] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir -r requirements.txt
+#17 ...
+
+#19 [web] exporting to image
+#19 exporting layers
+#19 ...
+
+#17 [backend 4/5] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir -r requirements.txt
+#17 123.7       Successfully uninstalled pip-24.0
+#17 127.1 Successfully installed pip-26.3
+#17 127.1 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#17 168.2 Collecting fastapi==0.115.0 (from -r requirements.txt (line 1))
+#17 168.6   Downloading fastapi-0.115.0-py3-none-any.whl.metadata (27 kB)
+#17 168.9 Collecting uvicorn==0.30.6 (from uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 168.9   Downloading uvicorn-0.30.6-py3-none-any.whl.metadata (6.6 kB)
+#17 169.3 Collecting psycopg2-binary==2.9.9 (from -r requirements.txt (line 3))
+#17 169.5   Downloading psycopg2_binary-2.9.9-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.4 kB)
+#17 169.7 Collecting paho-mqtt==1.6.1 (from -r requirements.txt (line 4))
+#17 169.8   Downloading paho-mqtt-1.6.1.tar.gz (99 kB)
+#17 170.1   Installing build dependencies: started
+#17 183.5   Installing build dependencies: finished with status 'done'
+#17 183.5   Getting requirements to build wheel: started
+#17 185.1   Getting requirements to build wheel: finished with status 'done'
+#17 185.1   Preparing metadata (pyproject.toml): started
+#17 185.9   Preparing metadata (pyproject.toml): finished with status 'done'
+#17 186.2 Collecting pydantic==2.9.2 (from -r requirements.txt (line 5))
+#17 186.3   Downloading pydantic-2.9.2-py3-none-any.whl.metadata (149 kB)
+#17 186.7 Collecting starlette<0.39.0,>=0.37.2 (from fastapi==0.115.0->-r requirements.txt (line 1))
+#17 186.7   Downloading starlette-0.38.6-py3-none-any.whl.metadata (6.0 kB)
+#17 187.0 Collecting typing-extensions>=4.8.0 (from fastapi==0.115.0->-r requirements.txt (line 1))
+#17 187.0   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+#17 ...
+
+#19 [web] exporting to image
+#19 exporting layers 78.4s done
+#19 exporting manifest sha256:562f7c01a7583d699d87371411bdc034525387fbfb444d9ec4b1d8fad5cc5b4c
+#19 exporting manifest sha256:562f7c01a7583d699d87371411bdc034525387fbfb444d9ec4b1d8fad5cc5b4c 3.6s done
+#19 exporting config sha256:5c342f188aba62479224a23858245917541fdbd378103524dee4d1b1ec30ecc8
+#19 ...
+
+#17 [backend 4/5] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir -r requirements.txt
+#17 187.3 Collecting annotated-types>=0.6.0 (from pydantic==2.9.2->-r requirements.txt (line 5))
+#17 187.3   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+#17 188.6 Collecting pydantic-core==2.23.4 (from pydantic==2.9.2->-r requirements.txt (line 5))
+#17 188.6   Downloading pydantic_core-2.23.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+#17 188.8 Collecting click>=7.0 (from uvicorn==0.30.6->uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 188.8   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+#17 188.9 Collecting h11>=0.8 (from uvicorn==0.30.6->uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 189.0   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+#17 189.2 Collecting httptools>=0.5.0 (from uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 189.2   Downloading httptools-0.9.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (3.5 kB)
+#17 189.4 Collecting python-dotenv>=0.13 (from uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 189.4   Downloading python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+#17 189.6 Collecting pyyaml>=5.1 (from uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 189.6   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+#17 189.8 Collecting uvloop!=0.15.0,!=0.15.1,>=0.14.0 (from uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 189.8   Downloading uvloop-0.23.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.1 kB)
+#17 190.1 Collecting watchfiles>=0.13 (from uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 190.1   Downloading watchfiles-1.3.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+#17 190.4 Collecting websockets>=10.4 (from uvicorn[standard]==0.30.6->-r requirements.txt (line 2))
+#17 190.7   Downloading websockets-17.4-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.3 kB)
+#17 190.8 Collecting anyio<5,>=3.4.0 (from starlette<0.39.0,>=0.37.2->fastapi==0.115.0->-r requirements.txt (line 1))
+#17 190.9   Downloading anyio-4.16.0-py3-none-any.whl.metadata (4.7 kB)
+#17 191.0 Collecting idna>=2.8 (from anyio<5,>=3.4.0->starlette<0.39.0,>=0.37.2->fastapi==0.115.0->-r requirements.txt (line 1))
+#17 191.0   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+#17 191.1 Downloading fastapi-0.115.0-py3-none-any.whl (94 kB)
+#17 191.2 Downloading pydantic-2.9.2-py3-none-any.whl (434 kB)
+#17 191.3 Downloading uvicorn-0.30.6-py3-none-any.whl (62 kB)
+#17 191.4 Downloading psycopg2_binary-2.9.9-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.0 MB)
+#17 191.9    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.0/3.0 MB 6.1 MB/s  0:00:00
+#17 192.0 Downloading pydantic_core-2.23.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+#17 192.2    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 8.0 MB/s  0:00:00
+#17 192.3 Downloading starlette-0.38.6-py3-none-any.whl (71 kB)
+#17 192.3 Downloading anyio-4.16.0-py3-none-any.whl (134 kB)
+#17 192.4 Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+#17 192.5 Downloading click-8.5.0-py3-none-any.whl (125 kB)
+#17 192.5 Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+#17 192.6 Downloading httptools-0.9.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (499 kB)
+#17 192.7 Downloading idna-3.20-py3-none-any.whl (69 kB)
+#17 192.7 Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+#17 192.8 Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+#17 192.9    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 9.8 MB/s  0:00:00
+#17 192.9 Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+#17 193.0 Downloading uvloop-0.23.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.0 MB)
+#17 193.3    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.0/4.0 MB 10.3 MB/s  0:00:00
+#17 193.4 Downloading watchfiles-1.3.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (458 kB)
+#17 193.5 Downloading websockets-17.4-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (226 kB)
+#17 193.6 Building wheels for collected packages: paho-mqtt
+#17 193.6   Building wheel for paho-mqtt (pyproject.toml): started
+#17 194.3   Building wheel for paho-mqtt (pyproject.toml): finished with status 'done'
+#17 194.3   Created wheel for paho-mqtt: filename=paho_mqtt-1.6.1-py3-none-any.whl size=62199 sha256=0d6c953e5f75355c20a9d1e68c55afb5a9a52be56faa5d7dd0214920e96d04a7
+#17 194.3   Stored in directory: /tmp/pip-ephem-wheel-cache-6rb7sj0t/wheels/29/ea/a5/ba9a63aaf4cd4e16e8a87ee31fb4d11b04ff5e1735d312619a
+#17 194.3 Successfully built paho-mqtt
+#17 194.4 Installing collected packages: paho-mqtt, websockets, uvloop, typing-extensions, pyyaml, python-dotenv, psycopg2-binary, idna, httptools, h11, click, annotated-types, uvicorn, pydantic-core, anyio, watchfiles, starlette, pydantic, fastapi
+#17 ...
+
+#19 [web] exporting to image
+#19 exporting config sha256:5c342f188aba62479224a23858245917541fdbd378103524dee4d1b1ec30ecc8 4.9s done
+#19 exporting attestation manifest sha256:5e414e3d972c23b90cc197bfcbbade74525886d8fc66e111c8eb88b93605e9b5
+#19 exporting attestation manifest sha256:5e414e3d972c23b90cc197bfcbbade74525886d8fc66e111c8eb88b93605e9b5 5.2s done
+#19 exporting manifest list sha256:b0169b6b466c5f6120260a2fa3d09d6410694b22e711ed625849683c86759cc7
+#19 exporting manifest list sha256:b0169b6b466c5f6120260a2fa3d09d6410694b22e711ed625849683c86759cc7 5.0s done
+#19 naming to docker.io/library/iot-20261-web:latest
+#19 naming to docker.io/library/iot-20261-web:latest 0.9s done
+#19 unpacking to docker.io/library/iot-20261-web:latest
+#19 ...
+
+#17 [backend 4/5] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir -r requirements.txt
+#17 227.0 
+#17 227.1 Successfully installed annotated-types-0.8.0 anyio-4.16.0 click-8.5.0 fastapi-0.115.0 h11-0.16.0 httptools-0.9.0 idna-3.20 paho-mqtt-1.6.1 psycopg2-binary-2.9.9 pydantic-2.9.2 pydantic-core-2.23.4 python-dotenv-1.2.4 pyyaml-6.0.3 starlette-0.38.6 typing-extensions-4.16.0 uvicorn-0.30.6 uvloop-0.23.0 watchfiles-1.3.0 websockets-17.4
+#17 227.1 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#17 DONE 248.6s
+
+#19 [web] exporting to image
+#19 ...
+
+#20 [backend 5/5] COPY ./app ./app
+#20 ...
+
+#19 [web] exporting to image
+#19 unpacking to docker.io/library/iot-20261-web:latest 72.9s done
+#19 DONE 184.0s
+
+#20 [backend 5/5] COPY ./app ./app
+#20 DONE 58.8s
+
+#21 [backend] exporting to image
+#21 exporting layers
+#21 ...
+
+#22 [web] resolving provenance for metadata file
+#22 DONE 0.0s
+
+#21 [backend] exporting to image
+#21 exporting layers 102.4s done
+#21 exporting manifest sha256:acd4a669cefa82f8edf30ac3b694214aee4cea113e3f66d4709aed342806db0d
+#21 exporting manifest sha256:acd4a669cefa82f8edf30ac3b694214aee4cea113e3f66d4709aed342806db0d 20.3s done
+#21 exporting config sha256:9e4a676913e0078b9779018970d027fffddd8121c7d26eed061529cbe4ae5fb1
+#21 exporting config sha256:9e4a676913e0078b9779018970d027fffddd8121c7d26eed061529cbe4ae5fb1 4.3s done
+#21 exporting attestation manifest sha256:5b326c533771d57e7639f1b7b2bd2948432a5e07b86d1ef9ccb9167441b112b5
+#21 exporting attestation manifest sha256:5b326c533771d57e7639f1b7b2bd2948432a5e07b86d1ef9ccb9167441b112b5 213.3s done
+#21 exporting manifest list sha256:1a6003a1a4f45df7c584543b52646b8205a4e7344c5f9c907fdac9a6fc37b0c1
+#21 exporting manifest list sha256:1a6003a1a4f45df7c584543b52646b8205a4e7344c5f9c907fdac9a6fc37b0c1 6.2s done
+#21 naming to docker.io/library/iot-20261-backend:latest
+#21 naming to docker.io/library/iot-20261-backend:latest 0.9s done
+#21 unpacking to docker.io/library/iot-20261-backend:latest
+#21 unpacking to docker.io/library/iot-20261-backend:latest 41.5s done
+#21 DONE 404.6s
+
+#23 [backend] resolving provenance for metadata file
+#23 DONE 0.0s
+ Image iot-20261-backend Built 
+ Image iot-20261-web Built 
+ Container gsp-mosquitto Running 
+ Container gsp-timescaledb Running 
+ Container gsp-backend Creating 
+ Container gsp-backend Created 
+ Container gsp-web Creating 
+ Container gsp-web Created 
+ Container gsp-timescaledb Waiting 
+ Container gsp-timescaledb Healthy 
+ Container gsp-web Starting 
+ Container gsp-web Started 

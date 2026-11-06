@@ -1,0 +1,107 @@
+[MQTT] Đã kết nối tới Broker localhost:1883 (Thiết bị: GSP-TRUCK-01)
+[STATUS] Đã phát bản tin trạng thái ONLINE (Retain=True) lên gsp/v1/GSP-TRUCK-01/status
+
+=====================================================================
+   BẢNG ĐIỀU KHIỂN KIỂM THỬ HỆ THỐNG GSP COLD-CHAIN IOT (SIMULATOR)
+=====================================================================
+  [1] Gửi 1 bản tin Telemetry chuẩn GSP (+3.8°C .. +5.4°C) -> ECDSA Verified
+  [2] Gửi 1 bản tin Vượt ngưỡng (> +9.2°C) + Cảnh báo khẩn cấp -> Nhấp nháy ĐỎ
+  [3] Giả lập Đẩy bù thẻ nhớ MicroSD (3 bản ghi + 1 bản ghi trùng lặp) -> AUTO-SYNC
+  [4] Giả lập Tấn công sửa đổi nhiệt độ trái phép -> Phát hiện TAMPERED
+  [5] Giả lập Mất kết nối đột ngột (Bắn bản tin LWT OFFLINE)
+  [6] Khôi phục trạng thái thiết bị ONLINE
+  [7] Chạy tự động liên hoàn tất cả kịch bản (Auto Demo Loop)
+  [0] Thoát chương trình
+=====================================================================
+Nhập lựa chọn của bạn [0-7]: [REALTIME OK] Seq=#3844 | Temp=5.02°C | Hum=63.58% | Canonical='GSP-TRUCK-01|3844|1793942844|5.02|63.58|0' | SHA256=7817699861ea...
+
+=====================================================================
+   BẢNG ĐIỀU KHIỂN KIỂM THỬ HỆ THỐNG GSP COLD-CHAIN IOT (SIMULATOR)
+=====================================================================
+  [1] Gửi 1 bản tin Telemetry chuẩn GSP (+3.8°C .. +5.4°C) -> ECDSA Verified
+  [2] Gửi 1 bản tin Vượt ngưỡng (> +9.2°C) + Cảnh báo khẩn cấp -> Nhấp nháy ĐỎ
+  [3] Giả lập Đẩy bù thẻ nhớ MicroSD (3 bản ghi + 1 bản ghi trùng lặp) -> AUTO-SYNC
+  [4] Giả lập Tấn công sửa đổi nhiệt độ trái phép -> Phát hiện TAMPERED
+  [5] Giả lập Mất kết nối đột ngột (Bắn bản tin LWT OFFLINE)
+  [6] Khôi phục trạng thái thiết bị ONLINE
+  [7] Chạy tự động liên hoàn tất cả kịch bản (Auto Demo Loop)
+  [0] Thoát chương trình
+=====================================================================
+Nhập lựa chọn của bạn [0-7]: [ALERT GSP!] Seq=#3845 | Temp=9.69°C (VƯỢT NGƯỠNG) | Canonical='GSP-TRUCK-01|3845|1793942845|9.69|70.62|1'
+
+=====================================================================
+   BẢNG ĐIỀU KHIỂN KIỂM THỬ HỆ THỐNG GSP COLD-CHAIN IOT (SIMULATOR)
+=====================================================================
+  [1] Gửi 1 bản tin Telemetry chuẩn GSP (+3.8°C .. +5.4°C) -> ECDSA Verified
+  [2] Gửi 1 bản tin Vượt ngưỡng (> +9.2°C) + Cảnh báo khẩn cấp -> Nhấp nháy ĐỎ
+  [3] Giả lập Đẩy bù thẻ nhớ MicroSD (3 bản ghi + 1 bản ghi trùng lặp) -> AUTO-SYNC
+  [4] Giả lập Tấn công sửa đổi nhiệt độ trái phép -> Phát hiện TAMPERED
+  [5] Giả lập Mất kết nối đột ngột (Bắn bản tin LWT OFFLINE)
+  [6] Khôi phục trạng thái thiết bị ONLINE
+  [7] Chạy tự động liên hoàn tất cả kịch bản (Auto Demo Loop)
+  [0] Thoát chương trình
+=====================================================================
+Nhập lựa chọn của bạn [0-7]: 
+--- [AUTO-SYNC] Bắt đầu đẩy bù dữ liệu Offline từ thẻ MicroSD ---
+  -> [SYNC #1/3] Đã đẩy bản ghi SD: Seq=#3846, ts_rtc=1793942668, Temp=4.10°C
+  -> [SYNC #2/3] Đã đẩy bản ghi SD: Seq=#3847, ts_rtc=1793942728, Temp=4.35°C
+  -> [SYNC #3/3] Đã đẩy bản ghi SD: Seq=#3848, ts_rtc=1793942788, Temp=4.60°C
+  -> [TEST CHỐNG TRÙNG LẶP] Cố tình gửi lại bản ghi SD vừa rồi (cùng device_id & ts_rtc)...
+  -> [HOÀN TẤT] Backend sẽ tự động bỏ qua bản ghi trùng nhờ ON CONFLICT DO NOTHING!
+
+
+=====================================================================
+   BẢNG ĐIỀU KHIỂN KIỂM THỬ HỆ THỐNG GSP COLD-CHAIN IOT (SIMULATOR)
+=====================================================================
+  [1] Gửi 1 bản tin Telemetry chuẩn GSP (+3.8°C .. +5.4°C) -> ECDSA Verified
+  [2] Gửi 1 bản tin Vượt ngưỡng (> +9.2°C) + Cảnh báo khẩn cấp -> Nhấp nháy ĐỎ
+  [3] Giả lập Đẩy bù thẻ nhớ MicroSD (3 bản ghi + 1 bản ghi trùng lặp) -> AUTO-SYNC
+  [4] Giả lập Tấn công sửa đổi nhiệt độ trái phép -> Phát hiện TAMPERED
+  [5] Giả lập Mất kết nối đột ngột (Bắn bản tin LWT OFFLINE)
+  [6] Khôi phục trạng thái thiết bị ONLINE
+  [7] Chạy tự động liên hoàn tất cả kịch bản (Auto Demo Loop)
+  [0] Thoát chương trình
+=====================================================================
+Nhập lựa chọn của bạn [0-7]: [ATTACK SIMULATED] Seq=#3849 | Nhiệt độ thực ký số=9.80°C nhưng bị sửa lậu thành 4.50°C -> Backend sẽ đánh dấu TAMPERED!
+
+=====================================================================
+   BẢNG ĐIỀU KHIỂN KIỂM THỬ HỆ THỐNG GSP COLD-CHAIN IOT (SIMULATOR)
+=====================================================================
+  [1] Gửi 1 bản tin Telemetry chuẩn GSP (+3.8°C .. +5.4°C) -> ECDSA Verified
+  [2] Gửi 1 bản tin Vượt ngưỡng (> +9.2°C) + Cảnh báo khẩn cấp -> Nhấp nháy ĐỎ
+  [3] Giả lập Đẩy bù thẻ nhớ MicroSD (3 bản ghi + 1 bản ghi trùng lặp) -> AUTO-SYNC
+  [4] Giả lập Tấn công sửa đổi nhiệt độ trái phép -> Phát hiện TAMPERED
+  [5] Giả lập Mất kết nối đột ngột (Bắn bản tin LWT OFFLINE)
+  [6] Khôi phục trạng thái thiết bị ONLINE
+  [7] Chạy tự động liên hoàn tất cả kịch bản (Auto Demo Loop)
+  [0] Thoát chương trình
+=====================================================================
+Nhập lựa chọn của bạn [0-7]: [STATUS] Đã cập nhật trạng thái thiết bị sang: OFFLINE
+
+=====================================================================
+   BẢNG ĐIỀU KHIỂN KIỂM THỬ HỆ THỐNG GSP COLD-CHAIN IOT (SIMULATOR)
+=====================================================================
+  [1] Gửi 1 bản tin Telemetry chuẩn GSP (+3.8°C .. +5.4°C) -> ECDSA Verified
+  [2] Gửi 1 bản tin Vượt ngưỡng (> +9.2°C) + Cảnh báo khẩn cấp -> Nhấp nháy ĐỎ
+  [3] Giả lập Đẩy bù thẻ nhớ MicroSD (3 bản ghi + 1 bản ghi trùng lặp) -> AUTO-SYNC
+  [4] Giả lập Tấn công sửa đổi nhiệt độ trái phép -> Phát hiện TAMPERED
+  [5] Giả lập Mất kết nối đột ngột (Bắn bản tin LWT OFFLINE)
+  [6] Khôi phục trạng thái thiết bị ONLINE
+  [7] Chạy tự động liên hoàn tất cả kịch bản (Auto Demo Loop)
+  [0] Thoát chương trình
+=====================================================================
+Nhập lựa chọn của bạn [0-7]: [STATUS] Đã cập nhật trạng thái thiết bị sang: ONLINE
+
+=====================================================================
+   BẢNG ĐIỀU KHIỂN KIỂM THỬ HỆ THỐNG GSP COLD-CHAIN IOT (SIMULATOR)
+=====================================================================
+  [1] Gửi 1 bản tin Telemetry chuẩn GSP (+3.8°C .. +5.4°C) -> ECDSA Verified
+  [2] Gửi 1 bản tin Vượt ngưỡng (> +9.2°C) + Cảnh báo khẩn cấp -> Nhấp nháy ĐỎ
+  [3] Giả lập Đẩy bù thẻ nhớ MicroSD (3 bản ghi + 1 bản ghi trùng lặp) -> AUTO-SYNC
+  [4] Giả lập Tấn công sửa đổi nhiệt độ trái phép -> Phát hiện TAMPERED
+  [5] Giả lập Mất kết nối đột ngột (Bắn bản tin LWT OFFLINE)
+  [6] Khôi phục trạng thái thiết bị ONLINE
+  [7] Chạy tự động liên hoàn tất cả kịch bản (Auto Demo Loop)
+  [0] Thoát chương trình
+=====================================================================
+Nhập lựa chọn của bạn [0-7]: [MQTT] Đã gửi trạng thái OFFLINE và ngắt kết nối an toàn.

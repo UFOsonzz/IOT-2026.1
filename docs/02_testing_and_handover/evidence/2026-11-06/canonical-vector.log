@@ -1,0 +1,4 @@
+PASS: simulator and backend canonical string and SHA-256 agree
+GSP-TRUCK-01|1042|1761526800|4.25|62.50|0
+2d2744bd1cdef2facfb2c88ac7fbf361e9ab74a9cb4c5cc0dffdeed4aa7b207b
+This checks Python implementations; no claim of C++ runtime validation.

@@ -1,0 +1,5 @@
+NAME              IMAGE                               COMMAND                  SERVICE       CREATED          STATUS                        PORTS
+gsp-backend       iot-20261-backend                   "uvicorn app.main:ap…"   backend       10 minutes ago   Up 2 minutes                  0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp, 0.0.0.0:8888->8888/udp, [::]:8888->8888/udp
+gsp-mosquitto     eclipse-mosquitto:2                 "/docker-entrypoint.…"   mosquitto     27 minutes ago   Up 25 minutes                 0.0.0.0:1883->1883/tcp, [::]:1883->1883/tcp
+gsp-timescaledb   timescale/timescaledb:latest-pg16   "docker-entrypoint.s…"   timescaledb   27 minutes ago   Up About a minute (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+gsp-web           iot-20261-web                       "docker-entrypoint.s…"   web           10 minutes ago   Up 2 minutes                  0.0.0.0:5173->5173/tcp, [::]:5173->5173/tcp

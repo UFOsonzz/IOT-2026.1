@@ -1,0 +1,450 @@
+gsp-backend  | INFO:     172.19.0.1:34700 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:44,237 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:34702 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:45,247 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:34708 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:46,258 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:34710 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:47,271 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:34720 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:48,281 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:34722 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:49,293 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53366 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:50,304 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53374 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:51,314 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53382 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:52,325 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53394 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:53,335 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53404 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:54,346 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53412 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:55,356 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53416 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:56,371 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53420 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:57,381 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53432 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:58,392 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:53444 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:23:59,402 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42756 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:00,412 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42758 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:01,422 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42760 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:02,433 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42772 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:03,443 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42784 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:04,454 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42790 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:05,466 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42802 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:06,477 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42816 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:07,487 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42828 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:08,498 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:42834 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:09,508 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:52550 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:10,518 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:52564 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:11,528 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:52572 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:12,539 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:52586 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:13,549 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:52588 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:14,560 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:52604 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:24:15,571 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is not yet accepting connections
+gsp-backend  | DETAIL:  Consistent recovery state has not been yet reached.
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:52618 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | INFO:     172.19.0.1:52624 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 48928) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:35,178 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:35,544 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:48938 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 48952) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:35,618 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:38,834 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:42410 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 42416) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:38,938 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:39,093 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 42420) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:39,153 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:39,312 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 42428) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:39,318 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:39,680 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:42436 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 42442) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:39,745 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:39,882 [WARNING] gsp.mqtt_worker: CẢNH BÁO GIẢ MẠO DỮ LIỆU! Thiết bị=TEST-059d4ad5a7d8, seq_no=4, hash_nhận=5d65b6fe58ff8e2c4735cf7edecbecbeea915d4d09d69a718beb836189b92f89, hash_tính=20df37c0b6745a948eec732afd0daba18d50fde42f849dab27193b7f12402996
+gsp-backend  | 2026-11-06 05:24:39,887 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:42448 - "GET /api/v1/devices/TEST-059d4ad5a7d8/verify-chain HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 42460) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:39,941 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:40,221 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:42466 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 42482) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:40,290 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:40,390 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:42492 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 42494) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:40,665 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:41,533 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | 2026-11-06 05:24:41,535 [ERROR] gsp.mqtt_worker: Payload JSON không hợp lệ trên topic gsp/v1/TEST-059d4ad5a7d8/telemetry: Expecting value: line 1 column 1 (char 0)
+gsp-backend  | 2026-11-06 05:24:41,535 [ERROR] gsp.mqtt_worker: Lỗi xử lý bản tin trên kênh telemetry (thiết bị TEST-059d4ad5a7d8): 'list' object has no attribute 'get'
+gsp-backend  | 2026-11-06 05:24:41,535 [ERROR] gsp.mqtt_worker: Lỗi xử lý bản tin trên kênh telemetry (thiết bị TEST-059d4ad5a7d8): 'NoneType' object has no attribute 'get'
+gsp-backend  | 2026-11-06 05:24:41,536 [ERROR] gsp.mqtt_worker: Lỗi xử lý bản tin trên kênh telemetry (thiết bị TEST-059d4ad5a7d8): 'seq_no'
+gsp-backend  | 2026-11-06 05:24:41,536 [ERROR] gsp.mqtt_worker: Lỗi xử lý bản tin trên kênh telemetry (thiết bị TEST-059d4ad5a7d8): 'seq_no'
+gsp-backend  | INFO:     ('172.19.0.1', 42510) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:41,539 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:41,793 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 42522) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:41,800 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:42,125 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 42534) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:42,128 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:42,335 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 42546) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:42,342 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:42,670 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:42560 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=2 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42570 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=2&cursor=2026-11-06T04%3A24%3A40%2B00%3A00 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42586 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=0 HTTP/1.1" 422 Unprocessable Entity
+gsp-backend  | INFO:     172.19.0.1:42592 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=501 HTTP/1.1" 422 Unprocessable Entity
+gsp-backend  | INFO:     172.19.0.1:42608 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?cursor=invalid HTTP/1.1" 400 Bad Request
+gsp-backend  | INFO:     ('172.19.0.1', 42622) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:42,778 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:24:43,287 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | 2026-11-06 05:24:43,338 [INFO] gsp.api: Đã phản hồi UDP Auto-Discovery cho ESP32-S3 tại 172.19.0.1:58841
+gsp-backend  | INFO:     172.19.0.1:42638 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42654 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42670 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42676 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42690 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42702 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42714 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42716 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42724 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42726 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42728 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42736 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42744 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42756 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42766 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42772 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42782 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42788 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42802 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42810 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42820 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:42830 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:51958 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:51966 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:51968 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:51972 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:51974 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:51986 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52000 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52016 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52020 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52028 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52036 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52042 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52050 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52054 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52056 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52066 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52080 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52088 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52100 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52102 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52116 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52126 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52136 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52150 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52158 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52160 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52162 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52166 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52174 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52182 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52196 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52212 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:52216 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 52224) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:24:57,029 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:25:03,958 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 58410) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:25:03,968 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:25:04,058 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 58422) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:25:04,061 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:25:04,162 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:58426 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     Shutting down
+gsp-backend  | INFO:     Waiting for application shutdown.
+gsp-backend  | 2026-11-06 05:25:04,670 [INFO] gsp.mqtt_worker: Đang dừng GSPMqttWorker...
+gsp-backend  | INFO:     Application shutdown complete.
+gsp-backend  | INFO:     Finished server process [8]
+gsp-backend  | INFO:     Stopping reloader process [1]
+gsp-backend  | INFO:     Will watch for changes in these directories: ['/app']
+gsp-backend  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+gsp-backend  | INFO:     Started reloader process [1] using WatchFiles
+gsp-backend  | INFO:     Started server process [8]
+gsp-backend  | INFO:     Waiting for application startup.
+gsp-backend  | 2026-11-06 05:25:14,465 [INFO] gsp.mqtt_worker: Đang kết nối MQTT Broker tại mosquitto:1883 (client_id=gsp_backend_worker, clean_session=False)...
+gsp-backend  | 2026-11-06 05:25:14,475 [INFO] gsp.api: Đang lắng nghe UDP Auto-Discovery trên cổng 8888/udp...
+gsp-backend  | 2026-11-06 05:25:14,475 [INFO] gsp.api: Khởi chạy tác vụ nền phát dữ liệu Realtime WebSocket...
+gsp-backend  | INFO:     Application startup complete.
+gsp-backend  | 2026-11-06 05:25:14,475 [INFO] gsp.mqtt_worker: Kết nối MQTT Broker thành công! Đang đăng ký các kênh GSP QoS 1...
+gsp-backend  | INFO:     172.19.0.1:40816 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40832 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40836 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40840 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40846 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40850 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40854 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40856 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40870 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40882 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:40896 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 43782) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:25:52,411 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:25:52,431 [ERROR] gsp.db: Lỗi khi chèn bản ghi telemetry cho thiết bị TEST-059d4ad5a7d8: could not translate host name "timescaledb" to address: Name or service not known
+gsp-backend  | 
+gsp-backend  | 2026-11-06 05:25:52,431 [ERROR] gsp.mqtt_worker: Lỗi xử lý bản tin trên kênh telemetry (thiết bị TEST-059d4ad5a7d8): could not translate host name "timescaledb" to address: Name or service not known
+gsp-backend  | 
+gsp-backend  | 2026-11-06 05:25:52,446 [ERROR] gsp.db: Lỗi khi cập nhật trạng thái thiết bị TEST-059d4ad5a7d8: could not translate host name "timescaledb" to address: Name or service not known
+gsp-backend  | 
+gsp-backend  | 2026-11-06 05:25:52,453 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | 2026-11-06 05:25:59,394 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: Connection refused
+gsp-backend  | 	Is the server running on that host and accepting TCP/IP connections?
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:60738 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:25:59,599 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: Connection refused
+gsp-backend  | 	Is the server running on that host and accepting TCP/IP connections?
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:60754 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:25:59,803 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: Connection refused
+gsp-backend  | 	Is the server running on that host and accepting TCP/IP connections?
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:60762 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:26:00,011 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: Connection refused
+gsp-backend  | 	Is the server running on that host and accepting TCP/IP connections?
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:60772 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:26:00,217 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: Connection refused
+gsp-backend  | 	Is the server running on that host and accepting TCP/IP connections?
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:60780 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:26:01,656 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is starting up
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:60786 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | 2026-11-06 05:26:01,860 [ERROR] gsp.api: Lỗi truy vấn danh sách thiết bị: connection to server at "timescaledb" (172.19.0.2), port 5432 failed: FATAL:  the database system is starting up
+gsp-backend  | 
+gsp-backend  | INFO:     172.19.0.1:60790 - "GET /api/v1/devices HTTP/1.1" 500 Internal Server Error
+gsp-backend  | INFO:     172.19.0.1:60804 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 60810) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:02,396 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:26:02,602 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:60816 - "GET /api/v1/devices/TEST-059d4ad5a7d8/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     ('172.19.0.1', 47130) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:10,003 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | INFO:     ('172.19.0.1', 47136) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:10,015 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 2
+gsp-backend  | INFO:     connection open
+gsp-backend  | INFO:     172.19.0.1:47118 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47102 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47118 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47150 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | 2026-11-06 05:26:10,318 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 1
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:47158 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=1 HTTP/1.1" 200 OK
+gsp-backend  | 2026-11-06 05:26:10,570 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 47184) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:11,249 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:26:11,250 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 47190) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:11,261 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | INFO:     172.19.0.1:47168 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47182 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47168 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47194 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47204 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=1 HTTP/1.1" 200 OK
+gsp-backend  | 2026-11-06 05:26:13,664 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 47232) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:14,328 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:26:14,330 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 47238) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:14,341 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | INFO:     172.19.0.1:47212 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47220 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47212 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47248 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47250 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=1 HTTP/1.1" 200 OK
+gsp-backend  | 2026-11-06 05:26:15,584 [WARNING] gsp.mqtt_worker: CẢNH BÁO GIẢ MẠO DỮ LIỆU! Thiết bị=GSP-TRUCK-01, seq_no=129, hash_nhận=f459b3cfa9a5bbbab67691582258fee8beedd9459d9a0a3a12432a59e83c6911, hash_tính=4fa23592a266030c305fa6ed309a980143f07f2ab5c34b541b5a497b06894744
+gsp-backend  | INFO:     172.19.0.1:47248 - "GET /api/v1/devices/GSP-TRUCK-01/verify-chain HTTP/1.1" 200 OK
+gsp-backend  | 2026-11-06 05:26:16,249 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 47272) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:16,921 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:26:16,923 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 47286) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:16,933 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | INFO:     172.19.0.1:47256 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47260 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47256 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47302 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47306 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=1 HTTP/1.1" 200 OK
+gsp-backend  | 2026-11-06 05:26:17,824 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 47346) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:18,521 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:26:18,523 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 47358) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:26:18,534 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | INFO:     172.19.0.1:47316 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47330 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47316 - "GET /api/v1/devices HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47366 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=20 HTTP/1.1" 200 OK
+gsp-backend  | INFO:     172.19.0.1:47376 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=1 HTTP/1.1" 200 OK
+gsp-backend  | 2026-11-06 05:26:18,968 [WARNING] gsp.mqtt_worker: CẢNH BÁO GIẢ MẠO DỮ LIỆU! Thiết bị=GSP-TRUCK-01, seq_no=132, hash_nhận=a7ce99396a5a0f66e0a7f3f94b870b4b11b391be80a35e82b6b942c59b058c96, hash_tính=febb7d3e58a032519bae3e71e4b5443dcd7dd774f48c9f33680d591e069e1c82
+gsp-backend  | INFO:     172.19.0.1:54662 - "GET /api/v1/devices/GSP-TRUCK-01/telemetry?limit=500 HTTP/1.1" 200 OK
+gsp-backend  | 2026-11-06 05:26:19,422 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 50876) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:27:02,230 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:27:02,490 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     ('172.19.0.1', 50878) - "WebSocket /ws/realtime" [accepted]
+gsp-backend  | 2026-11-06 05:27:02,497 [INFO] gsp.api: WebSocket client đã kết nối. Tổng số kết nối: 1
+gsp-backend  | INFO:     connection open
+gsp-backend  | 2026-11-06 05:27:03,208 [INFO] gsp.api: WebSocket client đã ngắt kết nối. Còn lại: 0
+gsp-backend  | INFO:     connection closed
+gsp-backend  | INFO:     172.19.0.1:50880 - "GET /api/v1/devices/TEST-db7b026d40e8/telemetry?limit=500 HTTP/1.1" 200 OK

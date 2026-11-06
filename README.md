@@ -7,6 +7,8 @@
 
 ## 1. Tổng quan kiến trúc
 
+Hướng dẫn kiểm thử có thể chạy lại: [Tự kiểm thử repo](docs/02_testing_and_handover/how_to_test.md). Kết quả chạy thực tế ngày 06/11/2026: [Báo cáo kiểm thử](docs/02_testing_and_handover/test_results_2026-11-06.md).
+
 1. **Kiến trúc Một chiều (Unidirectional):** Thiết bị biên ESP32-S3 chỉ đọc cảm biến, băm SHA-256, ký số ECDSA và đẩy dữ liệu lên Broker; **KHÔNG** mở kênh nhận lệnh điều khiển từ xa nhằm đảm bảo tính chống chối bỏ.
 2. **Dữ liệu Chuỗi thời gian Bất biến (Append-Only & Immutable):** Bảng `telemetry_logs` trên TimescaleDB được khóa cứng thao tác `UPDATE` và `DELETE` ở tầng Engine của cơ sở dữ liệu bằng Trigger `trg_immutable_telemetry` (mã lỗi SQLSTATE `42501`).
 3. **Đồng bộ bù Không trùng lặp (Idempotent Auto-Sync):** Kết hợp lưu đệm Offline tại biên và ràng buộc khóa chính kép `ON CONFLICT (device_id, ts_rtc) DO NOTHING` tại CSDL.

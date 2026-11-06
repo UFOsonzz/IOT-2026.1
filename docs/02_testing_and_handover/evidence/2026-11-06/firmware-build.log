@@ -1,0 +1,387 @@
+********************************************************************************
+If you like PlatformIO, please:
+- star it on GitHub > https://github.com/platformio/platformio-core
+- follow us on LinkedIn to stay up-to-date on the latest project news > https://www.linkedin.com/company/platformio/
+- try PlatformIO IDE for embedded development > https://platformio.org/platformio-ide
+********************************************************************************
+
+Processing esp32-s3-devkitc-1 (platform: espressif32; board: esp32-s3-devkitc-1; framework: arduino)
+--------------------------------------------------------------------------------
+Platform Manager: Installing espressif32
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Platform Manager: espressif32@8.0.0 has been installed!
+Tool Manager: Installing platformio/toolchain-riscv32-esp @ 14.2.0+20260121
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: toolchain-riscv32-esp@14.2.0+20260121 has been installed!
+Tool Manager: Installing platformio/toolchain-xtensa-esp-elf @ 14.2.0+20260121
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: toolchain-xtensa-esp-elf@14.2.0+20260121 has been installed!
+Tool Manager: Installing espressif/tool-xtensa-esp-elf-gdb @ ~12.1.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: tool-xtensa-esp-elf-gdb@12.1.0+20221002 has been installed!
+Tool Manager: Installing espressif/tool-riscv32-esp-elf-gdb @ ~12.1.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: tool-riscv32-esp-elf-gdb@12.1.0+20221002 has been installed!
+Tool Manager: Installing platformio/framework-arduinoespressif32 @ ~4.30312.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: framework-arduinoespressif32@4.30312.261024 has been installed!
+Tool Manager: Installing platformio/framework-arduinoespressif32-esp32s3-libs @ ~3.3.12
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: framework-arduinoespressif32-esp32s3-libs@3.3.12 has been installed!
+Tool Manager: Installing platformio/tool-esptool @ ~2.50400.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70%
+Tool Manager: tool-esptool@2.50400.0 has been installed!
+Tool Manager: Installing platformio/tool-scons @ ~4.41101.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Tool Manager: tool-scons@4.41101.0 has been installed!
+Library Manager: Installing knolleary/PubSubClient @ ^2.8
+Downloading 0% 10% 20%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: PubSubClient@2.8.0 has been installed!
+Library Manager: Installing bblanchon/ArduinoJson @ ^7.0.0
+Downloading 0% 10% 20% 30% 40% 50% 60% 70% 80% 90%
+Unpacking 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
+Library Manager: ArduinoJson@7.4.3 has been installed!
+Verbose mode can be enabled via `-v, --verbose` option
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32-s3-devkitc-1.html
+PLATFORM: Espressif 32 (8.0.0) > Espressif ESP32-S3-DevKitC-1-N8 (8 MB QD, No PSRAM)
+HARDWARE: ESP32S3 240MHz, 320KB RAM, 8MB Flash
+DEBUG: Current (esp-builtin) On-board (esp-builtin) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 4.30312.261024 (3.3.12) 
+ - framework-arduinoespressif32-esp32s3-libs @ 3.3.12 
+ - tool-esptool @ 2.50400.0 (5.4.0) 
+ - tool-riscv32-esp-elf-gdb @ 12.1.0+20221002 
+ - tool-xtensa-esp-elf-gdb @ 12.1.0+20221002 
+ - toolchain-riscv32-esp @ 14.2.0+20260121 
+ - toolchain-xtensa-esp-elf @ 14.2.0+20260121
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 46 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- PubSubClient @ 2.8.0
+|-- ArduinoJson @ 7.4.3
+|-- Preferences @ 3.3.12
+|-- Ticker @ 3.3.12
+|-- WebServer @ 3.3.12
+|-- WiFi @ 3.3.12
+Building in release mode
+Compiling .pio/build/esp32-s3-devkitc-1/src/main.cpp.o
+Building .pio/build/esp32-s3-devkitc-1/bootloader.bin
+Generating partitions .pio/build/esp32-s3-devkitc-1/partitions.bin
+Compiling .pio/build/esp32-s3-devkitc-1/lib436/PubSubClient/PubSubClient.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/libc0c/Preferences/Preferences.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/lib10f/Ticker/Ticker.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/lib5fd/FS/FS.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/lib5fd/FS/vfs_api.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/lib4f5/Network/NetworkClient.cpp.o
+esptool v5.4.0
+Creating ESP32-S3 image...
+Merged 2 ELF sections.
+Successfully created ESP32-S3 image.
+Compiling .pio/build/esp32-s3-devkitc-1/lib4f5/Network/NetworkEvents.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: note: this is the location of the previous definition
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/esp32-s3-devkitc-1/lib10f/libTicker.a
+Indexing .pio/build/esp32-s3-devkitc-1/lib10f/libTicker.a
+Archiving .pio/build/esp32-s3-devkitc-1/libc0c/libPreferences.a
+Indexing .pio/build/esp32-s3-devkitc-1/libc0c/libPreferences.a
+Compiling .pio/build/esp32-s3-devkitc-1/lib4f5/Network/NetworkInterface.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/lib4f5/Network/NetworkManager.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/esp32-s3-devkitc-1/lib436/libPubSubClient.a
+Indexing .pio/build/esp32-s3-devkitc-1/lib436/libPubSubClient.a
+Compiling .pio/build/esp32-s3-devkitc-1/lib4f5/Network/NetworkServer.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib4f5/Network/NetworkUdp.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib552/Hash/PBKDF2_HMACBuilder.cpp.o
+Archiving .pio/build/esp32-s3-devkitc-1/lib5fd/libFS.a
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Indexing .pio/build/esp32-s3-devkitc-1/lib5fd/libFS.a
+Compiling .pio/build/esp32-s3-devkitc-1/lib552/Hash/SHA1Builder.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/lib552/Hash/SHA2Builder.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib552/Hash/SHA3Builder.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+Compiling .pio/build/esp32-s3-devkitc-1/libde0/WebServer/Parsing.cpp.o
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/libde0/WebServer/WebServer.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/libde0/WebServer/detail/mimetable.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/libde0/WebServer/middleware/AuthenticationMiddleware.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/libde0/WebServer/middleware/CorsMiddleware.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/esp32-s3-devkitc-1/lib4f5/libNetwork.a
+Indexing .pio/build/esp32-s3-devkitc-1/lib4f5/libNetwork.a
+Compiling .pio/build/esp32-s3-devkitc-1/libde0/WebServer/middleware/LoggingMiddleware.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/libde0/WebServer/middleware/MiddlewareChain.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib600/WiFi/AP.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/esp32-s3-devkitc-1/lib552/libHash.a
+Indexing .pio/build/esp32-s3-devkitc-1/lib552/libHash.a
+Compiling .pio/build/esp32-s3-devkitc-1/lib600/WiFi/STA.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib600/WiFi/WiFi.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib600/WiFi/WiFiAP.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib600/WiFi/WiFiGeneric.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib600/WiFi/WiFiMulti.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib600/WiFi/WiFiSTA.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/lib600/WiFi/WiFiScan.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/ColorFormat.c.o
+Archiving .pio/build/esp32-s3-devkitc-1/libde0/libWebServer.a
+Indexing .pio/build/esp32-s3-devkitc-1/libde0/libWebServer.a
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/Esp.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/FirmwareMSC.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/FunctionalInterrupt.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/HEXBuilder.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/HWCDC.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/HardwareSerial.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/HashBuilder.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/IPAddress.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/MD5Builder.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/MacAddress.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/esp32-s3-devkitc-1/lib600/libWiFi.a
+Indexing .pio/build/esp32-s3-devkitc-1/lib600/libWiFi.a
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/Print.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/Stream.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/StreamString.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/StringUtils.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/Tone.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/USB.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/USBCDC.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/USBHost.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/USBMSC.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/WMath.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/WString.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/base64.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/cbuf.cpp.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/chip-debug-report.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-adc.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-bt.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-cpu.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-dac.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-gpio.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-hosted.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-i2c-ng.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-i2c-slave.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-i2c.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-ldo.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-ledc.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-log-wrapper.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-matrix.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-misc.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-periman.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-psram.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-rgb-led.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-rmt.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-sigmadelta.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-spi.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-time.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-timer.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-tinyusb.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-touch-ng.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-touch.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/esp32-hal-uart.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/firmware_msc_fat.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/freertos_stats.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/idf_openthread_mpool_wrapper.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/libb64/cdecode.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/libb64/cencode.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/main.cpp.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/stdlib_noniso.c.o
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/wiring_pulse.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Compiling .pio/build/esp32-s3-devkitc-1/FrameworkArduino/wiring_shift.c.o
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+<command-line>: warning: "ARDUINO_USB_MODE" redefined
+<command-line>: note: this is the location of the previous definition
+Archiving .pio/build/esp32-s3-devkitc-1/libFrameworkArduino.a
+Indexing .pio/build/esp32-s3-devkitc-1/libFrameworkArduino.a
+Linking .pio/build/esp32-s3-devkitc-1/firmware.elf
+Retrieving maximum program size .pio/build/esp32-s3-devkitc-1/firmware.elf
+Checking size .pio/build/esp32-s3-devkitc-1/firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]  14.7% (used 48268 bytes from 327680 bytes)
+Flash: [===       ]  32.8% (used 1094751 bytes from 3342336 bytes)
+Building .pio/build/esp32-s3-devkitc-1/firmware.bin
+esptool v5.4.0
+Creating ESP32-S3 image...
+Merged 3 ELF sections.
+Successfully created ESP32-S3 image.
+======================== [SUCCESS] Took 2562.55 seconds ========================
