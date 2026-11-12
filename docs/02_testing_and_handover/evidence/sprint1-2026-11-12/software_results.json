@@ -1,0 +1,86 @@
+{
+  "started_at": "2026-11-12T11:58:35.822768+00:00",
+  "browser_requested": true,
+  "hardware_acceptance": "PENDING: ESP32 not connected; no hardware results inferred",
+  "checks": [
+    {
+      "name": "compose_config",
+      "command": [
+        "docker",
+        "compose",
+        "config",
+        "--quiet"
+      ],
+      "exit_code": 0,
+      "seconds": 0.09,
+      "status": "PASS"
+    },
+    {
+      "name": "host_tests",
+      "command": [
+        "/home/tam/Projects/IOT-2026.1/.venv/bin/python",
+        "tools/test_sprint1.py"
+      ],
+      "exit_code": 0,
+      "seconds": 3.92,
+      "status": "PASS"
+    },
+    {
+      "name": "firmware_build",
+      "command": [
+        "/home/tam/Projects/IOT-2026.1/.venv/bin/pio",
+        "run",
+        "-d",
+        "firmware",
+        "-e",
+        "esp32dev"
+      ],
+      "exit_code": 0,
+      "seconds": 71.37,
+      "status": "PASS"
+    },
+    {
+      "name": "web_build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "seconds": 35.79,
+      "status": "PASS"
+    },
+    {
+      "name": "usb_ports",
+      "command": [
+        "/home/tam/Projects/IOT-2026.1/.venv/bin/python",
+        "tools/sprint1_serial.py",
+        "--list"
+      ],
+      "exit_code": 0,
+      "seconds": 8.45,
+      "status": "PASS"
+    },
+    {
+      "name": "system_tests",
+      "command": [
+        "/home/tam/Projects/IOT-2026.1/.venv/bin/python",
+        "-u",
+        "tools/test_sprint1_system.py",
+        "--evidence-dir",
+        "/home/tam/Projects/IOT-2026.1/docs/02_testing_and_handover/evidence/sprint1-2026-11-12",
+        "--browser"
+      ],
+      "exit_code": 1,
+      "seconds": 730.25,
+      "status": "FAIL"
+    }
+  ],
+  "firmware": {
+    "path": "firmware/.pio/build/esp32dev/firmware.bin",
+    "bytes": 1205792,
+    "sha256": "9c3499e4e9d754a933e2ec95dec3405f1409e98b94197d7eac3d1f5b07574764"
+  },
+  "status": "FAIL",
+  "finished_at": "2026-11-12T12:12:48.061289+00:00"
+}

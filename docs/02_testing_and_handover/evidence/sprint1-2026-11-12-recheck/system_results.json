@@ -1,0 +1,9 @@
+{
+  "device_id": "GSP-S1-b78b89388214",
+  "source": "simulator, not physical ESP32",
+  "started_at": "2026-11-12T15:52:36.255968+00:00",
+  "checks": [],
+  "status": "FAIL",
+  "error": "Command '['docker', 'compose', 'exec', '-T', 'backend', 'python', '-c', 'import sys\\nfrom app.db import get_connection\\nwith get_connection() as conn:\\n    with conn.cursor() as cur:\\n        cur.execute(\"\"\"INSERT INTO devices\\n            (device_id, device_name, storage_type, ecdsa_pub_key, mqtt_token_hash)\\n            VALUES (%s, %s, \\'MEDICAL_2_8C\\', \\'DUMMY_PUBLIC_KEY\\', \\'test_only\\')\"\"\",\\n            (sys.argv[1], \\'Sprint 1 automated test (simulation)\\'))\\n', 'GSP-S1-b78b89388214']' returned non-zero exit status 1.",
+  "finished_at": "2026-11-12T15:52:36.414073+00:00"
+}

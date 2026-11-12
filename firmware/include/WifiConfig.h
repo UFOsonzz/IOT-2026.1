@@ -8,6 +8,7 @@
 #include <WiFiUdp.h>
 #include <WebServer.h>
 #include <Ticker.h>
+#include "HardwareConfig.h"
 
 // Định danh thiết bị và cổng dịch vụ
 #define DEVICE_ID           "GSP-TRUCK-01"
@@ -15,8 +16,6 @@
 #define UDP_DISCOVERY_PORT  8888
 
 // Chân phần cứng phục vụ trạng thái mạng và nút Reset cấu hình Wi-Fi
-#define PIN_STATUS_LED      38    // LED trạng thái trên bo mạch
-#define PIN_WIFI_RESET_BTN  0     // Nút BOOT trên mạch, giữ 5 giây để xóa Wi-Fi
 #define PUSHTIME            5000
 
 WebServer webServer(80);
@@ -39,7 +38,7 @@ const char html[] PROGMEM = R"html(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GSP ESP32-S3 NETWORK SETUP</title>
+  <title>GSP ESP32 NETWORK SETUP</title>
   <style type="text/css">
     body{display:flex;justify-content:center;align-items:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f0f2f5;margin:0;padding:16px;}
     .card{background:white;padding:22px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.08);max-width:360px;width:100%;}
@@ -62,7 +61,7 @@ const char html[] PROGMEM = R"html(
 </head>
 <body>
   <div class="card">
-    <h3>CẤU HÌNH MẠNG GSP ESP32-S3</h3>
+    <h3>CẤU HÌNH MẠNG GSP ESP32</h3>
     
     <div class="opt3-banner">
       <b>Đang chạy Option 3 (AP Direct):</b><br>
@@ -264,7 +263,7 @@ inline void setupWebServer() {
     });
 
     webServer.on("/reStart", []() {
-        webServer.send(200, "text/plain", "ESP32-S3 đang khởi động lại...");
+        webServer.send(200, "text/plain", "ESP32 đang khởi động lại...");
         delay(1000);
         ESP.restart();
     });

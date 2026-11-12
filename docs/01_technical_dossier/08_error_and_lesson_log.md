@@ -15,4 +15,7 @@ Tài liệu này ghi nhận trung thực các lỗi kỹ thuật về phần c�
 
 | Mã Lỗi | Giai đoạn | Hiện tượng lỗi | Nguyên nhân | Cách khắc phục | Bài học rút ra |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **ERR-04** | `[Cập nhật sau]` | `[Ghi nhận sau]` | `[...]` | `[...]` | `[...]` |
+| **ERR-04** | Sprint 1, build Web | `ImportMeta.env` thiếu kiểu Vite | Chưa khai báo Vite client types | Thêm `web/src/vite-env.d.ts` | Chạy production build bên cạnh dev server |
+| **ERR-05** | Sprint 1, build Web trên host | `EACCES` khi xóa `web/dist/assets` | Build trong container root ghi output lên bind mount host | Sửa quyền thư mục output hiện có, mount riêng `/app/dist`; thêm `.dockerignore` | Tách output build container khỏi source host |
+| **ERR-06** | Sprint 1, Dashboard realtime | Sync cũ/bản tin trùng có thể thay KPI hiện tại | Mọi event đều được đẩy lên đầu, kể cả `inserted=false` | Bỏ event trùng, so thời gian và sắp lịch sử theo UTC; regression bằng MQTT/WS/browser thật | Dùng khóa thời gian DB khi đồng bộ trạng thái UI |
+| **ERR-07** | Sprint 1, ESP32 chỉ USB | `bat_v=0` bị báo pin yếu; nhãn xác thực giả bị gọi ECDSA | UI chưa xử lý sentinel chưa đo pin, nhãn giữ từ skeleton | Pin hiển thị chưa đo, sửa GPIO34; nhãn Hash Verified và chú thích chữ ký dummy | Hiển thị đúng khả năng đã triển khai và dữ liệu thực có |

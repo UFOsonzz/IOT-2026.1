@@ -1,0 +1,10 @@
+PASS SHT30 datasheet CRC, conversion, short read, temperature/humidity corruption
+PASS RTC UTC known epoch, leap day, 12h AM/PM, invalid BCD, century, 2024..2099 daily roundtrip
+PASS button bounce, stable release, single press during hold, millis rollover
+PASS GSP boundaries and 9.50C test
+PASS actual driver with mocks: ESP32 pins, UTC/OSF initialization, validated I2C sample, no fake battery
+PASS actual ISR -> stable debounce -> one OLED page change, including bounce and held button
+PASS actual HMI: 15-second test, immediate alarm/sample request, ACK preserves alert, restore real sensor
+PASS actual driver: CRC error, short read, NACK, local fault/mute, automatic SHT30 recovery
+PASS actual RTC driver: unplug, OSF invalidation, manual UTC, rejected bad time, SQW warning/recovery
+PASS actual driver: OLED recovery, bounded Serial parser, one-shot NTP -> DS3231 synchronization

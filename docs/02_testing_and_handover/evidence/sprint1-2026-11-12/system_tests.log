@@ -1,0 +1,15 @@
+Command '['/home/tam/Projects/IOT-2026.1/.venv/bin/python', '-u', 'tools/test_sprint1_system.py', '--evidence-dir', '/home/tam/Projects/IOT-2026.1/docs/02_testing_and_handover/evidence/sprint1-2026-11-12', '--browser']' timed out after 240 seconds
+PASS Isolated simulated device is registered
+PASS UDP discovery returns IOT_SERVER_HERE
+[MQTT] Đã kết nối tới Broker 127.0.0.1:1883 (Thiết bị: GSP-S1-f1265282208b)
+[STATUS] Đã phát bản tin trạng thái ONLINE (Retain=True) lên gsp/v1/GSP-S1-f1265282208b/status
+PASS MQTT retained ONLINE reaches device API
+PASS ESP32-format normal telemetry persists with valid hash and bat_v=0
+PASS GSP test 9.50C persists with alert_code=1
+PASS 3 backfill records persist; duplicate is removed
+PASS Altered payload is stored as TAMPERED
+PASS Exactly six unique telemetry records persisted
+[STATUS] Đã cập nhật trạng thái thiết bị sang: OFFLINE
+PASS Explicit OFFLINE reaches API
+[STATUS] Đã cập nhật trạng thái thiết bị sang: ONLINE
+PASS ONLINE recovery reaches API

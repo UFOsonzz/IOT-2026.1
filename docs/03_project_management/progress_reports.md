@@ -46,12 +46,26 @@
 
 | PBI | Hạng mục | Trạng thái | Ghi chú |
 |:----|:---------|:-----------|:--------|
-| PBI-01 | SHT30 qua I2C | `[Cập nhật sau]` | |
-| PBI-02 | DS3231 RTC qua I2C | `[Cập nhật sau]` | |
-| PBI-03 | OLED SSD1306 cơ bản | `[Cập nhật sau]` | |
-| PBI-04 | GPIO Interrupt 3 nút | `[Cập nhật sau]` | |
+| PBI-01 | SHT30 qua I2C | Phần mềm hoàn tất; chờ test mạch thật | Đọc 0x44, CRC hai trường, chu kỳ 2 giây; xử lý NACK/short read/lỗi CRC; bỏ dữ liệu lỗi |
+| PBI-02 | DS3231 RTC qua I2C | Phần mềm hoàn tất; chờ test mạch thật | UTC từ RTC, OSF/BCD/ngày hợp lệ, SQW1Hz trên GPIO27, đặt giờ qua Serial/NTP |
+| PBI-03 | OLED SSD1306 cơ bản | Phần mềm hoàn tất; chờ test mạch thật | Hai trang cập nhật 500ms, cảm biến/RTC/network; pin N/A khi chỉ USB; phục hồi khi có màn |
+| PBI-04 | GPIO Interrupt 3 nút | Phần mềm hoàn tất; chờ test mạch thật | Ngắt CHANGE GPIO32/33/25, debounce 35ms, đổi trang/ACK/test15s; giữ nút không lặp |
+
+**Bàn giao phần mềm ngày 2026-11-12:** nhánh `feat/sprint1-esp32`, board ESP32-WROOM-32 (`esp32dev`).
+Đã chuẩn bị test host có AddressSanitizer/UndefinedBehaviorSanitizer, build PlatformIO/Vite,
+kiểm thử hệ thống trên thiết bị giả lập có ID riêng và kiểm tra Chromium nhận dữ liệu WebSocket.
+Runner `tools/check_sprint1.py --browser` ghi log, mã thoát, JSON kết quả và ảnh vào thư mục evidence.
+Kết quả thực thi chi tiết tại [báo cáo Sprint 1](../02_testing_and_handover/sprint1_test_report.md).
+
+Hỗ trợ luồng thử thật: sửa Vite typings và quyền output build, tách `dist` container khỏi host,
+chặn bản tin trùng/dữ liệu sync cũ ghi đè KPI, hiển thị đúng pin chưa đo và chữ ký dummy.
 
 ### Vướng mắc & Hỗ trợ cần thiết
 
-- `[Cập nhật sau mỗi buổi họp tuần]`
+- Người dùng chưa cắm ESP32; chưa upload, đo sai số, xem OLED hay nhấn nút trên mạch thật.
+- Dùng [checklist HW-01→14](../02_testing_and_handover/sprint1_hardware_acceptance.md) khi có mạch;
+  mẫu CSV đo chuẩn được giữ trống cho đến khi đo thật.
+- Chưa có kết quả review/approve và dựng sạch trên máy khác. Giữ trạng thái nghiệm thu Sprint 1
+  là `In Progress` theo DoD, dù phạm vi phần mềm PBI-01→04 đã hoàn tất.
+- SD/offline sync/seq_no bền vững/ECDSA thật chuyển sang Sprint 2 đúng backlog.
 

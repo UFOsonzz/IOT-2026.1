@@ -1,6 +1,6 @@
 # Product Backlog
 
-> **Cập nhật lần cuối:** 2026-11-04
+> **Cập nhật lần cuối:** 2026-11-12
 >
 > **Quy ước trạng thái:** ✅ Done | 🔄 In Progress | 📋 Planned | ❌ Blocked
 >
@@ -28,21 +28,33 @@
 
 ### Sprint 1 — Tuần 8: Cảm biến thực I2C
 
+**Board thực tế:** ESP32 thường (ESP32-WROOM-32 / DevKit, `esp32dev`, không PSRAM).
+**Triển khai phần mềm đã xong**, build và test host đã qua; chưa nghiệm thu trên mạch thật
+và chưa đo sai số với thiết bị chuẩn. Giữ `In Progress` theo DoD đến khi có hardware evidence/review.
+**Phạm vi bàn giao 2026-11-12:** PBI-01→04 đã triển khai đủ phần mềm, có bộ kiểm thử tự động
+`tools/check_sprint1.py --browser`, công cụ Serial lưu log và checklist để người dùng nạp/test sau.
+Code PBI-01→04 đã triển khai; **kiểm thử hệ thống vẫn chưa hoàn tất** do lượt trước timeout,
+lượt kiểm tra lại gặp Docker daemon không chạy. Còn cần xác nhận E2E/browser,
+nghiệm thu mạch thật và quy trình review của nhóm; chưa coi phần mềm đã đạt toàn bộ.
+Xem [hướng dẫn test](../02_testing_and_handover/sprint1_esp32_guide.md)
+và [báo cáo](../02_testing_and_handover/sprint1_test_report.md).
+Checklist còn lại: [nghiệm thu phần cứng](../02_testing_and_handover/sprint1_hardware_acceptance.md).
+
 | ID | Hạng mục | Mô tả chi tiết | Ưu tiên | Owner | Nhánh | Trạng thái |
 |:---|:---------|:----------------|:--------|:------|:------|:-----------|
-| PBI-01 | Tích hợp SHT30 qua I2C | Đọc nhiệt độ & độ ẩm thực từ SHT30 (0x44), thay thế pseudo random. Kiểm tra sai số với nhiệt kế chuẩn. | **Must** | TV1 | `feat/fw-i2c-sensors` | 📋 Planned |
-| PBI-02 | Tích hợp DS3231 RTC qua I2C | Đọc timestamp UTC thực từ DS3231 (0x68), thay thế `millis()`. Cấu hình SQW 1Hz interrupt trên GPIO14. | **Must** | TV1 | `feat/fw-i2c-sensors` | 📋 Planned |
-| PBI-03 | Hiển thị OLED SSD1306 cơ bản | Trang 1: Nhiệt độ/Ẩm/Pin real-time. Trang 2: Trạng thái WiFi/MQTT. Chuyển trang bằng BTN1 (GPIO5). | **Should** | TV1 | `feat/fw-i2c-sensors` | 📋 Planned |
-| PBI-04 | GPIO Interrupt cho 3 nút HMI | Chuyển từ polling sang `attachInterrupt()` với debounce. BTN1=OLED, BTN2=ACK/Mute, BTN3=Test GSP. | **Should** | TV1 | `feat/fw-i2c-sensors` | 📋 Planned |
+| PBI-01 | Tích hợp SHT30 qua I2C | Đọc nhiệt độ & độ ẩm thực từ SHT30 (0x44), thay thế pseudo random. Kiểm tra sai số với nhiệt kế chuẩn. | **Must** | TV1 | `feat/sprint1-esp32` | 🔄 In Progress (code/build/test host xong; chờ nghiệm thu phần cứng) |
+| PBI-02 | Tích hợp DS3231 RTC qua I2C | Đọc timestamp UTC thực từ DS3231 (0x68), thay thế `millis()`. Cấu hình SQW 1Hz interrupt trên GPIO27. | **Must** | TV1 | `feat/sprint1-esp32` | 🔄 In Progress (code/build/test host xong; chờ nghiệm thu phần cứng) |
+| PBI-03 | Hiển thị OLED SSD1306 cơ bản | Trang 1: Nhiệt độ/Ẩm/Pin real-time. Trang 2: Trạng thái WiFi/MQTT. Chuyển trang bằng BTN1 (GPIO32). | **Should** | TV1 | `feat/sprint1-esp32` | 🔄 In Progress (code/build/test host xong; chờ nghiệm thu phần cứng) |
+| PBI-04 | GPIO Interrupt cho 3 nút HMI | Chuyển từ polling sang `attachInterrupt()` với debounce. BTN1=OLED, BTN2=ACK/Mute, BTN3=Test GSP. | **Should** | TV1 | `feat/sprint1-esp32` | 🔄 In Progress (code/build/test host xong; chờ nghiệm thu phần cứng) |
 
 ### Sprint 2 — Tuần 9-10: Offline Buffering & Bảo mật thực
 
 | ID | Hạng mục | Mô tả chi tiết | Ưu tiên | Owner | Nhánh | Trạng thái |
 |:---|:---------|:----------------|:--------|:------|:------|:-----------|
-| PBI-05 | MicroSD đọc/ghi file CSV | Ghi đệm offline ra file `.CSV` trên thẻ MicroSD qua SPI2 (GPIO 10-13). Đáp ứng FR-02. | **Must** | TV1 | `feat/fw-sdcard-sync` | 📋 Planned |
+| PBI-05 | MicroSD đọc/ghi file CSV | Ghi đệm offline ra file `.CSV` trên thẻ MicroSD qua SPI (CS13/MOSI23/SCK18/MISO19; dự kiến cho ESP32 thường). Đáp ứng FR-02. | **Must** | TV1 | `feat/fw-sdcard-sync` | 📋 Planned |
 | PBI-06 | Auto-Sync từ MicroSD khi có mạng | Đọc file CSV, đẩy bù qua topic `gsp/v1/+/sync`, cập nhật `sync_byte_offset`. Đáp ứng FR-03. | **Must** | TV1 | `feat/fw-sdcard-sync` | 📋 Planned |
 | PBI-07 | Persist seq_no vào NVS/SD | Lưu `seq_no` vào NVS Flash hoặc SD card, tránh reset khi mất điện. | **Must** | TV1 + TV4 | `feat/fw-sdcard-sync` | 📋 Planned |
-| PBI-08 | ECDSA secp256r1 ký số thực | Thay `DUMMY_SIG_OK_ESP32S3_SECP256R1` bằng chữ ký thật dùng mbedTLS. Sinh keypair, lưu private key an toàn. | **Must** | TV4 | `feat/sec-ecdsa-real` | 📋 Planned |
+| PBI-08 | ECDSA secp256r1 ký số thực | Thay `DUMMY_SIG_OK_ESP32_SECP256R1` bằng chữ ký thật dùng mbedTLS. Sinh keypair, lưu private key an toàn. | **Must** | TV4 | `feat/sec-ecdsa-real` | 📋 Planned |
 | PBI-09 | Backend verify ECDSA thực | Cập nhật `mqtt_worker.py` verify chữ ký ECDSA thực thay vì check dummy string. Lưu public key vào bảng `devices`. | **Must** | TV4 | `feat/sec-ecdsa-real` | 📋 Planned |
 
 ### Sprint 3 — Tuần 10-11: Telegram, Audit & Dashboard nâng cao

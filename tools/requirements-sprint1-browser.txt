@@ -1,0 +1,2 @@
+-r requirements-sprint1.txt
+playwright>=1.50,<2

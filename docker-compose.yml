@@ -2,7 +2,7 @@ services:
   mosquitto:
     image: eclipse-mosquitto:2
     container_name: gsp-mosquitto
-    restart: unless-stopped
+    restart: "no"
     ports:
       - "1883:1883"
     volumes:
@@ -14,7 +14,7 @@ services:
   timescaledb:
     image: timescale/timescaledb:latest-pg16
     container_name: gsp-timescaledb
-    restart: unless-stopped
+    restart: "no"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-gsp_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gsp_pass}
@@ -39,7 +39,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: gsp-backend
-    restart: unless-stopped
+    restart: "no"
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://gsp_user:gsp_pass@timescaledb:5432/gsp_coldchain}
       MQTT_BROKER_HOST: ${MQTT_BROKER_HOST:-mosquitto}
@@ -64,7 +64,7 @@ services:
       context: ./web
       dockerfile: Dockerfile
     container_name: gsp-web
-    restart: unless-stopped
+    restart: "no"
     environment:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
       VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8000/ws/realtime}
@@ -75,6 +75,7 @@ services:
     volumes:
       - ./web:/app
       - /app/node_modules
+      - /app/dist
     depends_on:
       - backend
     networks:
