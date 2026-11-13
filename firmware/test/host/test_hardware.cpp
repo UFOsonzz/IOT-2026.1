@@ -101,7 +101,14 @@ int main() {
     hw.update(); hw.update(); hw.update();
     assert(Serial.output.find("Command too long") != std::string::npos);
     assert(Serial.output.find("[STATUS]") != std::string::npos);
+    // Priority: RTC module is present, so NTP time does NOT overwrite it
     mockUtc = 1800000000; hw.update();
-    assert(hw.reading().epoch == 1800000000);
-    std::puts("PASS actual driver: OLED recovery, bounded Serial parser, one-shot NTP -> DS3231 synchronization");
+    assert(hw.reading().epoch == 1735689700);
+    // Fallback: When RTC module is absent, fall back to international NTP time
+    Wire.rtcPresent = false; step(hw, 1100);
+    assert(hw.reading().rtcOk && hw.reading().epoch == 1800000000);
+    // Priority restored: When RTC module is re-connected, read from RTC module again
+    Wire.rtcPresent = true; step(hw, 1100);
+    assert(hw.reading().rtcOk && hw.reading().epoch == 1735689700);
+    std::puts("PASS actual driver: OLED recovery, bounded Serial parser, prioritize RTC module & fallback to NTP");
 }

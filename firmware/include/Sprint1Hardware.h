@@ -17,6 +17,7 @@ public:
     void begin();
     void update();
     Sprint1Reading reading();
+    bool isRtcHardware() const { return rtcModulePresent_; }
     bool takeSampleRequest();
     void setNetwork(bool wifi, bool mqtt, const char* ip);
     void printStatus();
@@ -40,7 +41,8 @@ private:
     uint32_t lastRtc_ = 0, lastOled_ = 0, testStarted_ = 0;
     uint32_t lastSqw_ = 0, sqwSeen_ = 0, sqwLastEdge_ = 0;
     bool measuring_ = false, oledOk_ = false, test_ = false, muted_ = false;
-    bool requestSample_ = false, sqwWarning_ = false, ntpSynced_ = false;
+    bool requestSample_ = false, sqwWarning_ = false;
+    bool rtcModulePresent_ = false;
     uint8_t page_ = 0, previousAlarm_ = 0;
     char serialLine_[48] = {};
     uint8_t serialLength_ = 0;

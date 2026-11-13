@@ -98,11 +98,29 @@ void Sprint1Hardware::scan() {
 bool Sprint1Hardware::readRtc() {
     uint8_t regs[7], status;
     const bool wasOk = latest_.rtcOk;
-    latest_.rtcOk = readRegisters(0, regs, 7) && readRegisters(0x0f, &status, 1)
-        && !(status & 0x80) && sprint1::decodeRtc(regs, 7, latest_.epoch);
-    if (!latest_.rtcOk) latest_.epoch = 0;
-    if (wasOk && !latest_.rtcOk) Serial.println(F("[RTC ERROR] Missing/OSF/invalid date; telemetry paused"));
-    if (!wasOk && latest_.rtcOk) Serial.println(F("[RTC] UTC valid"));
+    const bool hadModule = rtcModulePresent_;
+    uint32_t rtcEpoch = 0;
+    const bool hwPresent = readRegisters(0, regs, 7) && readRegisters(0x0f, &status, 1);
+    const bool hwValid = hwPresent && !(status & 0x80) && sprint1::decodeRtc(regs, 7, rtcEpoch);
+
+    if (hwValid) {
+        rtcModulePresent_ = true;
+        latest_.epoch = rtcEpoch;
+        latest_.rtcOk = true;
+        if (!wasOk || !hadModule) Serial.println(F("[RTC] UTC valid from RTC module"));
+    } else {
+        rtcModulePresent_ = false;
+        const time_t utc = time(nullptr);
+        if (utc >= 1704067200LL && utc <= 4102444799LL) {
+            latest_.epoch = static_cast<uint32_t>(utc);
+            latest_.rtcOk = true;
+            if (!wasOk || hadModule) Serial.println(F("[TIME] Fallback to NTP network time (no RTC module)"));
+        } else {
+            latest_.epoch = 0;
+            latest_.rtcOk = false;
+            if (wasOk) Serial.println(F("[RTC ERROR] Missing/OSF/invalid date and no NTP; telemetry paused"));
+        }
+    }
     return latest_.rtcOk;
 }
 
@@ -123,10 +141,6 @@ void Sprint1Hardware::update() {
     buttons();
     serialCommands();
     const uint32_t now = millis();
-    // Only SNTP sets the ESP32 system clock; telemetry itself ALWAYS reads DS3231.
-    const time_t utc = time(nullptr);
-    if (!ntpSynced_ && utc >= 1704067200LL && utc <= 4102444799LL)
-        ntpSynced_ = setRtc(static_cast<uint32_t>(utc));
     if (!measuring_ && now - lastSensor_ >= SENSOR_INTERVAL_MS) {
         lastSensor_ = now;
         Wire.beginTransmission(SHT30_ADDRESS);
@@ -155,7 +169,7 @@ void Sprint1Hardware::update() {
         sqwSeen_ = ticks; sqwLastEdge_ = now;
         if (sqwWarning_) { Serial.println(F("[SQW] 1Hz edges recovered")); sqwWarning_ = false; }
     }
-    if (now - lastRtc_ >= 1000 || ticks != lastSqw_) {
+    if (now - lastRtc_ >= 1000 || ticks != lastSqw_ || (!latest_.rtcOk && time(nullptr) >= 1704067200LL)) {
         lastRtc_ = now; lastSqw_ = ticks;
         readRtc();
     }
@@ -231,6 +245,7 @@ void Sprint1Hardware::printStatus() {
     Serial.print(F(" hum=")); Serial.print(latest_.hum, 2);
     Serial.print(F(" RTC=")); Serial.print(latest_.rtcOk ? F("OK") : F("INVALID"));
     Serial.print(F(" epoch=")); Serial.print(latest_.epoch);
+    Serial.print(F(" src=")); Serial.print(rtcModulePresent_ ? F("RTC") : F("NTP"));
     Serial.print(F(" SQW=")); Serial.print(sqwSeen_);
     Serial.print(F(" OLED=")); Serial.print(oledOk_ ? F("OK") : F("MISSING"));
     Serial.print(F(" BAT=")); if (latest_.batteryOk) Serial.print(latest_.battery, 2); else Serial.print(F("N/A"));
@@ -302,7 +317,11 @@ void Sprint1Hardware::updateDisplay() {
             oled.setCursor(0, 50); oled.print(F("SQW ticks: ")); oled.print(sqwSeen_);
         }
         oled.setCursor(0, 62);
-        if (latest_.rtcOk) { oled.print(F("UTC ")); oled.print(latest_.epoch); }
-        else oled.print(F("RTC INVALID: set TIME"));
+        if (latest_.rtcOk) {
+            oled.print(rtcModulePresent_ ? F("RTC ") : F("NTP "));
+            oled.print(latest_.epoch);
+        } else {
+            oled.print(F("RTC INVALID: set TIME"));
+        }
     } while (oled.nextPage());
 }
