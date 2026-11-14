@@ -1,6 +1,6 @@
 # Sơ đồ đấu nối — ESP32 thường / ESP32-WROOM-32
 
-Cập nhật 2026-11-12 theo board thực tế của người dùng. Firmware dùng PlatformIO `esp32dev`, flash 4 MB, không cần PSRAM. **Bảng chân này thay thế sơ đồ ESP32-S3 N16R8 trước đây.** Hướng dẫn nạp và test đầy đủ tại [Sprint 1](../02_testing_and_handover/sprint1_esp32_guide.md).
+Cập nhật 2026-11-12 theo board thực tế của người dùng. Firmware dùng PlatformIO `esp32dev`, flash 4 MB, không cần PSRAM. Hướng dẫn nạp và test đầy đủ tại [Sprint 1](../02_testing_and_handover/sprint1/esp32_guide.md).
 
 ## 1. Gán chân đang dùng
 
