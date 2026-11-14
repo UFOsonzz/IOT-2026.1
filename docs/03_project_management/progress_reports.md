@@ -4,7 +4,7 @@
 
 ---
 
-## Sprint 0 — Tuần 2-7: Walking Skeleton
+## Sprint 0 — Walking Skeleton
 
 **Thời gian:** Tuần 2 → Tuần 7 (6 tuần)
 **Mục tiêu:** Xây dựng khung chạy thông toàn bộ luồng End-to-End từ thiết bị biên đến giao diện Web, dùng dữ liệu giả lập (pseudo-sensor) để chứng minh kiến trúc hoạt động đúng.
@@ -17,7 +17,7 @@
 | **Infra** | `docker-compose.yml` + `init.sql` + `mosquitto.conf` | 4 Docker containers chạy ổn định. TimescaleDB Hypertable + Immutability Trigger hoạt động đúng. |
 | **Backend** | `main.py` + `db.py` + `mqtt_worker.py` (tổng ~802 dòng) | FastAPI subscribe 4 MQTT topics, verify SHA-256, cursor pagination, WebSocket push, UDP Discovery listener. |
 | **Frontend** | `App.tsx` (678 dòng) + TypeScript types | React Dashboard: KPI cards, telemetry table, alert flash đỏ, nút audit GSP verify-chain. Real-time qua WebSocket. |
-| **Simulator** | `dummy_simulator.py` (340 dòng) | 5 kịch bản: Normal, Alert >8°C, Sync backfill, Tamper (sửa hash), LWT offline. |
+| **Simulator** | `dummy_simulator.py` và `gui_simulator.py` | 5 kịch bản: Normal, Alert >8°C, Sync backfill, Tamper (sửa hash), LWT offline. |
 | **Docs** | 8 tài liệu technical dossier + PM docs | Requirements, BOM, Architecture, Wiring, DB Schema, API Spec, Demo Script, Error Log, Risk Register, Schedule. |
 
 ### Các lỗi đã gặp và khắc phục
@@ -36,7 +36,7 @@
 
 ---
 
-## Sprint 1 — Tuần 8: Cảm biến thực I2C
+## Sprint 1 — Cảm biến thực I2C
 
 **Thời gian:** Tuần 8
 **Mục tiêu:** Thay pseudo-sensor bằng SHT30 + DS3231 thực qua I2C. Hiển thị OLED cơ bản.
@@ -51,16 +51,7 @@
 | PBI-03 | OLED SSD1306 cơ bản | Phần mềm hoàn tất; chờ test mạch thật | Hai trang cập nhật 500ms, cảm biến/RTC/network; pin N/A khi chỉ USB; phục hồi khi có màn |
 | PBI-04 | GPIO Interrupt 3 nút | Phần mềm hoàn tất; chờ test mạch thật | Ngắt CHANGE GPIO32/33/25, debounce 35ms, đổi trang/ACK/test15s; giữ nút không lặp |
 
-**Bàn giao phần mềm ngày 2026-11-12:** nhánh `feat/sprint1-esp32`, board ESP32-WROOM-32 (`esp32dev`).
-Đã chuẩn bị test host có AddressSanitizer/UndefinedBehaviorSanitizer, build PlatformIO/Vite,
-kiểm thử hệ thống trên thiết bị giả lập có ID riêng và kiểm tra Chromium nhận dữ liệu WebSocket.
-Runner `tools/check_sprint1.py --browser` ghi log, mã thoát, JSON kết quả và ảnh vào thư mục evidence.
-Kết quả thực thi chi tiết tại [báo cáo Sprint 1](../02_testing_and_handover/sprint1_test_report.md).
-
-Hỗ trợ luồng thử thật: sửa Vite typings và quyền output build, tách `dist` container khỏi host,
-chặn bản tin trùng/dữ liệu sync cũ ghi đè KPI, hiển thị đúng pin chưa đo và chữ ký dummy.
-
-### Vướng mắc & Hỗ trợ cần thiết
+### Vướng mắc và hỗ trợ cần thiết
 
 - Người dùng chưa cắm ESP32; chưa upload, đo sai số, xem OLED hay nhấn nút trên mạch thật.
 - Dùng [checklist HW-01→14](../02_testing_and_handover/sprint1_hardware_acceptance.md) khi có mạch;

@@ -3,10 +3,6 @@
 
 > **Trạng thái tài liệu hiện tại:** Đã lập xong **Kế hoạch kiểm thử** cho 3 mức và 4 kịch bản bất lợi; đã kiểm chứng luồng logic Backend/DB/UI thông qua `tools/dummy_simulator.py`. Kết quả nghiệm thu trên phần cứng thực tế sẽ được cập nhật sau.
 
-> **Bổ sung Sprint 1 (2026-11-12):** Kết quả chạy phần mềm và bằng chứng nằm trong
-> [báo cáo Sprint 1](sprint1_test_report.md); test mạch thật theo [checklist](sprint1_hardware_acceptance.md).
-> Các tiêu chí full-system ở bảng bên dưới (SD, bảo mật thật, mất mạng/máy chủ) vẫn thuộc các sprint sau.
-
 ## 1. Kế hoạch và Kết quả Kiểm thử ở 3 mức
 
 | Mức kiểm thử | Thành phần được kiểm thử | Phương pháp kiểm thử | Tiêu chí đạt (Pass Criteria) | Trạng thái (`feat/walking-skeleton`) | Kết quả nghiệm thu (Tuần 12) |

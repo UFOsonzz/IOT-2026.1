@@ -1,6 +1,6 @@
 # Product Backlog
 
-> **Cập nhật lần cuối:** 2026-11-12
+> **Cập nhật lần cuối:** 2026-11-14
 >
 > **Quy ước trạng thái:** ✅ Done | 🔄 In Progress | 📋 Planned | ❌ Blocked
 >
@@ -8,7 +8,9 @@
 
 ---
 
-## 1. Các hạng mục đã hoàn thành (Walking Skeleton — Sprint 0)
+## 1. Các hạng mục đã hoàn thành
+
+### Sprint 0 — Walking skeleton
 
 | ID | Hạng mục | Mô tả | Owner | Nhánh | Trạng thái |
 |:---|:---------|:-------|:------|:------|:-----------|
@@ -27,18 +29,6 @@
 ## 2. Backlog giai đoạn tiếp theo
 
 ### Sprint 1 — Tuần 8: Cảm biến thực I2C
-
-**Board thực tế:** ESP32 thường (ESP32-WROOM-32 / DevKit, `esp32dev`, không PSRAM).
-**Triển khai phần mềm đã xong**, build và test host đã qua; chưa nghiệm thu trên mạch thật
-và chưa đo sai số với thiết bị chuẩn. Giữ `In Progress` theo DoD đến khi có hardware evidence/review.
-**Phạm vi bàn giao 2026-11-12:** PBI-01→04 đã triển khai đủ phần mềm, có bộ kiểm thử tự động
-`tools/check_sprint1.py --browser`, công cụ Serial lưu log và checklist để người dùng nạp/test sau.
-Code PBI-01→04 đã triển khai; **kiểm thử hệ thống vẫn chưa hoàn tất** do lượt trước timeout,
-lượt kiểm tra lại gặp Docker daemon không chạy. Còn cần xác nhận E2E/browser,
-nghiệm thu mạch thật và quy trình review của nhóm; chưa coi phần mềm đã đạt toàn bộ.
-Xem [hướng dẫn test](../02_testing_and_handover/sprint1_esp32_guide.md)
-và [báo cáo](../02_testing_and_handover/sprint1_test_report.md).
-Checklist còn lại: [nghiệm thu phần cứng](../02_testing_and_handover/sprint1_hardware_acceptance.md).
 
 | ID | Hạng mục | Mô tả chi tiết | Ưu tiên | Owner | Nhánh | Trạng thái |
 |:---|:---------|:----------------|:--------|:------|:------|:-----------|
