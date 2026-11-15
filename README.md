@@ -1,7 +1,18 @@
 # Hệ thống IoT Giám sát chuỗi cung ứng lạnh tuân thủ GSP
 
-1. Đồ án học phần **IT4735 - IoT và Ứng dụng** - Đại học Bách Khoa Hà Nội.  
-2. Hệ thống giám sát chuỗi cung ứng lạnh theo tiêu chuẩn Thực hành Tốt Bảo quản (**GSP - Good Storage Practices**) dành cho Vaccine (`+2.0°C` đến `+8.0°C`) và Thủy sản đông lạnh (`-20.0°C` đến `-40.0°C`).
+Đồ án học phần **IT4735 - IoT và Ứng dụng** — Đại học Bách Khoa Hà Nội.  
+Hệ thống giám sát chuỗi cung ứng lạnh tuân thủ chuẩn GSP cho Vaccine (+2.0°C đến +8.0°C) và Thủy hải sản đông lạnh (-20.0°C đến -40.0°C).
+
+---
+
+## Thành viên nhóm
+
+| STT | Họ và tên | MSSV | Phụ trách chính |
+| :---: | :--- | :---: | :--- |
+| 1 | Trần Lê Ngọc Tâm | 202416346 | Thiết bị và firmware |
+| 2 | Hoàng Thế Hiếu | 202400043 | Backend và CSDL |
+| 3 | Bùi Tuấn Đạt | 202400096 | Frontend dashboard |
+| 4 | Đặng Bảo Quân | 202416319 | Quản lý dự án và tích hợp |
 
 ---
 
@@ -95,7 +106,7 @@ IOT-2026.1/
 
 1. **Docker & Docker Compose:** Đã cài đặt [Docker Desktop](https://www.docker.com/) hoặc Docker Engine + Docker Compose Plugin v2 (Linux) và Docker Daemon đang hoạt động.
     
-2. **Giải phóng các cổng mạng trên máy host (tránh xung đột cổng):**
+2. **Giải phóng các cổng mạng trên máy host (để xung đột):**
     
     - `1883/tcp`: MQTT Broker (Eclipse Mosquitto)
         
