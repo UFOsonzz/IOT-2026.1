@@ -1,140 +1,81 @@
-# Sơ đồ đấu nối
+# Sơ đồ đấu nối phần cứng
 
-Áp dụng cho **ESP32-WROOM-32 / ESP32 DevKit / NodeMCU-32S**. Không dùng sơ đồ này cho các dòng ESP32-S2/S3/C3/C6.
+Áp dụng cho **ESP32 Classic** (ESP32-WROOM-32 / DevKit v1) và **ESP32-S3** (DevKitC-1). Hỗ trợ cảm biến **SHT30** hoặc **SHT40** và IC RTC **DS3231**.
 
 ---
 
 ## 1. Quy tắc an toàn
 
-1. **Rút cáp USB** khỏi máy tính trước khi cắm hoặc tháo dây.
-2. **Đọc đúng chữ in trên mạch (`GPIO` / `IO` / `3V3` / `GND`)**, tuyệt đối không đếm thứ tự chân vì mỗi hãng làm vỏ mạch có thể xếp chân khác nhau.
-3. **Cấp nguồn 3V3 cho các cảm biến và màn hình**, nối chung tất cả chân `GND` lại với nhau. Không cấp 5V cho SHT30, DS3231, OLED hay nút nhấn.
+1. Rút cáp USB trước khi cắm hoặc tháo dây.
+2. Đọc đúng ký hiệu in trên mạch: `3V3`, `GND`, số hiệu chân GPIO.
+3. Cấp nguồn 3V3 cho SHT30/SHT40, DS3231, OLED. Nối chung toàn bộ chân GND.
 
 ---
 
-## 2. Bảng nối dây chi tiết
+## 2. Bảng gán chân đối chiếu
 
-### 2.1. Cảm biến, màn hình và thời gian thực
+| Thiết bị / Chức năng | Chân thiết bị | ESP32 Classic | ESP32-S3 | Lưu ý |
+| :--- | :--- | :--- | :--- | :--- |
+| **Cảm biến SHT30 / SHT40** | VCC | 3V3 | 3V3 | Nguồn 3.3V |
+| | GND | GND | GND | Nối chung GND |
+| | SDA | **GPIO21** | **GPIO8** | Chung bus I2C với OLED và RTC |
+| | SCL | **GPIO22** | **GPIO9** | Chung bus I2C với OLED và RTC |
+| **IC RTC DS3231** | VCC | 3V3 | 3V3 | Lắp pin CR2032 dự phòng |
+| | GND | GND | GND | Nối chung GND |
+| | SDA | **GPIO21** | **GPIO8** | Chung bus I2C |
+| | SCL | **GPIO22** | **GPIO9** | Chung bus I2C |
+| | SQW | **GPIO27** | **GPIO6** | Ngắt xung nhịp 1Hz |
+| **Màn hình OLED SSD1306** | VCC / VDD | 3V3 | 3V3 | Nguồn 3.3V |
+| | GND | GND | GND | Nối chung GND |
+| | SDA | **GPIO21** | **GPIO8** | Chung bus I2C |
+| | SCL / SCK | **GPIO22** | **GPIO9** | Chung bus I2C |
+| **Nút bấm BTN1** | Chân tín hiệu | **GPIO32** | **GPIO4** | Đổi trang OLED, chân còn lại nối GND |
+| **Nút bấm BTN2** | Chân tín hiệu | **GPIO33** | **GPIO5** | Tắt còi cảnh báo, chân còn lại nối GND |
+| **Nút bấm BTN3** | Chân tín hiệu | **GPIO25** | **GPIO15** | Giả lập quá nhiệt 9.5°C, chân còn lại nối GND |
+| **Nút BOOT** | Tích hợp sẵn | **GPIO0** | **GPIO0** | Giữ 5 giây để reset WiFi |
+| **Cảnh báo Relay / LED** | IN / Anode | **GPIO26** | **GPIO7** | Mức HIGH kích hoạt cảnh báo |
+| **Đo điện áp Pin** | Cầu phân áp | **GPIO34** | **GPIO1** | Cầu phân áp 2 trở 100k, tụ 100nF |
+| **LED trạng thái** | Tích hợp sẵn | **GPIO2** | **GPIO2** | Đèn báo hệ thống |
 
-Các chân có cùng tên trên ESP32 (`3V3`, `GND`, `GPIO21`, `GPIO22`) sẽ được cắm chung trên cùng các hàng của breadboard.
-
-| Thiết bị | Chân trên thiết bị | Nối vào chân ESP32 | Lưu ý cho người lắp |
-|---|---|---|---|
-| **Cảm biến nhiệt ẩm (SHT30)** | `VCC` (hoặc `VIN`) | **3V3** | Kiểm tra kỹ chữ in trên mạch, tránh cắm ngược cực |
-| | `GND` | **GND** | Dùng chung với các thiết bị khác |
-| | `SDA` | **GPIO21** | Nối chung hàng với SDA của DS3231 và OLED |
-| | `SCL` | **GPIO22** | Nối chung hàng với SCL của DS3231 và OLED |
-| **Đồng hồ thời gian thực (DS3231)** | `VCC` | **3V3** | Lắp pin cúc áo phù hợp để giữ giờ khi rút điện |
-| | `GND` | **GND** | Dùng chung với các thiết bị khác |
-| | `SDA` | **GPIO21** | Nối chung hàng với SHT30 và OLED |
-| | `SCL` | **GPIO22** | Nối chung hàng với SHT30 và OLED |
-| | `SQW` (hoặc `INT`) | **GPIO27** | **Cẩn thận:** Không cắm nhầm sang chân `32K` cạnh đó |
-| **Màn hình OLED (SSD1306 128×64)** | `VCC` (hoặc `VDD`) | **3V3** | Chú ý thứ tự `VCC` và `GND` (tùy lô mạch có thể đảo vị trí) |
-| | `GND` | **GND** | Dùng chung với các thiết bị khác |
-| | `SDA` | **GPIO21** | Nối chung hàng với SHT30 và DS3231 |
-| | `SCL` (hoặc `SCK`) | **GPIO22** | Trên một số màn OLED, chân `SCL` được in là `SCK` |
-
-### 2.2. Nút nhấn điều khiển
-
-Mỗi nút nhấn chỉ cần **2 sợi dây**: 1 chân nối vào `GPIO`, chân còn lại nối thẳng xuống `GND` (không cấp `3V3` vào nút).
-
-| Nút nhấn | Chân 1 | Chân 2 | Chức năng |
-|---|---|---|---|
-| **BTN1** | **GPIO32** | **GND** | Đổi trang màn hình OLED |
-| **BTN2** | **GPIO33** | **GND** | Tắt tiếng còi báo động tại chỗ (ACK / Mute) |
-| **BTN3** | **GPIO25** | **GND** | Giả lập quá nhiệt (9,50°C trong 15 giây) để kiểm tra |
-| **Nút BOOT** | **GPIO0** *(có sẵn trên ESP32)* | — | Nhấn giữ 5 giây khi mạch đang chạy để xóa Wi-Fi cũ |
-
-> **Mẹo cắm nút nhấn 4 chân:** Nút bấm vuông 4 chân có 2 cặp chân đã thông sẵn bên trong. Để không phải đo, hãy cắm **2 chân chéo góc nhau** (1 góc vào `GPIO`, góc đối diện chéo qua tâm nút nối vào `GND`) là chắc chắn đúng.
-
-### 2.3. Cảnh báo, đèn báo và đo pin
-
-| Thành phần | Chân thiết bị | Nối vào chân ESP32 | Cách đấu nối chi tiết |
-|---|---|---|---|
-| **Cảnh báo (Đèn LED thử nghiệm)** | Chân dài LED (`+`) | **GPIO26** (qua trở `330 Ω`) | `GPIO26` → Điện trở `330 Ω` → Chân dài LED (`+`) \| Chân ngắn LED (`-`) → `GND` |
-| **Cảnh báo (Module Relay / Còi)** | `IN` | **GPIO26** | Chọn module Relay kích mức cao (**HIGH**) hỗ trợ tín hiệu 3,3V. Nối chung `GND`. Không cắm trực tiếp còi công suất lớn vào chân ESP32 |
-| **Đo điện áp Pin** | Điểm giữa 2 điện trở | **GPIO34** | Xem sơ đồ chia áp ở Mục 3.2 (chỉ bật trong code sau khi đã lắp đủ điện trở) |
-| **LED trạng thái** | LED tích hợp trên mạch | **GPIO2** | Đã nối sẵn trên đa số board ESP32, không cần cắm thêm dây |
+> **Lưu ý cấu hình phần mềm:** Cả SHT30 và SHT40 đều dùng chung sơ đồ chân I2C ở trên. Loại cảm biến được chọn qua cờ `build_flags` trong `firmware/platformio.ini` (`-D SENSOR_TYPE_SHT40` hoặc `-D SENSOR_TYPE_SHT30`).
 
 ---
 
-## 3. Sơ đồ trực quan
-
-### 3.1. Sơ đồ nối dây chính
-
-```text
-ESP32                  SHT30             DS3231            OLED SSD1306
-3V3 ------------------ VCC ------------- VCC ------------- VCC
-GND ------------------ GND ------------- GND ------------- GND
-GPIO21 --------------- SDA ------------- SDA ------------- SDA
-GPIO22 --------------- SCL ------------- SCL ------------- SCL (hoặc SCK)
-GPIO27 --------------------------------- SQW
-
-GPIO32 ---- [ Nút BTN1 ] ---- GND
-GPIO33 ---- [ Nút BTN2 ] ---- GND
-GPIO25 ---- [ Nút BTN3 ] ---- GND
-
-GPIO26 ---- [ Trở 330Ω ] ---- [ LED (+) | LED (-) ] ---- GND   (Hoặc nối vào chân IN của Module Relay)
-```
+## 3. Sơ đồ nguyên lý
 
 ```mermaid
 flowchart LR
-    ESP["ESP32-WROOM-32"]
-    SHT["SHT30 (0x44)"]
+    MCU["ESP32 / ESP32-S3"]
+    SENSOR["SHT30 / SHT40 (0x44)"]
     RTC["DS3231 (0x68)"]
     OLED["OLED SSD1306 (0x3C)"]
-    B1["BTN1"]
-    B2["BTN2"]
-    B3["BTN3"]
-    ALARM["Module Relay hoặc LED báo"]
+    B1["BTN1: Đổi trang"]
+    B2["BTN2: Tắt còi"]
+    B3["BTN3: Giả lập 9.5°C"]
+    ALARM["Relay / Còi"]
 
-    ESP <-->|"3V3, GND, SDA(21), SCL(22)"| SHT
-    ESP <-->|"3V3, GND, SDA(21), SCL(22)"| RTC
-    ESP <-->|"3V3, GND, SDA(21), SCL(22)"| OLED
-    RTC -->|"SQW → GPIO27"| ESP
-    B1 -->|"GPIO32 ↔ GND"| ESP
-    B2 -->|"GPIO33 ↔ GND"| ESP
-    B3 -->|"GPIO25 ↔ GND"| ESP
-    ESP -->|"GPIO26 (HIGH = Bật)"| ALARM
+    MCU <-->|"I2C: SDA, SCL"| SENSOR
+    MCU <-->|"I2C: SDA, SCL"| RTC
+    MCU <-->|"I2C: SDA, SCL"| OLED
+    RTC -->|"SQW 1Hz"| MCU
+    B1 --> MCU
+    B2 --> MCU
+    B3 --> MCU
+    MCU -->|"Kích mức HIGH"| ALARM
 ```
 
-> **Lưu ý kỹ thuật cho đường tín hiệu:**
-> - **Dây I2C (`GPIO21`, `GPIO22`):** Cắm dây càng ngắn càng tốt. Hầu hết module SHT30/DS3231/OLED bán sẵn đã có điện trở kéo lên (pull-up). Nếu dùng mạch tự thiết kế chưa có trở, nối thêm trở `4,7 kΩ` từ `SDA` lên `3V3` và từ `SCL` lên `3V3`.
-> - **Chân `SQW` (`GPIO27`):** Đã bật trở kéo nội trong chip. Nếu đi dây dài bị nhiễu, có thể mắc thêm trở `4,7–10 kΩ` từ `GPIO27` lên `3V3`.
+---
 
-### 3.2. Sơ đồ mạch đo pin (tùy chọn)
+## 4. Mạch đo điện áp pin
 
-**Cảnh báo:** Tuyệt đối không nối thẳng cực dương của pin (3,7V – 4,2V) vào chân ESP32 vì sẽ làm hỏng chân đọc. Phải đi qua 2 điện trở `100 kΩ` chia đôi điện áp như hình dưới:
+Điện áp pin 3.7V đến 4.2V phải đi qua cầu phân áp chia đôi trước khi vào chân ADC:
 
 ```text
 Cực dương Pin (+) ---- [ Trở R1: 100 kΩ ] ----+---- [ Trở R2: 100 kΩ ] ---- GND
                                               |
                                               +---- [ Tụ 100 nF ] --------- GND
                                               |
-                                           GPIO34 (ESP32)
+                                     GPIO34 (Classic) / GPIO1 (S3)
 ```
 
-*(Mặc định tính năng đo pin được tắt khi chỉ cắm cáp USB. Sau khi lắp mạch trên, đổi cờ `GSP_BATTERY_CONNECTED=1` trong `platformio.ini` để hiển thị dung lượng pin).*
-
----
-
-## 4. Chân chờ cho Thẻ nhớ MicroSD
-
-Hiện tại chưa cần cắm thẻ nhớ. Giữ trống các chân sau để lắp module MicroSD ở giai đoạn tiếp theo:
-
-| Chân trên module MicroSD | Nối vào chân ESP32 |
-|---|---|
-| `CS` | **GPIO13** |
-| `MOSI` | **GPIO23** |
-| `SCK` | **GPIO18** |
-| `MISO` | **GPIO19** |
-
----
-
-## 5. Các chân trên ESP32 KHÔNG ĐƯỢC cắm thêm thiết bị
-
-Khi cần gắn thêm linh kiện ngoài danh sách trên, **tránh tuyệt đối** các chân sau:
-- **GPIO6 đến GPIO11:** Chân nối bộ nhớ Flash bên trong chip, cắm dây vào sẽ làm treo mạch.
-- **GPIO1 và GPIO3 (`TX0` / `RX0`):** Chân nạp code và truyền dữ liệu qua cáp USB.
-- **GPIO0, GPIO2, GPIO5, GPIO12, GPIO15:** Các chân khởi động (strapping pins) — nếu gắn thiết bị kéo lệch điện áp lúc mới cắm điện sẽ khiến ESP32 không khởi động hoặc không nạp được code.
-- **GPIO34 đến GPIO39:** Chỉ nhận tín hiệu vào (Input-only), không phát được tín hiệu điều khiển và không có điện trở kéo nội (không dùng để nối trực tiếp nút nhấn).
+Bật cờ `GSP_BATTERY_CONNECTED=1` trong `platformio.ini` khi đã lắp mạch đo pin.

@@ -27,6 +27,18 @@ inline bool decodeSht30(const uint8_t* data, size_t count, float& temp, float& h
     return true;
 }
 
+inline bool decodeSht40(const uint8_t* data, size_t count, float& temp, float& hum) {
+    if (count != 6 || crc8(data, 2) != data[2] || crc8(data + 3, 2) != data[5]) {
+        return false;
+    }
+    temp = -45.0f + 175.0f * ((data[0] << 8) | data[1]) / 65535.0f;
+    float rawHum = -6.0f + 125.0f * ((data[3] << 8) | data[4]) / 65535.0f;
+    if (rawHum < 0.0f) rawHum = 0.0f;
+    if (rawHum > 100.0f) rawHum = 100.0f;
+    hum = rawHum;
+    return true;
+}
+
 inline bool decodeBcd(uint8_t byte, unsigned& value) {
     if ((byte & 15) > 9 || (byte >> 4) > 9) return false;
     value = (byte >> 4) * 10 + (byte & 15);

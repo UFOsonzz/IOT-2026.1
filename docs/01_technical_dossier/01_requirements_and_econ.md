@@ -12,7 +12,7 @@
 
 | Mã YC | Tên chức năng | Mô tả chi tiết | Trạng thái |
 | :--- | :--- | :--- | :--- |
-| **FR-01** | Thu thập và xử lý vi khí hậu | Đọc dữ liệu nhiệt độ, độ ẩm từ cảm biến SHT30 và điện áp pin 18650 theo chu kỳ cài đặt. | Đã chạy thông khung |
+| **FR-01** | Thu thập và xử lý vi khí hậu | Đọc dữ liệu nhiệt độ, độ ẩm từ cảm biến SHT30 hoặc SHT40 và điện áp pin theo chu kỳ. | Đã hoàn thành trên mạch thật |
 | **FR-02** | Ghi đệm dữ liệu Offline | Khi mất kết nối mạng, tự động lưu bản ghi vào thẻ nhớ MicroSD tại biên kèm nhãn thời gian chuẩn UTC từ IC RTC DS3231. | `[TODO]` |
 | **FR-03** | Đồng bộ hóa tự động | Khi có mạng lại, tự động đẩy dữ liệu Offline từ thẻ nhớ lên kênh `gsp/v1/+/sync` không làm gián đoạn luồng realtime và không trùng lặp bản ghi. | Đã có Dedup tại DB |
 | **FR-04** | Cảnh báo khẩn cấp đa kênh | Kích hoạt Relay bật còi hú + đèn chớp tại chỗ tức thời (<= 3s), đẩy cảnh báo lên Web Dashboard và gọi API Telegram Bot khi vượt ngưỡng. | Đã có Relay & WS |
@@ -22,9 +22,9 @@
 
 | Mã YC | Thuộc tính | Con số đo lường | Phương pháp kiểm chứng thực nghiệm | Kết quả nghiệm thu |
 | :--- | :--- | :--- | :--- | :--- |
-| **NFR-01** | Độ trễ cảnh báo | Còi hú tại chỗ kêu `<= 3 giây`; Cảnh báo tới Web và Telegram bot `<= 10 giây`. | Làm nóng cảm biến SHT30, dùng đồng hồ bấm giờ đo từ lúc vượt ngưỡng đến khi còi hú và nhận tin báo. | `[Điền sau]` |
+| **NFR-01** | Độ trễ cảnh báo | Còi hú tại chỗ kêu `<= 3 giây`; Cảnh báo tới Web và Telegram bot `<= 10 giây`. | Làm nóng cảm biến SHT30 / SHT40, đo thời gian từ lúc vượt ngưỡng đến khi còi hú và nhận tin báo. | `[Điền sau]` |
 | **NFR-02** | Chịu lỗi rớt mạng | Lưu trữ offline `100%` bản ghi phát sinh trong tối thiểu `7 ngày` mất mạng. | Ngắt Wi-Fi, sau đó cấp lại mạng; đối chiếu tổng số dòng trên file `.CSV` thẻ nhớ với số bản ghi `is_backfill=true` trên CSDL. | `[Điền sau]` |
-| **NFR-03** | Độ chính xác | Nhiệt độ sai số `<= +-0.3°C`; Độ ẩm sai số `<= +-2.0% RH`. | Đặt đầu dò SHT30 cùng buồng đo với nhiệt kế chuẩn y tế đã kiểm định và điểm cân bằng nước đá đang tan (`0.0°C`). | `[Điền sau]` |
+| **NFR-03** | Độ chính xác | Nhiệt độ sai số `<= +-0.3°C`; Độ ẩm sai số `<= +-2.0% RH`. | Đặt đầu dò SHT30 / SHT40 cùng buồng đo với nhiệt kế chuẩn y tế đã kiểm định và điểm cân bằng nước đá đang tan (`0.0°C`). | `[Điền sau]` |
 | **NFR-04** | Nguồn dự phòng | Hoạt động liên tục tối thiểu `>= 8 giờ` khi mất điện lưới toàn kho. | Rút nguồn USB 5V để mạch chạy bằng pin 18650; lấy hiệu số `ts_rtc` của bản ghi cuối cùng và bản ghi lúc rút nguồn. | `[Điền sau]` |
 
 ## 4. Bài toán kinh tế
@@ -35,7 +35,7 @@
 
 | Nhóm chi phí | Khoản mục chi tiết | Cách tính (Quy mô 10 điểm đo) | Thành tiền (Triệu đồng) |
 | :--- | :--- | :--- | :--- |
-| **CapEx** | Thiết bị biên công nghiệp (ESP32-S3, SHT30 có kiểm định, vỏ IP65, pin) | `2,5 triệu x 10 bộ` | `25,0` |
+| **CapEx** | Thiết bị biên công nghiệp (ESP32 / ESP32-S3, SHT30 / SHT40 có kiểm định, vỏ IP65, pin) | `2,5 triệu x 10 bộ` | `25,0` |
 | **CapEx** | Thiết lập nền tảng Server, CSDL TimescaleDB & Tích hợp phần mềm | `1 gói trọn gói` | `20,0` |
 | **CapEx** | Nhân công lắp đặt trên xe/kho, hiệu chuẩn ban đầu & Đào tạo | `1,0 triệu x 10 điểm` | `10,0` |
 | **Tổng CapEx** | | | **`55,0 triệu đồng`** |
@@ -47,7 +47,7 @@
 
 - **Tổng chi phí sở hữu 5 năm (TCO 5 năm):** `TCO = 55 + (5 x 40) = 255 triệu đồng` (trong đó OpEx 5 năm chiếm `78,4%`).
 
-### 4.2. Phân tích độ nhạy 2 kịch bản (Sensitivity Analysis)
+### 4.2. Phân tích độ nhạy 2 kịch bản
 
 | Kịch bản | Giả định mức cải thiện đạt được | Lợi ích thu hồi (Triệu/năm) | Dòng tiền ròng (= Lợi ích - OpEx) | Thời gian hoàn vốn (= CapEx / Dòng tiền ròng) | Đánh giá tính khả thi (Tuổi thọ TB 5-7 năm) |
 | :--- | :--- | :--- | :--- | :--- | :--- |

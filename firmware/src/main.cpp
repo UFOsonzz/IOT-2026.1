@@ -109,6 +109,7 @@ void setup() {
     Serial.begin(115200);
     delay(800);
     Serial.println(F("\n=== GSP EDGE NODE STARTING ==="));
+    Serial.printf("[SYSTEM] Hardware Profile: %s | Sensor: %s\n", BOARD_TARGET_NAME, SENSOR_NAME);
 
     g_peripherals.begin();
     g_wifi.begin();

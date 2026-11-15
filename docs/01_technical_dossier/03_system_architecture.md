@@ -14,7 +14,7 @@ flowchart TB
     %% ================= LỚP 1: LỚP CẢM NHẬN / THIẾT BỊ =================
     subgraph L1 ["LỚP 1: LỚP CẢM NHẬN & THIẾT BỊ HIỆN TRƯỜNG - [TV1: Phần cứng]"]
         direction LR
-        SHT30["🌡️ Cảm biến SHT30"]:::sensing
+        SHT30["🌡️ Cảm biến SHT30 / SHT40"]:::sensing
         DS3231["⏱️ IC RTC DS3231"]:::sensing
         OLED["🖥️ Màn OLED SSD1306"]:::sensing
         SDCARD["💾 Thẻ nhớ MicroSD"]:::sensing
@@ -26,7 +26,7 @@ flowchart TB
     %% ================= LỚP 2: LỚP MẠNG & ĐIỆN TOÁN BIÊN =================
     subgraph L2 ["LỚP 2: LỚP MẠNG và ĐIỆN TOÁN BIÊN - [TV1: Firmware | TV4: Bảo mật]"]
         direction TB
-        subgraph ESP32S3 ["Vi điều khiển trung tâm ESP32-WROOM-32 - [Nhóm Tự Xây Dựng]"]
+        subgraph ESP32S3 ["Vi điều khiển trung tâm ESP32 / ESP32-S3 - [Nhóm Tự Xây Dựng]"]
             CORE0["⚙️ Core 0: Thu thập, Xử lý Biên và Bảo mật Mật mã<br/>- Đọc cảm biến theo chu kỳ<br/>- Kiểm tra ngưỡng và kích hoạt Còi, Đèn<br/>- Băm gói tin bằng SHA-256 và Ký số ECDSA"]:::edge
             CORE1["🔄 Core 1: Quản lý Mạng và Auto-Sync<br/>- Kiểm tra kết nối Wi-Fi/MQTTS<br/>- Ghi đệm SD khi rớt mạng (FR-02)<br/>- Đẩy bù nền khi có mạng (FR-03)"]:::edge
         end

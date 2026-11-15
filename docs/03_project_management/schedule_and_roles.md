@@ -16,7 +16,7 @@
 | :--- | :--- | :--- | :--- |
 | Bước 1, 2, 3, 4 | Chốt đề tài GSP Cold-Chain, đặc tả FR/NFR, đặt mua linh kiện, thiết kế kiến trúc 4 lớp và chọn công nghệ. | Cả nhóm | `[x] Đã hoàn thành` |
 | Bước 5, 6, 7 (Chạy thông) | Xây dựng nhánh `feat/walking-skeleton` chạy thông End-to-End từ ESP32-S3 -> MQTT -> FastAPI -> TimescaleDB -> React UI + Simulator. | TV4 | `[x] Đã hoàn thành` |
-| **Checkpoint 1** | Nhánh `feat/sprint1-esp32`: SHT30, DS3231, OLED và nút ngắt trên ESP32 thường; Demo dữ liệu thật giữa kỳ. | TV1 + Cả nhóm | Phần mềm hoàn tất 2026-11-12; chờ nạp/test mạch và review |
+| **Checkpoint 1** | Nhánh `feat/sprint1-esp32`: Tích hợp SHT30/SHT40, DS3231, OLED và nút ngắt trên ESP32 và ESP32-S3. | TV1 + Cả nhóm | `[x] Đã hoàn thành` |
 | Bước 5 & 6 hoàn thiện | Nhánh `feat/fw-sdcard-sync` (ghi/đẩy bù thẻ MicroSD) và nhánh `feat/sec-ecdsa-real` (ký & xác thực ECDSA `secp256r1` thật). | TV1, TV4 | `[ ] Kế hoạch` |
 | Bước 6 & 7 hoàn thiện | Nhánh `feat/be-telegram-audit` (cảnh báo Telegram Bot, lọc `from/to`, ghi `audit_logs`) và nhánh `feat/web-chart-export` (vẽ biểu đồ nhiệt độ, xuất CSV). | TV2, TV3 | `[ ] Kế hoạch` |
 | Bước 8 (Kiểm thử) | Thực hiện kiểm thử 3 mức + 4 kịch bản bất lợi và tự chấm điểm theo Rubric 100 điểm. | Cả nhóm | `[ ] Kế hoạch` |

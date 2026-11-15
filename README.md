@@ -3,28 +3,6 @@
 1. Đồ án học phần **IT4735 - IoT và Ứng dụng** - Đại học Bách Khoa Hà Nội.  
 2. Hệ thống giám sát chuỗi cung ứng lạnh theo tiêu chuẩn Thực hành Tốt Bảo quản (**GSP - Good Storage Practices**) dành cho Vaccine (`+2.0°C` đến `+8.0°C`) và Thủy sản đông lạnh (`-20.0°C` đến `-40.0°C`).
 
-**Sprint 1 dùng ESP32 thường (ESP32-WROOM-32 / ESP32 DevKit, `esp32dev`, flash 4 MB, không cần PSRAM).**
-Xem [hướng dẫn đấu dây, nạp và test từng phần](docs/02_testing_and_handover/sprint1_esp32_guide.md)
-và [kết quả kiểm thử](docs/02_testing_and_handover/sprint1_test_report.md).
-I2C dùng GPIO21/22, SQW27, BTN1/2/3 = GPIO32/33/25; không dùng sơ đồ chân S3 cũ.
-
-**Trạng thái Sprint 1:** đã triển khai PBI-01→04; kiểm thử phần mềm và bằng chứng tại
-[báo cáo Sprint 1](docs/02_testing_and_handover/sprint1_test_report.md).
-Phần kiểm tra mạch thật thực hiện theo [checklist nghiệm thu](docs/02_testing_and_handover/sprint1_hardware_acceptance.md).
-
-Chạy lại toàn bộ kiểm thử phần mềm (Docker đang chạy, không cần ESP32):
-
-```bash
-.venv/bin/python -m pip install -r tools/requirements-sprint1-browser.txt
-.venv/bin/python -m playwright install chromium
-.venv/bin/python tools/check_sprint1.py --browser
-```
-
-Lệnh này build firmware/Web, chạy test host và kiểm tra MQTT → DB → API → WebSocket → trình duyệt.
-Log/JSON/ảnh thật nằm trong `docs/02_testing_and_handover/evidence/sprint1-YYYY-MM-DD/`.
-Thiết bị mô phỏng có ID riêng `GSP-S1-*`, không ghi vào ID ESP32 `GSP-TRUCK-01`.
-Sau test thiết bị mô phỏng chuyển OFFLINE; dữ liệu test được giữ lại để đối chiếu.
-
 ---
 
 ## 1. Tổng quan kiến trúc
@@ -79,10 +57,17 @@ IOT-2026.1/
 │       ├── risk_register.md                   # Sổ đăng ký và quản trị rủi ro (Risk Register)
 │       └── schedule_and_roles.md              # Kế hoạch tiến độ 15 tuần & Phân công vai trò
 ├── firmware/
-│   ├── .gitignore
-│   ├── platformio.ini                         # Cấu hình biên dịch cho ESP32-WROOM-32
-│   ├── include/WifiConfig.h                   # Quản lý Wi-Fi 3 chế độ, Captive Portal & UDP Auto-Discovery
-│   └── src/main.cpp                           # Firmware chính chạy FreeRTOS 2 lõi
+│   ├── platformio.ini                         # Cấu hình PlatformIO cho ESP32 Classic và ESP32-S3
+│   ├── include/                               # Module cấu hình, ngoại vi và codec
+│   │   ├── app_config.h                       # Cấu hình Pinout theo chip và loại cảm biến
+│   │   ├── app_types.h                        # Định nghĩa kiểu dữ liệu gói tin
+│   │   ├── crypto_signer.h                    # Tính toán mã băm SHA-256
+│   │   ├── gsp_codec.h                        # Giải mã SHT30/SHT40, DS3231 và Debounce
+│   │   ├── mqtt_service.h                     # Dịch vụ kết nối MQTT và LWT
+│   │   ├── peripheral_manager.h               # Quản lý cảm biến, RTC, OLED, ngắt nút bấm
+│   │   ├── portal_page.h                      # Giao diện Web Captive Portal
+│   │   └── wifi_manager.h                     # Quản lý kết nối WiFi 3 chế độ
+│   └── src/                                   # Triển khai mã nguồn firmware
 ├── infra/
 │   ├── db/init.sql                            # Khởi tạo Hypertable TimescaleDB, Trigger bất biến & dữ liệu mẫu
 │   └── mosquitto/mosquitto.conf               # Cấu hình Eclipse Mosquitto 2.x (Persistence & Queue)
@@ -286,30 +271,37 @@ python tools/dummy_simulator.py --mode auto --interval 3.0
 5. Nhấn nút **"Kiểm toán chuỗi chữ ký GSP"** ở góc trên bên phải để gọi API `/api/v1/devices/GSP-TRUCK-01/verify-chain` đối soát tính toàn vẹn của toàn bộ lịch sử dữ liệu.
     
 
-## 5. Hướng dẫn Biên dịch và Nạp Firmware cho ESP32 thường
+## 5. Hướng dẫn Biên dịch và Nạp Firmware
 
-### Bước 1: Biên dịch và nạp xuống mạch ESP32-WROOM-32
+Firmware hỗ trợ **ESP32 Classic** (`esp32dev`) và **ESP32-S3** (`esp32s3`), tương thích cảm biến **SHT30** và **SHT40**. Cấu hình mạng được lưu trong NVS Flash, quản lý qua Captive Portal.
 
-Firmware trong `firmware/` sử dụng cơ chế quản lý mạng lưu trên bộ nhớ NVS Flash (`firmware/include/WifiConfig.h`), không cần sửa cứng SSID hay IP trong mã nguồn. Sử dụng **PlatformIO CLI** hoặc **PlatformIO IDE** trên VS Code:
+### Cấu hình phần cứng trong `platformio.ini`
 
-Bash
+Thiết lập chip và cảm biến trực tiếp trong `firmware/platformio.ini`:
+- **Chọn chip:** `default_envs = esp32dev` (ESP32 Classic) hoặc `default_envs = esp32s3` (ESP32-S3).
+- **Chọn cảm biến:** Sửa cờ `build_flags` thành `-D SENSOR_TYPE_SHT40` (mặc định) hoặc `-D SENSOR_TYPE_SHT30`.
 
-```
+### Bước 1: Biên dịch và nạp firmware
+
+Sử dụng PlatformIO CLI hoặc Extension trên VS Code:
+
+```bash
 cd firmware
 
-# Biên dịch kiểm tra mã nguồn
-pio run -e esp32dev
+# Biên dịch kiểm tra mã nguồn:
+pio run -e esp32dev          # Dành cho ESP32 Classic
+pio run -e esp32s3           # Dành cho ESP32-S3
 
-# Nạp firmware xuống mạch và mở cổng Serial Monitor (115200 baud)
+# Nạp firmware và mở Serial Monitor (115200 baud):
 pio run -e esp32dev --target upload --target monitor
+# Hoặc với ESP32-S3:
+pio run -e esp32s3 --target upload --target monitor
 ```
 
-### Bước 2: Chọn kịch bản kết nối mạng Wi-Fi và MQTT Broker
+### Bước 2: Chọn kịch bản kết nối mạng WiFi và MQTT Broker
 
-Khi nạp code lần đầu (chưa có Wi-Fi trong NVS) hoặc khi nhấn giữ nút **`BOOT (GPIO0)` trong 5 giây**, mạch ESP32 sẽ phát mạng Wi-Fi Access Point có tên **`GSP-ESP32-XXXX`**:
+Khi nạp code lần đầu hoặc nhấn giữ nút **`BOOT (GPIO0)` trong 5 giây**, mạch phát Access Point **`GSP-ESP32-XXXX`**:
 
-- **Option 3 (AP Direct - Không cần Router ngoài):** Kết nối trực tiếp máy tính đang chạy Docker vào Wi-Fi `GSP-ESP32-XXXX`. Không cần cấu hình gì thêm, ESP32 tự động gửi gói tin MQTT về địa chỉ máy tính `192.168.4.2:1883`.
-    
-- **Option 1 (Mạng Wi-Fi chung / Router / Hotspot điện thoại):** Kết nối vào Wi-Fi `GSP-ESP32-XXXX`, mở trình duyệt truy cập `http://192.168.4.1`, chọn **Option 1**, chọn tên Wi-Fi 2.4GHz, nhập mật khẩu rồi bấm **LƯU CẤU HÌNH** $\rightarrow$ **KHỞI ĐỘNG LẠI**. Khi vào mạng chung, ESP32 tự động phát bản tin UDP Broadcast (cổng `8888`) để tìm IP của máy chủ Backend/MQTT.
-    
-- **Option 2 (Wi-Fi phát trực tiếp từ máy tính):** Mở `http://192.168.4.1`, chọn **Option 2** khi ESP32 kết nối vào mạng Wi-Fi Hotspot phát ra từ chính máy tính đang chạy Docker. Mạch sẽ tự động lấy địa chỉ **IP Gateway** làm địa chỉ MQTT Broker mà không cần dò UDP.
+- **Option 3 (AP Direct):** Kết nối máy tính chạy Docker vào WiFi `GSP-ESP32-XXXX`. ESP32 tự động gửi dữ liệu MQTT về `192.168.4.2:1883`.
+- **Option 1 (WiFi chung):** Kết nối vào `GSP-ESP32-XXXX`, truy cập `http://192.168.4.1`, chọn WiFi, nhập mật khẩu và lưu. ESP32 phát UDP Broadcast cổng 8888 để tìm IP Server.
+- **Option 2 (Hotspot máy tính):** Mở `http://192.168.4.1`, chọn Option 2 khi ESP32 kết nối vào Hotspot phát từ máy tính chạy Docker. Mạch lấy IP Gateway làm địa chỉ MQTT Broker.

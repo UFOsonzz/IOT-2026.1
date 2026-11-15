@@ -176,31 +176,35 @@ void PeripheralManager::update() {
     pollSerial();
     const uint32_t now = millis();
 
-    // Non-blocking SHT30 measurement state machine (20ms conversion delay)
+    // Non-blocking sensor measurement state machine
     if (!measuring_ && now - lastSensor_ >= SENSOR_INTERVAL_MS) {
         lastSensor_ = now;
-        Wire.beginTransmission(SHT30_ADDRESS);
-        Wire.write(0x24);
-        Wire.write(0x00); // High repeatability, clock stretching disabled
+        Wire.beginTransmission(SENSOR_I2C_ADDR);
+#if SENSOR_CMD_LEN == 1
+        Wire.write(SENSOR_CMD_BYTE_1);
+#else
+        Wire.write(SENSOR_CMD_BYTE_1);
+        Wire.write(SENSOR_CMD_BYTE_2);
+#endif
         measuring_ = (Wire.endTransmission() == 0);
         measureStarted_ = now;
         if (!measuring_) {
             latest_.sensorOk = false;
-            Serial.println(F("[SHT30 ERROR] NACK at 0x44"));
+            Serial.printf("[%s ERROR] NACK at 0x%02X\n", SENSOR_NAME, SENSOR_I2C_ADDR);
         }
     }
 
-    if (measuring_ && now - measureStarted_ >= 20) {
+    if (measuring_ && now - measureStarted_ >= SENSOR_CONVERSION_DELAY_MS) {
         measuring_ = false;
         uint8_t bytes[6];
-        const uint8_t count = Wire.requestFrom(SHT30_ADDRESS, static_cast<uint8_t>(6));
+        const uint8_t count = Wire.requestFrom(SENSOR_I2C_ADDR, static_cast<uint8_t>(6));
         for (uint8_t i = 0; i < count && i < 6; ++i) bytes[i] = Wire.read();
 
-        latest_.sensorOk = gsp::decodeSht30(bytes, count, realTemp_, latest_.hum);
+        latest_.sensorOk = SENSOR_DECODE_FUNC(bytes, count, realTemp_, latest_.hum);
         if (latest_.sensorOk) {
             lastGoodSensor_ = now;
         } else {
-            Serial.println(F("[SHT30 ERROR] Short read or CRC mismatch; telemetry paused"));
+            Serial.printf("[%s ERROR] Short read or CRC mismatch; telemetry paused\n", SENSOR_NAME);
         }
     }
 
@@ -236,7 +240,7 @@ void PeripheralManager::update() {
     if (test_ && now - testStarted_ >= GSP_TEST_DURATION_MS) {
         test_ = false;
         requestSample_ = true;
-        Serial.println(F("[TEST] End; using real SHT30 temperature"));
+        Serial.printf("[TEST] End; using real %s temperature\n", SENSOR_NAME);
     }
 
     latest_.temp = test_ ? 9.50f : realTemp_;
@@ -320,7 +324,7 @@ void PeripheralManager::setNetwork(bool wifi, bool mqtt, const char* ip) {
 }
 
 void PeripheralManager::printStatus() {
-    Serial.print(F("[STATUS] SHT30=")); Serial.print(latest_.sensorOk ? F("OK") : F("ERROR"));
+    Serial.printf("[STATUS] %s=", SENSOR_NAME); Serial.print(latest_.sensorOk ? F("OK") : F("ERROR"));
     Serial.print(F(" temp=")); Serial.print(latest_.temp, 2);
     Serial.print(F(" hum=")); Serial.print(latest_.hum, 2);
     Serial.print(F(" RTC=")); Serial.print(latest_.rtcOk ? F("OK") : F("INVALID"));

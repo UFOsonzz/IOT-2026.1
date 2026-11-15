@@ -21,7 +21,7 @@ Hệ thống cơ sở dữ liệu trên **TimescaleDB (PostgreSQL 16)** (`infra/
 | `temp_min_c`, `temp_max_c` | `NUMERIC(5,2)` | `NOT NULL` | Ngưỡng nhiệt độ bảo quản dưới và trên (`+2.00°C` đến `+8.00°C`). |
 | `ecdsa_pub_key` | `TEXT` | `NOT NULL` | Khóa công khai ECDSA `secp256r1` dùng để xác minh chữ ký gói tin. |
 | `mqtt_token_hash` | `VARCHAR(64)` | `NOT NULL` | Mã băm SHA-256 của mật khẩu xác thực MQTT thiết bị. |
-| `fw_version` | `VARCHAR(16)` | `DEFAULT '1.0.0'` | Phiên bản Firmware hiện tại trên ESP32-S3. |
+| `fw_version` | `VARCHAR(16)` | `DEFAULT '1.0.0'` | Phiên bản Firmware trên ESP32 / ESP32-S3. |
 | `is_online` | `BOOLEAN` | `DEFAULT FALSE` | Trạng thái kết nối tức thời (cập nhật qua kênh `status` hoặc di chúc LWT). |
 | `last_seen_at` | `TIMESTAMPTZ` | `NULL` | Thời điểm gần nhất nhận được bản tin từ thiết bị. |
 
@@ -36,7 +36,7 @@ Hệ thống cơ sở dữ liệu trên **TimescaleDB (PostgreSQL 16)** (`infra/
 | `is_backfill` | `BOOLEAN` | `DEFAULT FALSE` | `FALSE`: Gửi trực tiếp qua kênh `telemetry`; `TRUE`: Đẩy bù từ MicroSD qua kênh `sync`. |
 | `temp_c`, `hum_pct`, `bat_v` | `NUMERIC` | `NOT NULL` | Nhiệt độ (`°C`), Độ ẩm (`%RH`) và Điện áp pin (`V`). |
 | `alert_code` | `SMALLINT` | `DEFAULT 0` | `0`: Bình thường; `1`: Vượt ngưỡng trần (`>8°C`); `2`: Dưới ngưỡng sàn (`<2°C`). |
-| `sha256_hash` | `CHAR(64)` | `NOT NULL` | Mã băm SHA-256 của chuỗi Canonical String tính tại ESP32-S3. |
+| `sha256_hash` | `CHAR(64)` | `NOT NULL` | Mã băm SHA-256 của chuỗi Canonical String tính tại thiết bị biên. |
 | `ecdsa_sig` | `VARCHAR(160)` | `NOT NULL` | Chữ ký số ECDSA của thiết bị biên. |
 | `sig_verified` | `BOOLEAN` | `NOT NULL` | Kết quả Backend đối soát chữ ký (`FALSE` = Dữ liệu bị sửa đổi `TAMPERED`). |
 

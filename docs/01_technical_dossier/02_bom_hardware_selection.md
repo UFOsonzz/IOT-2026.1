@@ -1,28 +1,27 @@
-# (2) Lựa Chọn Cảm Biến Và Danh Mục Vật Tư
-*(Tài liệu thuộc Bước 2 và Mục 5.3.1 - Phụ trách chính: TV1)*
+# Lựa chọn cảm biến và danh mục vật tư
 
-> Cập nhật board triển khai Sprint 1: ESP32 thường. Chi phí bên dưới giữ nguyên mức dự toán ban đầu, chưa khảo giá lại board thực tế. Đấu nối theo [sơ đồ hiện hành](04_hardware_wiring.md).
+## 1. Bảng đối chiếu đại lượng đo với linh kiện
 
-## 1. Bảng đối chiếu đại lượng cần đo với cảm biến và cơ cấu chấp hành
-
-| Đại lượng đo | Linh kiện | Dải đo và Độ chính xác | Giao thức | Đối chiếu yêu cầu phi chức năng |
+| Đại lượng đo | Linh kiện | Dải đo và Sai số | Giao thức | Đáp ứng yêu cầu |
 | :--- | :--- | :--- | :--- | :--- |
-| Nhiệt độ kho lạnh | Cảm biến **SHT30** | `-40°C .. +125°C`, sai số `+-0.2°C` | I2C (`0x44`) | Đáp ứng NFR-03 và môi trường kho lạnh ẩm. |
-| Độ ẩm tương đối (RH) | Cảm biến **SHT30** | `0% .. 100% RH`, sai số `+-2.0% RH` | I2C (`0x44`) | Đáp ứng NFR-03; có màng PE chống đọng sương. |
-| Nhãn thời gian thực | IC RTC **DS3231SN** | Sai số `+-2ppm` (tương đương ~1 phút/năm), có bù nhiệt TCXO | I2C (`0x68`) | Đảm bảo dấu thời gian chính xác khi mất mạng. |
-| Điện áp Pin dự phòng 18650 | Cầu phân áp `2x 100kOhm` và tụ `100nF` | Chia đôi áp `3.0V..4.2V` về `1.5V..2.1V` | `ADC1_CH6` (`GPIO34`) | Giám sát dung lượng pin đảm bảo chạy `>= 8 giờ` (NFR-04). |
-| Báo động tại chỗ | Module Relay 1 kênh + Còi và Đèn | Đóng cắt tải 5V DC, cách ly chống dòng ngược | Digital Out (`GPIO26`) | Đáp ứng độ trễ bật còi tại chỗ `<= 3 giây` (NFR-01). |
+| Nhiệt độ kho lạnh | **SHT30** hoặc **SHT40** | `-40°C .. +125°C`, sai số `±0.2°C` (SHT40: `±0.1°C`) | I2C (`0x44`) | Đáp ứng NFR-03 cho bảo quản dược phẩm |
+| Độ ẩm tương đối | **SHT30** hoặc **SHT40** | `0% .. 100% RH`, sai số `±2.0% RH` (SHT40: `±1.5% RH`) | I2C (`0x44`) | Đáp ứng NFR-03 |
+| Thời gian thực | IC RTC **DS3231SN** | Sai số `±2ppm` (~1 phút/năm), tích hợp bù nhiệt TCXO | I2C (`0x68`) | Mốc thời gian chuẩn UTC khi mất mạng |
+| Điện áp pin dự phòng | Cầu phân áp 2 trở 100kΩ, tụ 100nF | Chia đôi điện áp 3.0V..4.2V về 1.5V..2.1V | ADC1 | Giám sát pin duy trì ≥ 8 giờ (NFR-04) |
+| Báo động tại chỗ | Module Relay 1 kênh + Còi 5V | Đóng cắt tải 5V DC, cách ly quang | Digital Out | Độ trễ còi hú tại chỗ ≤ 3 giây (NFR-01) |
 
-## 2. Danh mục vật tư dự kiến kèm thông số quyết định và chi phí
+> **Cấu hình cảm biến:** Cả SHT30 và SHT40 đều sử dụng địa chỉ I2C `0x44` và chung sơ đồ chân. Việc chuyển đổi cảm biến được thiết lập trong `firmware/platformio.ini` qua cờ `build_flags = -D SENSOR_TYPE_SHT40` hoặc `-D SENSOR_TYPE_SHT30`.
 
-| STT | Tên linh kiện | Thông số kỹ thuật quyết định | SL | Đơn giá (VNĐ) | Thành tiền (VNĐ) | Lý do lựa chọn & Nguồn cung |
+## 2. Danh mục vật tư dự kiến
+
+| STT | Tên linh kiện | Thông số kỹ thuật | SL | Đơn giá (VNĐ) | Thành tiền (VNĐ) | Ghi chú |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Vi điều khiển ESP32 DevKit / WROOM-32 | ESP32 thường, flash 4MB, không yêu cầu PSRAM, Dual-core 240MHz | 1 | 110.000 | 110.000 | Chạy FreeRTOS 2 lõi tách biệt; có phần cứng tăng tốc SHA-256. |
-| 2 | Đầu dò cảm biến SHT30 | Giao tiếp I2C, vỏ bọc chống ẩm/đọng sương | 1 | 100.000 | 100.000 | Tín hiệu số I2C đã hiệu chuẩn sẵn từ nhà máy, không bị trôi ADC. |
-| 3 | Màn hình OLED SSD1306 0.96" | Độ phân giải 128x64, giao tiếp I2C | 1 | 30.000 | 30.000 | Dùng chung bus I2C0; hiển thị tại chỗ. |
-| 4 | Module MicroSD + RTC DS3231 | Giao tiếp SPI (MicroSD) + I2C (DS3231 kèm pin CR2032) | 1 | 100.000 | 100.000 | Lưu đệm `.CSV` tối thiểu 7 ngày mất mạng. |
-| 5 | Module Relay 1 kênh 5V | Kích mức HIGH, có transistor và diode chống dòng ngược | 1 | 25.000 | 25.000 | Cách ly tải công suất của còi hú khỏi chân GPIO vi điều khiển. |
-| 6 | Còi hú mini 5V + Đèn chớp | Điện áp 5V DC, âm lượng lớn | 1 | 20.000 | 20.000 | Cảnh báo tức thời cho tài xế và thủ kho. |
-| 7 | Mạch sạc + Pin Li-ion 18650 | Pin 3.7V dung lượng >= 2600mAh kèm mạch sạc/boost 5V | 1 | 100.000 | 100.000 | Duy trì hệ thống hoạt động >= 8 giờ khi mất điện. |
-| 8 | Vật tư phụ (Hộp IP65, nút nhấn, trở, tụ) | Hộp nhựa ABS IP65, 3 nút nhấn HMI, trở 100kOhm, tụ 100nF | 1 | 50.000 | 50.000 | Chống ẩm kho lạnh và tạo giao diện 3 nút nhấn HMI. |
-| **Tổng** | | | | | **535.000** | *Khảo giá tháng 11/2026* |
+| 1 | Vi điều khiển ESP32 / ESP32-S3 | Dual-core 240MHz, tích hợp WiFi và BLE | 1 | 110.000 | 110.000 | Cấu hình qua môi trường `esp32dev` hoặc `esp32s3` |
+| 2 | Cảm biến SHT30 / SHT40 | Chuẩn I2C, vỏ bọc chống ẩm | 1 | 100.000 | 100.000 | Cấu hình qua cờ biên dịch `platformio.ini` |
+| 3 | Màn hình OLED SSD1306 0.96 inch | Độ phân giải 128x64, giao tiếp I2C | 1 | 30.000 | 30.000 | Hiển thị tại chỗ |
+| 4 | Module MicroSD + RTC DS3231 | SPI (MicroSD) + I2C (DS3231 kèm pin CR2032) | 1 | 100.000 | 100.000 | Lưu đệm offline tối thiểu 7 ngày |
+| 5 | Module Relay 1 kênh 5V | Kích mức HIGH, có diode chống dòng ngược | 1 | 25.000 | 25.000 | Cách ly tải còi hú khỏi MCU |
+| 6 | Còi hú 5V và đèn báo | Nguồn 5V DC, âm lượng lớn | 1 | 20.000 | 20.000 | Cảnh báo tức thời tại chỗ |
+| 7 | Mạch sạc và Pin Li-ion 18650 | Dung lượng ≥ 2600mAh, mạch boost 5V | 1 | 100.000 | 100.000 | Duy trì hoạt động ≥ 8 giờ khi mất điện |
+| 8 | Linh kiện phụ | Vỏ hộp IP65, 3 nút nhấn, trở, tụ | 1 | 50.000 | 50.000 | Bảo vệ môi trường và giao tiếp nút bấm |
+| **Tổng** | | | | | **535.000** | |

@@ -1,21 +1,20 @@
-# (8) Nhật Ký Lỗi Và Bài Học
-*(Thành phần bắt buộc số 8 của Hồ sơ kỹ thuật dự án theo Mục 5.3.1 & 5.3.3g - Học phần IT4735)*
+# Nhật ký lỗi và bài học
 
-Tài liệu này ghi nhận trung thực các lỗi kỹ thuật về phần cứng, firmware, mạng và cơ sở dữ liệu mà nhóm đã gặp và trực tiếp gỡ lỗi theo từng giai đoạn phát triển hệ thống.
+Tài liệu ghi nhận các lỗi kỹ thuật phát sinh và giải pháp xử lý theo từng giai đoạn phát triển.
 
-## 1. Các lỗi đã gặp và xử lý ở giai đoạn Chạy thông luồng
+## 1. Giai đoạn chạy thông luồng (Sprint 0)
 
-| Mã Lỗi | Giai đoạn | Hiện tượng lỗi | Nguyên nhân | Cách khắc phục | Bài học rút ra |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **ERR-01** | Kiểm thử kết nối mạng Option 1 (`WifiConfig.h`) | Mạch ESP32-S3 kết nối vào Wi-Fi chung (Option 1) nhưng liên tục in log `[UDP DISCOVERY] Chưa thấy phản hồi UDP cổng 8888` và không kết nối được MQTT. | Firmware ở Option 1 phát gói tin UDP Broadcast `"WHO_IS_IOT_SERVER"` tới cổng `8888`, nhưng trên Backend chưa khởi tạo dịch vụ lắng nghe cổng `8888/udp` để trả lời `"IOT_SERVER_HERE"`. | Bổ sung `UdpDiscoveryProtocol` lắng nghe cổng `8888/udp` trong `backend/app/main.py` và mở port `"8888:8888/udp"` trong `docker-compose.yml`. | Mọi giao thức tự động khám phá (Auto-Discovery) đều phải được kiểm thử cả 2 đầu (Client & Server) và cần bổ sung thêm ô nhập IP tĩnh dự phòng ở các bản tiếp theo khi mạng chặn Broadcast. |
-| **ERR-02** | Khởi chạy Docker bằng `.env.example` | Khi chạy `docker compose up` lần đầu rồi mới sửa file `.env`, container `gsp-backend` báo lỗi `password authentication failed for user "gsp_user"`. | Mật khẩu trong `.env.example` lúc đầu bị đặt lệch với giá trị fallback trong `docker-compose.yml` và `db.py`, trong khi Docker Volume `timescale_data` của PostgreSQL giữ mật khẩu của lần khởi tạo đầu tiên. | Đồng bộ toàn bộ mật khẩu mẫu trong `.env.example`, `docker-compose.yml` và `db.py` về cùng một giá trị thống nhất (`gsp_pass`) và hướng dẫn dùng `docker compose down -v` khi cần reset DB. | Cấu hình biến môi trường (`.env.example`) và `docker-compose.yml` phải đồng nhất tuyệt đối để đảm bảo tiêu chí "dựng lại hệ thống bằng một lệnh duy nhất". |
-| **ERR-03** | Đối soát mã băm SHA-256 giữa C++ và Python | Mã băm SHA-256 tính trên ESP32-S3 (`main.cpp`) và trên Backend (`mqtt_worker.py`) đôi khi khác nhau dù cùng giá trị nhiệt độ (ví dụ `4.5` vs `4.50`). | Sai khác định dạng số thực dấu phẩy động (Floating-point formatting) khi ghép chuỗi trước khi băm SHA-256. | Định nghĩa **Chuỗi chuẩn hóa (Canonical String)**: `<device_id>|<seq_no>|<ts_rtc>|<temp_2dec>|<hum_2dec>|<alert_code>` ép cố định 2 chữ số thập phân (`%.2f` trong C++ và `:.2f` trong Python) kèm làm tròn trước khi băm. | Khi ký số và băm dữ liệu giữa thiết bị nhúng C/C++ và Server Python, không bao giờ băm trực tiếp chuỗi JSON thô (do thứ tự key và khoảng trắng có thể thay đổi) mà phải băm trên một Canonical String cố định. |
+| Mã lỗi | Hiện tượng | Nguyên nhân | Cách khắc phục | Bài học |
+| :--- | :--- | :--- | :--- | :--- |
+| **ERR-01** | ESP32 không tìm thấy Backend qua UDP Discovery | Backend thiếu UDP listener tại cổng 8888 | Bổ sung `UdpDiscoveryProtocol` trong `backend/app/main.py`, mở cổng `8888/udp` trong `docker-compose.yml` | Kiểm thử giao thức Auto-Discovery ở cả Client và Server |
+| **ERR-02** | Khởi chạy Docker báo lỗi xác thực TimescaleDB | Mật khẩu trong `.env.example` lệch với cấu hình mặc định | Đồng bộ mật khẩu `gsp_pass` giữa `.env.example`, `docker-compose.yml` và `db.py` | Cấu hình biến môi trường phải đồng nhất giữa các dịch vụ |
+| **ERR-03** | Lệch mã băm SHA-256 giữa C++ và Python | Khác biệt định dạng số thực khi tạo chuỗi băm | Thống nhất Canonical String: `<device_id>|<seq_no>|<ts_rtc>|<temp_2dec>|<hum_2dec>|<alert_code>` với 2 chữ số thập phân | Băm trên chuỗi chuẩn hóa cố định, không băm JSON thô |
 
-## 2. Nhật ký lỗi và Kiểm thử toàn hệ thống
+## 2. Giai đoạn cảm biến thực và mạch phần cứng (Sprint 1)
 
-| Mã Lỗi | Giai đoạn | Hiện tượng lỗi | Nguyên nhân | Cách khắc phục | Bài học rút ra |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **ERR-04** | Sprint 1, build Web | `ImportMeta.env` thiếu kiểu Vite | Chưa khai báo Vite client types | Thêm `web/src/vite-env.d.ts` | Chạy production build bên cạnh dev server |
-| **ERR-05** | Sprint 1, build Web trên host | `EACCES` khi xóa `web/dist/assets` | Build trong container root ghi output lên bind mount host | Sửa quyền thư mục output hiện có, mount riêng `/app/dist`; thêm `.dockerignore` | Tách output build container khỏi source host |
-| **ERR-06** | Sprint 1, Dashboard realtime | Sync cũ/bản tin trùng có thể thay KPI hiện tại | Mọi event đều được đẩy lên đầu, kể cả `inserted=false` | Bỏ event trùng, so thời gian và sắp lịch sử theo UTC; regression bằng MQTT/WS/browser thật | Dùng khóa thời gian DB khi đồng bộ trạng thái UI |
-| **ERR-07** | Sprint 1, ESP32 chỉ USB | `bat_v=0` bị báo pin yếu; nhãn xác thực giả bị gọi ECDSA | UI chưa xử lý sentinel chưa đo pin, nhãn giữ từ skeleton | Pin hiển thị chưa đo, sửa GPIO34; nhãn Hash Verified và chú thích chữ ký dummy | Hiển thị đúng khả năng đã triển khai và dữ liệu thực có |
+| Mã lỗi | Hiện tượng | Nguyên nhân | Cách khắc phục | Bài học |
+| :--- | :--- | :--- | :--- | :--- |
+| **ERR-04** | Xung đột bus I2C giữa OLED, cảm biến và RTC | Task OLED cập nhật 500ms trùng thời điểm task đọc cảm biến và RTC mỗi 2s | Điều phối tuần tự hóa truy cập bus I2C trong `PeripheralManager`, tránh gọi chồng chéo | Chia sẻ bus I2C giữa nhiều thiết bị cần kiểm soát thời gian và trạng thái bận |
+| **ERR-05** | Nhiễu tín hiệu và nhận diện sai khi bấm nút | Độ nảy cơ học của tiếp điểm nút bấm vật lý | Thêm bộ lọc Debounce 35ms và cờ khóa trạng thái chống lặp khi giữ nút | Bắt buộc xử lý Debounce cho mọi nút bấm điều khiển |
+| **ERR-06** | Dữ liệu nhiệt ẩm sai khi đổi cảm biến sang SHT40 | SHT40 dùng command đo 0xFD và công thức độ ẩm khác SHT30 | Bổ sung hàm `decodeSht40`, macro chọn cảm biến trong `app_config.h` và cấu hình cờ `-D SENSOR_TYPE_SHT40` / `SHT30` trong `platformio.ini` | Tách riêng hàm giải mã theo Datasheet từng dòng cảm biến và quản lý cấu hình bằng build flags |
+| **ERR-07** | Lỗi gán chân khi chuyển giữa ESP32 Classic và ESP32-S3 | ESP32-S3 không có GPIO34 và chân I2C mặc định khác ESP32 Classic | Định nghĩa sơ đồ chân theo macro mục tiêu phần cứng `CONFIG_IDF_TARGET_ESP32S3` trong `app_config.h` | Quản lý Pinout tập trung theo cấu hình Board |
