@@ -1,11 +1,11 @@
-#include "Sprint1Logic.h"
+#include "gsp_codec.h"
 #include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
 
 int main() {
-    using namespace sprint1;
+    using namespace gsp;
     const uint8_t vector[] = {0xbe, 0xef};
     assert(crc8(vector, 2) == 0x92); // Sensirion datasheet test vector.
     float temp = 0, hum = 0;
@@ -13,10 +13,12 @@ int main() {
     frame[2] = crc8(frame, 2); frame[5] = crc8(frame + 3, 2);
     assert(decodeSht30(frame, 6, temp, hum));
     assert(std::fabs(temp - 25) < 0.001 && std::fabs(hum - 50.00076) < 0.001);
+    assert(decodeSht40(frame, 6, temp, hum));
+    assert(std::fabs(temp - 25) < 0.001 && std::fabs(hum - 56.50095) < 0.001);
     assert(!decodeSht30(frame, 5, temp, hum));
     frame[2] ^= 1; assert(!decodeSht30(frame, 6, temp, hum)); frame[2] ^= 1;
     frame[5] ^= 1; assert(!decodeSht30(frame, 6, temp, hum));
-    std::puts("PASS SHT30 datasheet CRC, conversion, short read, temperature/humidity corruption");
+    std::puts("PASS SHT30/SHT40 datasheet CRC, conversion, short read, temperature/humidity corruption");
 
     uint8_t rtc[] = {0x59, 0x59, 0x23, 5, 0x29, 0x02, 0x24};
     uint32_t epoch;

@@ -1,4 +1,8 @@
-#include "Sprint1Hardware.h"
+#ifndef SENSOR_TYPE_SHT30
+#define SENSOR_TYPE_SHT30
+#endif
+
+#include "peripheral_manager.h"
 #include "Wire.h"
 #include <cassert>
 #include <cmath>
@@ -12,12 +16,12 @@ MockSerial Serial;
 MockWire Wire;
 std::string mockDisplay;
 
-void step(Sprint1Hardware& hw, uint32_t elapsed) { mockMillis += elapsed; hw.update(); }
+void step(PeripheralManager& hw, uint32_t elapsed) { mockMillis += elapsed; hw.update(); }
 void edge(int pin, bool down) {
     mockPins[pin] = down ? LOW : HIGH;
     assert(mockInterrupts[pin]); mockInterrupts[pin]();
 }
-void click(Sprint1Hardware& hw, int pin) {
+void click(PeripheralManager& hw, int pin) {
     edge(pin, true); hw.update(); step(hw, 35);
     edge(pin, false); hw.update(); step(hw, 35);
 }
@@ -25,15 +29,15 @@ void setSensor(float temp, float hum) {
     uint16_t t = std::lround((temp + 45) / 175 * 65535), h = std::lround(hum / 100 * 65535);
     Wire.frame[0] = t >> 8; Wire.frame[1] = t;
     Wire.frame[3] = h >> 8; Wire.frame[4] = h;
-    Wire.frame[2] = sprint1::crc8(Wire.frame, 2);
-    Wire.frame[5] = sprint1::crc8(Wire.frame + 3, 2);
+    Wire.frame[2] = gsp::crc8(Wire.frame, 2);
+    Wire.frame[5] = gsp::crc8(Wire.frame + 3, 2);
 }
 
 int main() {
     for (auto& pin : mockPins) pin = HIGH;
     setSensor(4.5, 62.5);
     Wire.regs[0x0f] = 0x80; // New RTC with OSF set.
-    Sprint1Hardware hw;
+    PeripheralManager hw;
     hw.begin();
     assert(Wire.sda == 21 && Wire.scl == 22 && Wire.clock == 400000);
     for (int pin : {27, 32, 33, 25}) assert(mockInterrupts[pin] && mockModes[pin] == INPUT_PULLUP);

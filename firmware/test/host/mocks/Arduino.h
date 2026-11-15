@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
+#include <cstdarg>
+#include <cstdio>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
@@ -60,6 +62,14 @@ public:
     }
     void println() { output += '\n'; }
     template<class T> void println(T value) { print(value); println(); }
+    void printf(const char* format, ...) {
+        char buf[256];
+        va_list args;
+        va_start(args, format);
+        std::vsnprintf(buf, sizeof(buf), format, args);
+        va_end(args);
+        output += buf;
+    }
     int available() { return input.size() - position; }
     char read() { return input[position++]; }
     void inject(const std::string& text) { input = text; position = 0; }
