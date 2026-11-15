@@ -1,17 +1,23 @@
-# (7) Giao Diện Và Kịch Bản Demo
-*(Thành phần bắt buộc số 7 theo Mục 5.3.1 - Phụ trách chính: TV3)*
+# Giao diện và kịch bản demo
 
-## 1. Các màn hình chính của Web Dashboard
-- `[TODO - TV3 chèn ảnh chụp màn hình 1: Trạng thái hoạt động bình thường chuẩn GSP (ONLINE, ECDSA Verified)]`
-- `[TODO - TV3 chèn ảnh chụp màn hình 2: Giao diện nhấp nháy Đỏ khi vượt ngưỡng nhiệt độ > 8.0°C]`
-- `[TODO - TV3 chèn ảnh chụp màn hình 3: Phát hiện gói tin bị sửa đổi trái phép (Nhãn TAMPERED) & Kết quả Kiểm toán chuỗi chữ ký]`
+Phụ trách: TV3
 
-## 2. Kịch bản Demo (Cập nhật theo tiến độ luồng chạy thông)
+---
 
-| Bước | Thao tác thực hiện khi Demo | Kết quả mong đợi trên Phần cứng & Giao diện | Trạng thái hiện tại (`feat/walking-skeleton`) |
+## 1. Các chế độ hiển thị trên Web Dashboard
+
+1. **Bình thường:** Trạng thái `ONLINE`, nhiệt độ và độ ẩm trong ngưỡng an toàn GSP (+2.0°C đến +8.0°C), chữ ký hợp lệ.
+2. **Cảnh báo:** Thẻ đo nhấp nháy đỏ khi nhiệt độ vượt ngưỡng an toàn.
+3. **Kiểm toán:** Gói tin bị can thiệp trên đường truyền sẽ bị gắn cờ `TAMPERED`, kết quả kiểm toán chuỗi băm báo vi phạm toàn vẹn.
+
+---
+
+## 2. Kịch bản demo
+
+| Bước | Thao tác | Hiện tượng trên mạch và giao diện | Trạng thái |
 | :--- | :--- | :--- | :--- |
-| **Bước 1** | Khởi chạy Docker (`docker compose up -d`) và cấp nguồn cho mạch ESP32-S3 (hoặc chạy `dummy_simulator.py`). | Trạng thái thiết bị trên Web chuyển từ `OFFLINE` sang `ONLINE` màu xanh lá; dữ liệu cập nhật mỗi 10s qua WebSocket. | **Đã chạy thông** (Dữ liệu giả lập trên MCU & Simulator) |
-| **Bước 2** | Nhấn nút `BTN3 (GPIO7 - TEST)` trên mạch (hoặc chọn `[2]` trên Simulator). *(Giai đoạn sau: Tác động nhiệt trực tiếp vào cảm biến SHT30)*. | Nhiệt độ vọt lên `> 8.0°C` -> Relay đóng bật còi/đèn tại chỗ, Web nhấp nháy cảnh báo Đỏ. *(Giai đoạn sau: Bắn thêm tin nhắn Telegram)*. | **Đã có Relay, Nút TEST & Web Alert** (`[TODO Tuần 8: SHT30]`, `[TODO Tuần 10: Telegram]`) |
-| **Bước 3** | Nhấn nút `BTN2 (GPIO6 - ACK/Mute)` tại mạch biên. | Còi hú tại chỗ ngắt tiếng để tài xế xử lý sự cố, nhưng cảnh báo trên Web vẫn giữ nguyên để lưu vết. | **Đã có logic trong Firmware** *(Cần tối ưu sang ngắt GPIO ở Tuần 8)* |
-| **Bước 4** | Ngắt kết nối mạng (hoặc chạy tùy chọn `[3]`, `[5]` trên Simulator) để kiểm tra LWT và luồng đẩy bù `sync`. | Khi mất mạng quá 30s, Broker phát bản tin LWT báo `OFFLINE`. Khi có mạng lại, các bản ghi lưu đệm đẩy lên với nhãn `AUTO-SYNC (SD)` không trùng lặp. | **Đã chạy thông LWT & Dedup tại DB** (`[TODO Tuần 9: Đọc/ghi file CSV trên MicroSD thật]`) |
-| **Bước 5** | Chạy tùy chọn `[4]` trong `dummy_simulator.py` (sửa nhiệt độ từ `9.80°C` thành `4.50°C` trên đường truyền) và bấm nút **"Kiểm toán chuỗi chữ ký GSP"**. | Bản ghi bị gắn cờ đỏ `TAMPERED`; hộp thoại kiểm toán báo `COMPROMISED` và chỉ rõ số lượng bản ghi bị can thiệp. | **Đã chạy thông** (Băm SHA-256 thật + Chữ ký Dummy; `[TODO Tuần 9: ECDSA secp256r1 thật]`) |
+| **Bước 1** | Bật Docker và cấp nguồn mạch ESP32 / ESP32-S3 | Thiết bị chuyển `ONLINE`; dữ liệu nhiệt ẩm từ SHT30/SHT40 và timestamp từ DS3231 đẩy lên Web mỗi 2 giây. | Đã hoàn thành |
+| **Bước 2** | Nhấn BTN3 (GPIO25 trên Classic / GPIO15 trên S3) hoặc làm nóng cảm biến | Nhiệt độ vượt 8.0°C, Relay kích hoạt còi và đèn tại chỗ, Web Dashboard nhấp nháy cảnh báo đỏ. | Đã hoàn thành |
+| **Bước 3** | Nhấn BTN2 (GPIO33 trên Classic / GPIO5 trên S3) | Còi ngắt âm thanh tại chỗ, sự cố cảnh báo vẫn lưu trên Web phục vụ truy xuất. | Đã hoàn thành |
+| **Bước 4** | Ngắt kết nối WiFi của mạch | Quá 30 giây Broker phát LWT chuyển trạng thái sang `OFFLINE` trên Web. | Đã hoàn thành |
+| **Bước 5** | Sửa đổi giá trị nhiệt độ trong gói tin truyền | Backend phát hiện sai lệch mã băm SHA-256, gắn nhãn đỏ `TAMPERED` trên bảng dữ liệu. | Đã hoàn thành |

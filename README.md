@@ -1,16 +1,27 @@
 # Hệ thống IoT Giám sát chuỗi cung ứng lạnh tuân thủ GSP
 
-1. Đồ án học phần **IT4735 - IoT và Ứng dụng** - Đại học Bách Khoa Hà Nội.  
-2. Hệ thống giám sát chuỗi cung ứng lạnh theo tiêu chuẩn Thực hành Tốt Bảo quản (**GSP - Good Storage Practices**) dành cho Vaccine (`+2.0°C` đến `+8.0°C`) và Thủy sản đông lạnh (`-20.0°C` đến `-40.0°C`).
+Đồ án học phần **IT4735 - IoT và Ứng dụng** — Đại học Bách Khoa Hà Nội.  
+Hệ thống giám sát chuỗi cung ứng lạnh tuân thủ chuẩn GSP cho Vaccine (+2.0°C đến +8.0°C) và Thủy hải sản đông lạnh (-20.0°C đến -40.0°C).
+
+---
+
+## Thành viên nhóm
+
+| STT | Họ và tên | MSSV | Phụ trách chính |
+| :---: | :--- | :---: | :--- |
+| 1 | Trần Lê Ngọc Tâm | 202416346 | Thiết bị và firmware |
+| 2 | Hoàng Thế Hiếu | 202400043 | Backend và CSDL |
+| 3 | Bùi Tuấn Đạt | 202400096 | Frontend dashboard |
+| 4 | Đặng Bảo Quân | 202416319 | Quản lý dự án và tích hợp |
 
 ---
 
 ## 1. Tổng quan kiến trúc
 
-1. **Kiến trúc Một chiều (Unidirectional):** Thiết bị biên ESP32-S3 chỉ đọc cảm biến, băm SHA-256, ký số ECDSA và đẩy dữ liệu lên Broker; **KHÔNG** mở kênh nhận lệnh điều khiển từ xa nhằm đảm bảo tính chống chối bỏ.
+1. **Kiến trúc Một chiều (Unidirectional):** Thiết bị biên ESP32 chỉ đọc cảm biến, băm SHA-256, đính kèm chữ ký dummy (ECDSA thật thuộc Sprint 2) và đẩy dữ liệu lên Broker; **KHÔNG** mở kênh nhận lệnh điều khiển từ xa nhằm đảm bảo tính chống chối bỏ.
 2. **Dữ liệu Chuỗi thời gian Bất biến (Append-Only & Immutable):** Bảng `telemetry_logs` trên TimescaleDB được khóa cứng thao tác `UPDATE` và `DELETE` ở tầng Engine của cơ sở dữ liệu bằng Trigger `trg_immutable_telemetry` (mã lỗi SQLSTATE `42501`).
 3. **Đồng bộ bù Không trùng lặp (Idempotent Auto-Sync):** Kết hợp lưu đệm Offline tại biên và ràng buộc khóa chính kép `ON CONFLICT (device_id, ts_rtc) DO NOTHING` tại CSDL.
-4. **Đa nhiệm 2 Lõi trên ESP32-S3:**
+4. **Đa nhiệm 2 Lõi trên ESP32:**
    - **Core 0:** Đọc cảm biến, kiểm tra ngưỡng GSP, kích hoạt Relay bật còi/đèn tại chỗ tức thời, xử lý nút nhấn HMI, băm SHA-256 và tính toán ECDSA.
    - **Core 1:** Quản lý kết nối Wi-Fi (3 chế độ + Captive Portal + UDP Auto-Discovery), duy trì MQTT Keep-Alive + Di chúc LWT và đẩy dữ liệu qua Queue.
 
@@ -38,7 +49,7 @@ IOT-2026.1/
 │   │   ├── 01_requirements_and_econ.md        # Đặc tả yêu cầu FR/NFR & Phân tích kinh tế TCO/ROI
 │   │   ├── 02_bom_hardware_selection.md       # Lựa chọn cảm biến & Danh mục vật tư (BOM)
 │   │   ├── 03_system_architecture.md          # Kiến trúc 4 lớp & Lập luận chọn giao thức
-│   │   ├── 04_hardware_wiring.md              # Sơ đồ đấu nối phần cứng & Bảng gán chân ESP32-S3
+│   │   ├── 04_hardware_wiring.md              # Sơ đồ đấu nối phần cứng & Bảng gán chân ESP32
 │   │   ├── 05_database_schema.md              # Lược đồ CSDL 4 bảng & Chiến lược đánh chỉ số (Index)
 │   │   ├── 06_api_spec.md                     # Hợp đồng dữ liệu MQTT, Canonical String & Đặc tả REST/WS API
 │   │   ├── 06_postman_collection.json         # Bộ kiểm thử tự động REST API trên Postman
@@ -57,15 +68,22 @@ IOT-2026.1/
 │       ├── risk_register.md                   # Sổ đăng ký và quản trị rủi ro (Risk Register)
 │       └── schedule_and_roles.md              # Kế hoạch tiến độ 15 tuần & Phân công vai trò
 ├── firmware/
-│   ├── .gitignore
-│   ├── platformio.ini                         # Cấu hình biên dịch cho ESP32-S3-WROOM-1-N16R8
-│   ├── include/WifiConfig.h                   # Quản lý Wi-Fi 3 chế độ, Captive Portal & UDP Auto-Discovery
-│   └── src/main.cpp                           # Firmware chính chạy FreeRTOS 2 lõi
+│   ├── platformio.ini                         # Cấu hình PlatformIO cho ESP32 Classic và ESP32-S3
+│   ├── include/                               # Module cấu hình, ngoại vi và codec
+│   │   ├── app_config.h                       # Cấu hình Pinout theo chip và loại cảm biến
+│   │   ├── app_types.h                        # Định nghĩa kiểu dữ liệu gói tin
+│   │   ├── crypto_signer.h                    # Tính toán mã băm SHA-256
+│   │   ├── gsp_codec.h                        # Giải mã SHT30/SHT40, DS3231 và Debounce
+│   │   ├── mqtt_service.h                     # Dịch vụ kết nối MQTT và LWT
+│   │   ├── peripheral_manager.h               # Quản lý cảm biến, RTC, OLED, ngắt nút bấm
+│   │   ├── portal_page.h                      # Giao diện Web Captive Portal
+│   │   └── wifi_manager.h                     # Quản lý kết nối WiFi 3 chế độ
+│   └── src/                                   # Triển khai mã nguồn firmware
 ├── infra/
 │   ├── db/init.sql                            # Khởi tạo Hypertable TimescaleDB, Trigger bất biến & dữ liệu mẫu
 │   └── mosquitto/mosquitto.conf               # Cấu hình Eclipse Mosquitto 2.x (Persistence & Queue)
 ├── tools/
-│   ├── gui_simulator.py                       # Ứng dụng Desktop GUI mô phỏng phần cứng ESP32-S3 & tấn công (HIL)
+│   ├── gui_simulator.py                       # Ứng dụng Desktop GUI mô phỏng phần cứng ESP32 & tấn công (HIL)
 │   └── dummy_simulator.py                     # Công cụ CLI giả lập nhanh 5 kịch bản qua dòng lệnh
 └── web/
     ├── Dockerfile
@@ -88,7 +106,7 @@ IOT-2026.1/
 
 1. **Docker & Docker Compose:** Đã cài đặt [Docker Desktop](https://www.docker.com/) hoặc Docker Engine + Docker Compose Plugin v2 (Linux) và Docker Daemon đang hoạt động.
     
-2. **Giải phóng các cổng mạng trên máy host (tránh xung đột cổng):**
+2. **Giải phóng các cổng mạng trên máy host (để xung đột):**
     
     - `1883/tcp`: MQTT Broker (Eclipse Mosquitto)
         
@@ -96,7 +114,7 @@ IOT-2026.1/
         
     - `8000/tcp`: Backend REST API và WebSocket (FastAPI)
         
-    - `8888/udp`: Cổng UDP Broadcast Auto-Discovery (giúp ESP32-S3 tự động tìm IP Server)
+    - `8888/udp`: Cổng UDP Broadcast Auto-Discovery (giúp ESP32 tự động tìm IP Server)
         
     - `5173/tcp`: Giao diện Web Dashboard (React + Vite)
         
@@ -108,7 +126,7 @@ IOT-2026.1/
     > 
     > - **Cách A (Kiểm thử & Demo bằng phần mềm mô phỏng):** Cài sẵn **Python 3.9+** (kèm `tkinter`) trên máy host để chạy ứng dụng Desktop GUI Simulator hoặc CLI Simulator (xem [Mục 4](https://www.google.com/search?q=%234-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn-ch%E1%BA%A1y-b%E1%BB%99-gi%E1%BA%A3-l%E1%BA%ADp-thi%E1%BA%BFt-b%E1%BB%8B-simulator)).
     >     
-    > - **Cách B (Chạy với mạch phần cứng thực tế):** Cần mạch **ESP32-S3-DevKitC-1 (N16R8)**, cáp USB Type-C và tiện ích **PlatformIO** (xem [Mục 5](https://www.google.com/search?q=%235-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn-bi%C3%AAn-d%E1%BB%8Bch-v%C3%A0-n%E1%BA%A1p-firmware-cho-esp32-s3)).
+    > - **Cách B (Chạy với mạch phần cứng thực tế):** Cần mạch **ESP32 DevKit (ESP32-WROOM-32)**, cáp USB có dây dữ liệu (đúng đầu cắm của board) và tiện ích **PlatformIO** (xem [Mục 5](https://www.google.com/search?q=%235-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn-bi%C3%AAn-d%E1%BB%8Bch-v%C3%A0-n%E1%BA%A1p-firmware-cho-esp32-s3)).
     >     
     
 
@@ -121,7 +139,7 @@ Tại thư mục gốc của dự án, sao chép `.env.example` thành `.env`:
 Bash
 
 ```
-cp .env.example .env
+test -f .env || cp .env.example .env
 ```
 
 Mặc định file `.env.example` đã cấu hình sẵn các thông số đồng bộ để chạy ngay. Nếu tùy chỉnh `POSTGRES_USER`, `POSTGRES_PASSWORD` hoặc `POSTGRES_DB`, hãy cập nhật tương ứng biến `DATABASE_URL`.
@@ -216,7 +234,7 @@ Dự án cung cấp **2 công cụ giả lập** trong thư mục `tools/` để
 
 ### 4.1. Chạy ứng dụng Desktop GUI Simulator (`tools/gui_simulator.py`) - Khuyên dùng
 
-Ứng dụng giao diện đồ họa (dùng `customtkinter`) mô phỏng trực quan phần cứng ESP32-S3-N16R8: màn hình OLED SSD1306, thanh trượt chỉnh nhiệt độ/độ ẩm SHT30, xả pin dự phòng 18650 khi rút nguồn 5V, ngắt Wi-Fi ghi đệm ra file thẻ nhớ thật (`tools/sd_card_buffer.csv`), rút thẻ nhớ sửa lậu dữ liệu (Tampering Lab) và đẩy bù tự động (Auto-Sync).
+Ứng dụng giao diện đồ họa (dùng `customtkinter`) mô phỏng trực quan phần cứng ESP32-WROOM-32: màn hình OLED SSD1306, thanh trượt chỉnh nhiệt độ/độ ẩm SHT30, xả pin dự phòng 18650 khi rút nguồn 5V, ngắt Wi-Fi ghi đệm ra file thẻ nhớ thật (`tools/sd_card_buffer.csv`), rút thẻ nhớ sửa lậu dữ liệu (Tampering Lab) và đẩy bù tự động (Auto-Sync).
 
 - **Trên Windows:** Mở Command Prompt / PowerShell tại thư mục gốc và chạy (hoặc nhấp đúp vào file):
     
@@ -264,30 +282,37 @@ python tools/dummy_simulator.py --mode auto --interval 3.0
 5. Nhấn nút **"Kiểm toán chuỗi chữ ký GSP"** ở góc trên bên phải để gọi API `/api/v1/devices/GSP-TRUCK-01/verify-chain` đối soát tính toàn vẹn của toàn bộ lịch sử dữ liệu.
     
 
-## 5. Hướng dẫn Biên dịch và Nạp Firmware cho ESP32-S3
+## 5. Hướng dẫn Biên dịch và Nạp Firmware
 
-### Bước 1: Biên dịch và nạp xuống mạch ESP32-S3-N16R8
+Firmware hỗ trợ **ESP32 Classic** (`esp32dev`) và **ESP32-S3** (`esp32s3`), tương thích cảm biến **SHT30** và **SHT40**. Cấu hình mạng được lưu trong NVS Flash, quản lý qua Captive Portal.
 
-Firmware trong `firmware/` sử dụng cơ chế quản lý mạng lưu trên bộ nhớ NVS Flash (`firmware/include/WifiConfig.h`), không cần sửa cứng SSID hay IP trong mã nguồn. Sử dụng **PlatformIO CLI** hoặc **PlatformIO IDE** trên VS Code:
+### Cấu hình phần cứng trong `platformio.ini`
 
-Bash
+Thiết lập chip và cảm biến trực tiếp trong `firmware/platformio.ini`:
+- **Chọn chip:** `default_envs = esp32dev` (ESP32 Classic) hoặc `default_envs = esp32s3` (ESP32-S3).
+- **Chọn cảm biến:** Sửa cờ `build_flags` thành `-D SENSOR_TYPE_SHT40` (mặc định) hoặc `-D SENSOR_TYPE_SHT30`.
 
-```
+### Bước 1: Biên dịch và nạp firmware
+
+Sử dụng PlatformIO CLI hoặc Extension trên VS Code:
+
+```bash
 cd firmware
 
-# Biên dịch kiểm tra mã nguồn
-pio run
+# Biên dịch kiểm tra mã nguồn:
+pio run -e esp32dev          # Dành cho ESP32 Classic
+pio run -e esp32s3           # Dành cho ESP32-S3
 
-# Nạp firmware xuống mạch và mở cổng Serial Monitor (115200 baud)
-pio run --target upload --target monitor
+# Nạp firmware và mở Serial Monitor (115200 baud):
+pio run -e esp32dev --target upload --target monitor
+# Hoặc với ESP32-S3:
+pio run -e esp32s3 --target upload --target monitor
 ```
 
-### Bước 2: Chọn kịch bản kết nối mạng Wi-Fi và MQTT Broker
+### Bước 2: Chọn kịch bản kết nối mạng WiFi và MQTT Broker
 
-Khi nạp code lần đầu (chưa có Wi-Fi trong NVS) hoặc khi nhấn giữ nút **`BOOT (GPIO0)` trong 5 giây**, mạch ESP32-S3 sẽ phát mạng Wi-Fi Access Point có tên **`GSP-ESP32-XXXX`**:
+Khi nạp code lần đầu hoặc nhấn giữ nút **`BOOT (GPIO0)` trong 5 giây**, mạch phát Access Point **`GSP-ESP32-XXXX`**:
 
-- **Option 3 (AP Direct - Không cần Router ngoài):** Kết nối trực tiếp máy tính đang chạy Docker vào Wi-Fi `GSP-ESP32-XXXX`. Không cần cấu hình gì thêm, ESP32-S3 tự động gửi gói tin MQTT về địa chỉ máy tính `192.168.4.2:1883`.
-    
-- **Option 1 (Mạng Wi-Fi chung / Router / Hotspot điện thoại):** Kết nối vào Wi-Fi `GSP-ESP32-XXXX`, mở trình duyệt truy cập `http://192.168.4.1`, chọn **Option 1**, chọn tên Wi-Fi 2.4GHz, nhập mật khẩu rồi bấm **LƯU CẤU HÌNH** $\rightarrow$ **KHỞI ĐỘNG LẠI**. Khi vào mạng chung, ESP32-S3 tự động phát bản tin UDP Broadcast (cổng `8888`) để tìm IP của máy chủ Backend/MQTT.
-    
-- **Option 2 (Wi-Fi phát trực tiếp từ máy tính):** Mở `http://192.168.4.1`, chọn **Option 2** khi ESP32-S3 kết nối vào mạng Wi-Fi Hotspot phát ra từ chính máy tính đang chạy Docker. Mạch sẽ tự động lấy địa chỉ **IP Gateway** làm địa chỉ MQTT Broker mà không cần dò UDP.
+- **Option 3 (AP Direct):** Kết nối máy tính chạy Docker vào WiFi `GSP-ESP32-XXXX`. ESP32 tự động gửi dữ liệu MQTT về `192.168.4.2:1883`.
+- **Option 1 (WiFi chung):** Kết nối vào `GSP-ESP32-XXXX`, truy cập `http://192.168.4.1`, chọn WiFi, nhập mật khẩu và lưu. ESP32 phát UDP Broadcast cổng 8888 để tìm IP Server.
+- **Option 2 (Hotspot máy tính):** Mở `http://192.168.4.1`, chọn Option 2 khi ESP32 kết nối vào Hotspot phát từ máy tính chạy Docker. Mạch lấy IP Gateway làm địa chỉ MQTT Broker.

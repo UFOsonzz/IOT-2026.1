@@ -30,6 +30,11 @@ const WS_URL =
 const DEFAULT_DEVICE_ID = "GSP-TRUCK-01";
 const MAX_TABLE_ROWS = 50;
 
+function epochMillis(ts: string | number | null | undefined): number {
+  if (ts === null || ts === undefined) return 0;
+  return typeof ts === "number" ? ts * 1000 : Date.parse(ts) || 0;
+}
+
 function formatUtcTimestamp(ts: string | number | null | undefined): string {
   if (ts === null || ts === undefined) return "—";
   const dateObj =
@@ -54,7 +59,7 @@ function shortenHash(hash: string): string {
 export default function App() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] =
-    useState<string>(DEFAULT_DEVICE_ID);
+    useState<string>(() => new URLSearchParams(window.location.search).get("device") || DEFAULT_DEVICE_ID);
   const [telemetryList, setTelemetryList] = useState<TelemetryRecord[]>([]);
   const [verifySummary, setVerifySummary] =
     useState<VerifyChainSummary | null>(null);
@@ -139,11 +144,13 @@ export default function App() {
           const payload: RealtimeEvent = JSON.parse(msgEvent.data);
 
           if (payload.event === "telemetry" || payload.event === "sync") {
+            if (!payload.inserted) return;
             const record = payload.data;
 
             setDevices((prevDevices) =>
               prevDevices.map((dev) =>
-                dev.device_id === record.device_id
+                dev.device_id === record.device_id &&
+                epochMillis(record.ts_iso || record.ts_rtc) > epochMillis(dev.latest_ts_rtc)
                   ? {
                       ...dev,
                       is_online: true,
@@ -164,7 +171,7 @@ export default function App() {
             if (record.device_id === selectedDeviceId) {
               setTelemetryList((prev) => {
                 const deduplicated = prev.filter(
-                  (item) => item.seq_no !== record.seq_no
+                  (item) => epochMillis(item.ts_iso || item.ts_rtc) !== epochMillis(record.ts_iso || record.ts_rtc)
                 );
                 return [
                   {
@@ -172,7 +179,8 @@ export default function App() {
                     ts_rtc: record.ts_iso || record.ts_rtc,
                   },
                   ...deduplicated,
-                ].slice(0, MAX_TABLE_ROWS);
+                ].sort((a, b) => epochMillis(b.ts_iso || b.ts_rtc) - epochMillis(a.ts_iso || a.ts_rtc))
+                  .slice(0, MAX_TABLE_ROWS);
               });
             }
           } else if (payload.event === "status") {
@@ -225,8 +233,8 @@ export default function App() {
     latestRow?.temp_c ?? activeDevice?.temp_c ?? null;
   const currentHum =
     latestRow?.hum_pct ?? activeDevice?.hum_pct ?? null;
-  const currentBat =
-    latestRow?.bat_v ?? activeDevice?.bat_v ?? null;
+  const batteryReading = latestRow?.bat_v ?? activeDevice?.bat_v ?? null;
+  const currentBat = batteryReading !== null && batteryReading > 0 ? batteryReading : null;
   const currentAlertCode =
     latestRow?.alert_code ?? activeDevice?.alert_code ?? 0;
   const isOnline = activeDevice?.is_online ?? false;
@@ -435,11 +443,11 @@ export default function App() {
                     : "bg-emerald-500/20 text-emerald-300"
                 }`}
               >
-                {currentBat !== null && currentBat < 3.5 ? "PIN YẾU" : "ỔN ĐỊNH"}
+                {currentBat === null ? "CHƯA ĐO PIN" : currentBat < 3.5 ? "PIN YẾU" : "ỔN ĐỊNH"}
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-2">
-              ADC1_CH3 (GPIO4) • Dự phòng ≥ 8 giờ
+              ADC1 (GPIO34) • Chỉ hiển thị khi đã nối mạch đo pin
             </p>
           </div>
 
@@ -447,7 +455,7 @@ export default function App() {
           <div className="rounded-xl p-5 bg-slate-900/90 border border-slate-800">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                Toàn vẹn Chữ ký Số (FR-05)
+                Toàn vẹn SHA-256
               </span>
               {latestRow?.sig_verified === false ? (
                 <ShieldAlert className="w-5 h-5 text-rose-400" />
@@ -460,7 +468,7 @@ export default function App() {
                 latestRow.sig_verified ? (
                   <span className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-300 bg-emerald-950 border border-emerald-600 px-3 py-1 rounded-lg">
                     <CheckCircle2 className="w-4 h-4" />
-                    ECDSA VERIFIED
+                    HASH VERIFIED
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1.5 text-sm font-bold text-rose-200 bg-rose-950 border border-rose-500 px-3 py-1 rounded-lg animate-bounce">
@@ -473,7 +481,7 @@ export default function App() {
               )}
             </div>
             <p className="text-xs text-slate-400 mt-2 font-mono truncate">
-              Seq #{latestRow?.seq_no ?? "—"} • SHA-256 + secp256r1
+              Seq #{latestRow?.seq_no ?? "—"} • Chữ ký dummy; ECDSA thật ở Sprint 2
             </p>
           </div>
         </section>
@@ -643,7 +651,7 @@ export default function App() {
                           {Number(row.hum_pct).toFixed(2)}%
                         </td>
                         <td className="py-3 px-4 text-slate-300">
-                          {Number(row.bat_v).toFixed(2)}V
+                          {row.bat_v > 0 ? `${Number(row.bat_v).toFixed(2)}V` : "—"}
                         </td>
                         <td
                           className="py-3 px-4 font-mono text-xs text-slate-400"
@@ -655,7 +663,7 @@ export default function App() {
                           {row.sig_verified ? (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                               <CheckCircle2 className="w-3.5 h-3.5" />
-                              ECDSA Verified
+                              Hash Verified
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-600/30 text-rose-200 border border-rose-500 animate-pulse">
