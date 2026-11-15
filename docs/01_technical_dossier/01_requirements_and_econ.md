@@ -1,55 +1,65 @@
-# (1) Đặc tả yêu cầu và bài toán kinh tế
-*(Tài liệu thuộc Bước 1, Mục 1.6 và Mục 5.3.1 - Phụ trách chính: TV4)*
+# Đặc tả yêu cầu và bài toán kinh tế
 
-## 1. Bối cảnh, Đối tượng người dùng & Ranh giới pháp lý
-- **Đối tượng người dùng:**
-  1. Quản lý kho lạnh tại các công ty dược phẩm, tập đoàn chế biến nông/thủy sản và đơn vị vận chuyển hàng y tế tuyến huyện/vùng xa.
-  2. Tài xế xe tải lạnh vận chuyển vaccine (+2.0°C đến +8.0°C).
-  3. Thanh tra viên y tế và chuyên viên QA cần truy xuất báo cáo tuân thủ GSP (Good Storage Practices).
-- **Ranh giới pháp lý:** Trong khuôn khổ học phần IT4735, đây là prototype phục vụ rèn luyện thiết kế hệ thống IoT có tính toàn vẹn dữ liệu. Khi triển khai thương mại phục vụ thanh tra GSP chính thức của Bộ Y tế, các cảm biến phải được kiểm định và hiệu chuẩn định kỳ tại đơn vị đo lường có thẩm quyền.
+Phụ trách: TV4
 
-## 2. Bảng Yêu cầu Chức năng
+---
 
-| Mã YC | Tên chức năng | Mô tả chi tiết | Trạng thái |
+## 1. Bối cảnh và người dùng
+
+- **Người dùng mục tiêu:**
+  1. Quản lý kho lạnh dược phẩm, nông sản, thủy sản và điều phối vận chuyển y tế.
+  2. Tài xế xe lạnh vận chuyển vaccine (+2.0°C đến +8.0°C).
+  3. Thanh tra y tế và QA kiểm tra tuân thủ GSP.
+- **Ranh giới pháp lý:** Hệ thống là prototype học phần IT4735, tập trung vào thiết kế toàn vẹn dữ liệu IoT. Khi triển khai thương mại cho thanh tra GSP của Bộ Y tế, cảm biến cần được hiệu chuẩn định kỳ tại cơ quan đo lường có thẩm quyền.
+
+---
+
+## 2. Yêu cầu chức năng
+
+| Mã | Chức năng | Mô tả chi tiết | Trạng thái |
 | :--- | :--- | :--- | :--- |
-| **FR-01** | Thu thập và xử lý vi khí hậu | Đọc dữ liệu nhiệt độ, độ ẩm từ cảm biến SHT30 hoặc SHT40 và điện áp pin theo chu kỳ. | Đã hoàn thành trên mạch thật |
-| **FR-02** | Ghi đệm dữ liệu Offline | Khi mất kết nối mạng, tự động lưu bản ghi vào thẻ nhớ MicroSD tại biên kèm nhãn thời gian chuẩn UTC từ IC RTC DS3231. | `[TODO]` |
-| **FR-03** | Đồng bộ hóa tự động | Khi có mạng lại, tự động đẩy dữ liệu Offline từ thẻ nhớ lên kênh `gsp/v1/+/sync` không làm gián đoạn luồng realtime và không trùng lặp bản ghi. | Đã có Dedup tại DB |
-| **FR-04** | Cảnh báo khẩn cấp đa kênh | Kích hoạt Relay bật còi hú + đèn chớp tại chỗ tức thời (<= 3s), đẩy cảnh báo lên Web Dashboard và gọi API Telegram Bot khi vượt ngưỡng. | Đã có Relay & WS |
-| **FR-05** | Đảm bảo tính bất biến | Vi điều khiển băm SHA-256 và ký số ECDSA cho mỗi gói tin; CSDL khóa cứng mọi lệnh `UPDATE` và `DELETE` (Append-Only). | Đã chạy thông |
+| **FR-01** | Thu thập vi khí hậu | Đọc nhiệt độ, độ ẩm từ SHT30/SHT40 và điện áp pin theo chu kỳ. | Đã hoàn thành trên mạch thật |
+| **FR-02** | Lưu đệm offline | Khi mất mạng, lưu bản ghi vào thẻ MicroSD kèm timestamp UTC từ RTC DS3231. | Kế hoạch Sprint 2 |
+| **FR-03** | Tự động đồng bộ | Khi có mạng, đẩy bù dữ liệu từ thẻ nhớ lên topic `gsp/v1/+/sync`, tự khử trùng lặp tại CSDL. | Đã xử lý Dedup tại DB |
+| **FR-04** | Cảnh báo đa kênh | Kích hoạt Relay bật còi và đèn tại chỗ (≤ 3s), đẩy cảnh báo lên Web Dashboard và Telegram Bot khi vượt ngưỡng. | Đã có Relay và WebSocket |
+| **FR-05** | Toàn vẹn dữ liệu | Vi điều khiển băm SHA-256 và ký ECDSA từng gói tin; CSDL append-only chặn lệnh `UPDATE` và `DELETE`. | Đã chạy thông |
 
-## 3. Bảng Yêu cầu Phi chức năng
+---
 
-| Mã YC | Thuộc tính | Con số đo lường | Phương pháp kiểm chứng thực nghiệm | Kết quả nghiệm thu |
+## 3. Yêu cầu phi chức năng
+
+| Mã | Thuộc tính | Tiêu chuẩn | Phương pháp kiểm chứng | Kết quả nghiệm thu |
 | :--- | :--- | :--- | :--- | :--- |
-| **NFR-01** | Độ trễ cảnh báo | Còi hú tại chỗ kêu `<= 3 giây`; Cảnh báo tới Web và Telegram bot `<= 10 giây`. | Làm nóng cảm biến SHT30 / SHT40, đo thời gian từ lúc vượt ngưỡng đến khi còi hú và nhận tin báo. | `[Điền sau]` |
-| **NFR-02** | Chịu lỗi rớt mạng | Lưu trữ offline `100%` bản ghi phát sinh trong tối thiểu `7 ngày` mất mạng. | Ngắt Wi-Fi, sau đó cấp lại mạng; đối chiếu tổng số dòng trên file `.CSV` thẻ nhớ với số bản ghi `is_backfill=true` trên CSDL. | `[Điền sau]` |
-| **NFR-03** | Độ chính xác | Nhiệt độ sai số `<= +-0.3°C`; Độ ẩm sai số `<= +-2.0% RH`. | Đặt đầu dò SHT30 / SHT40 cùng buồng đo với nhiệt kế chuẩn y tế đã kiểm định và điểm cân bằng nước đá đang tan (`0.0°C`). | `[Điền sau]` |
-| **NFR-04** | Nguồn dự phòng | Hoạt động liên tục tối thiểu `>= 8 giờ` khi mất điện lưới toàn kho. | Rút nguồn USB 5V để mạch chạy bằng pin 18650; lấy hiệu số `ts_rtc` của bản ghi cuối cùng và bản ghi lúc rút nguồn. | `[Điền sau]` |
+| **NFR-01** | Độ trễ cảnh báo | Còi hú tại chỗ ≤ 3s; cảnh báo Web và Telegram ≤ 10s. | Gia nhiệt SHT30/SHT40, đo thời gian từ lúc vượt ngưỡng đến khi kích hoạt còi và nhận tin báo. | Điền sau |
+| **NFR-02** | Chịu lỗi mất mạng | Lưu offline 100% dữ liệu phát sinh trong tối thiểu 7 ngày mất kết nối. | Ngắt WiFi, cấp lại mạng và đối chiếu số dòng CSV trên thẻ nhớ với số bản ghi `is_backfill=true` trong CSDL. | Điền sau |
+| **NFR-03** | Độ chính xác | Nhiệt độ sai số ≤ ±0.3°C; độ ẩm sai số ≤ ±2.0% RH. | Đặt đầu dò SHT30/SHT40 cùng nhiệt kế chuẩn y tế và điểm đá tan (0.0°C). | Điền sau |
+| **NFR-04** | Nguồn dự phòng | Hoạt động liên tục ≥ 8 giờ khi mất nguồn chính. | Rút nguồn USB 5V cho mạch chạy pin 18650, so sánh `ts_rtc` bản ghi cuối cùng với thời điểm rút nguồn. | Điền sau |
+
+---
 
 ## 4. Bài toán kinh tế
 
-- **Hiện trạng khi chưa có hệ thống:** Giá trị vaccine trung bình `2 tỷ đồng/xe` (`20 tỷ đồng` cho 10 xe). Rủi ro hỏng lô hàng do sự cố máy lạnh không phát hiện kịp trung bình `1,5%/năm` (`300 triệu đồng/năm`), cộng chi phí nhân công kiểm tra và ghi sổ tay 3 ca/ngày (`120 triệu đồng/năm`) -> Tổng chi phí thiệt hại & thủ công = **`420 triệu đồng/năm`**.
+- **Hiện trạng chưa có hệ thống:** Giá trị vaccine trung bình 2 tỷ đồng/xe (20 tỷ đồng cho 10 xe). Rủi ro hỏng hàng do sự cố lạnh khoảng 1.5%/năm (300 triệu đồng/năm), chi phí ghi sổ tay thủ công 3 ca/ngày là 120 triệu đồng/năm. Tổng tổn thất: **420 triệu đồng/năm**.
 
-### 4.1. Chi phí đầu tư ban đầu (CapEx) và vận hành hằng năm (OpEx)
+### 4.1. Chi phí đầu tư (CapEx) và vận hành hàng năm (OpEx)
 
-| Nhóm chi phí | Khoản mục chi tiết | Cách tính (Quy mô 10 điểm đo) | Thành tiền (Triệu đồng) |
+| Phân loại | Khoản mục | Quy mô tính toán (10 điểm đo) | Thành tiền (Triệu đồng) |
 | :--- | :--- | :--- | :--- |
-| **CapEx** | Thiết bị biên công nghiệp (ESP32 / ESP32-S3, SHT30 / SHT40 có kiểm định, vỏ IP65, pin) | `2,5 triệu x 10 bộ` | `25,0` |
-| **CapEx** | Thiết lập nền tảng Server, CSDL TimescaleDB & Tích hợp phần mềm | `1 gói trọn gói` | `20,0` |
-| **CapEx** | Nhân công lắp đặt trên xe/kho, hiệu chuẩn ban đầu & Đào tạo | `1,0 triệu x 10 điểm` | `10,0` |
-| **Tổng CapEx** | | | **`55,0 triệu đồng`** |
-| **OpEx (năm)** | Cước SIM 4G / Truyền dẫn mạng | `30.000 đ/tháng x 10 điểm x 12 tháng` | `3,6 / năm` |
-| **OpEx (năm)** | Thuê máy chủ Cloud VPS & Sao lưu dữ liệu bất biến GSP | `1,5 triệu/tháng x 12 tháng` | `18,0 / năm` |
-| **OpEx (năm)** | Kiểm định & hiệu chuẩn cảm biến định kỳ hằng năm theo chuẩn GSP | `1,2 triệu/điểm/năm x 10 điểm` | `12,0 / năm` |
-| **OpEx (năm)** | Bảo trì thiết bị, thay thế pin 18650 & xử lý sự cố | `~15% giá trị phần cứng + phụ phí` | `6,4 / năm` |
-| **Tổng OpEx** | | | **`40,0 triệu đồng/năm`** |
+| **CapEx** | Thiết bị biên (ESP32/ESP32-S3, SHT30/SHT40, vỏ IP65, pin) | 2.5 triệu x 10 bộ | 25.0 |
+| **CapEx** | Máy chủ, CSDL TimescaleDB và phần mềm | Gói hoàn thiện | 20.0 |
+| **CapEx** | Lắp đặt, hiệu chuẩn ban đầu và đào tạo | 1.0 triệu x 10 điểm | 10.0 |
+| **Tổng CapEx** | | | **55.0** |
+| **OpEx/năm** | Cước SIM 4G và truyền dẫn | 30.000 đ/tháng x 10 điểm x 12 tháng | 3.6 |
+| **OpEx/năm** | Thuê Cloud VPS và backup dữ liệu GSP | 1.5 triệu/tháng x 12 tháng | 18.0 |
+| **OpEx/năm** | Kiểm định và hiệu chuẩn cảm biến định kỳ theo chuẩn GSP | 1.2 triệu/điểm/năm x 10 điểm | 12.0 |
+| **OpEx/năm** | Bảo trì thiết bị, thay pin 18650 và xử lý sự cố | ~15% giá trị phần cứng | 6.4 |
+| **Tổng OpEx** | | | **40.0/năm** |
 
-- **Tổng chi phí sở hữu 5 năm (TCO 5 năm):** `TCO = 55 + (5 x 40) = 255 triệu đồng` (trong đó OpEx 5 năm chiếm `78,4%`).
+- **Tổng chi phí sở hữu 5 năm (TCO 5 năm):** `TCO = 55 + (5 x 40) = 255 triệu đồng` (OpEx chiếm 78.4%).
 
-### 4.2. Phân tích độ nhạy 2 kịch bản
+### 4.2. Phân tích độ nhạy
 
-| Kịch bản | Giả định mức cải thiện đạt được | Lợi ích thu hồi (Triệu/năm) | Dòng tiền ròng (= Lợi ích - OpEx) | Thời gian hoàn vốn (= CapEx / Dòng tiền ròng) | Đánh giá tính khả thi (Tuổi thọ TB 5-7 năm) |
+| Kịch bản | Giả định cải thiện | Lợi ích thu hồi (Triệu/năm) | Dòng tiền ròng (Lợi ích - OpEx) | Thời gian hoàn vốn (CapEx / Dòng tiền ròng) | Đánh giá khả thi |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Kịch bản cơ sở** | Giảm 80% rủi ro hỏng thuốc (240 tr) + giảm 50% công ghi sổ (60 tr) | `300,0` | `260,0 triệu/năm` | **`0,21 năm (~2,5 tháng)`** | **Khả thi** |
-| **Kịch bản thận trọng** | Chỉ giảm 15% rủi ro hỏng thuốc (45 tr) + không giảm nhân công | `45,0` | `5,0 triệu/năm` | **`11,0 năm`** | **Không khả thi** (Vượt tuổi thọ thiết bị) |
+| **Cơ sở** | Giảm 80% rủi ro hỏng thuốc (240 tr) + giảm 50% công ghi sổ (60 tr) | 300.0 | 260.0 triệu/năm | **0.21 năm (~2.5 tháng)** | **Khả thi** |
+| **Thận trọng** | Giảm 15% rủi ro hỏng thuốc (45 tr), không giảm nhân công | 45.0 | 5.0 triệu/năm | **11.0 năm** | **Không khả thi** (vượt tuổi thọ thiết bị) |
